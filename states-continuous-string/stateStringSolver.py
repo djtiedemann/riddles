@@ -1,3 +1,4 @@
+# solves https://fivethirtyeight.com/features/can-you-help-dakota-jones-raid-the-lost-arc/
 import sys
 
 class StateSolver:
