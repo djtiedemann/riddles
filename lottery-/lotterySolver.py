@@ -33,6 +33,29 @@ class Factor:
 		return list(set(self.getPrimeFactors(value)))
 
 
+class LotteryGenerator:
+	def generateValidCombinations(self):
+		# in this case, each of the 5 people must pick different numbers, each of which multiply to the same number
+		
+		return None
+		
+	def generateAllPossibleSelectionsFromList(self, potentialValues, numValuesToChoose, valuesAlreadyChosen):
+		potentialSelections = []
+		for value in potentialValues:
+			# make sure we are selecting values in ascending order to minimize duplication
+			if(len(valuesAlreadyChosen) >= 1 and value < valuesAlreadyChosen[len(valuesAlreadyChosen) - 1]):
+				continue
+		
+			newValuesChosen = valuesAlreadyChosen + [value]
+			potentialValuesLeft = potentialValues.copy()
+			potentialValuesLeft.remove(value)
+			if (numValuesToChoose == 1):
+				potentialSelections.append(newValuesChosen)
+			else:
+				possibleSelections = self.generateAllPossibleSelectionsFromList(potentialValuesLeft, numValuesToChoose - 1, newValuesChosen)
+				potentialSelections = potentialSelections + possibleSelections
+		return potentialSelections
+			
 minNumber = 2 # we can ignore the edge case of 1. it isn't composite and it doesn't have 2 distinct prime factors so it cannot be chose
 maxNumber = 70
 
@@ -41,7 +64,9 @@ valuesWithAtLeast2DistinctPrimeFactors = []
 for value in range(minNumber, maxNumber + 1):
 	primeFactors = factor.getPrimeFactors(value)
 	distinctPrimeFactors = factor.getDistinctPrimeFactors(value)
-	print(str(value) + ': ' + str(primeFactors) + ', ' + str(distinctPrimeFactors))
 	if(len(distinctPrimeFactors) >= 2):
 		valuesWithAtLeast2DistinctPrimeFactors.append(value)
-print(valuesWithAtLeast2DistinctPrimeFactors)
+lotteryGenerator = LotteryGenerator()
+possibleSelections = lotteryGenerator.generateAllPossibleSelectionsFromList([1, 2, 3, 4, 5], 5, [])
+for selection in possibleSelections:
+	print(selection)
