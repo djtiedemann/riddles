@@ -127,7 +127,7 @@ for value in range(minNumber, maxNumber + 1):
 valuesThatCanBeInLottery = factor.prunePotentialCompositeNumbers(valuesWithAtLeast2DistinctPrimeFactors)
 print(valuesThatCanBeInLottery)
 lotteryGenerator = LotteryGenerator()
-possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesWithAtLeast2DistinctPrimeFactors)
+possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesThatCanBeInLottery)
 
 productMap = lotteryGenerator.getProductOfSelectionsMap(possibleSelections)
 
