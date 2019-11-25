@@ -34,27 +34,30 @@ class Factor:
 
 
 class LotteryGenerator:
-	def generateValidCombinations(self):
+	def generateValidCombinations(p):
 		# in this case, each of the 5 people must pick different numbers, each of which multiply to the same number
 		
 		return None
 		
-	def generateAllPossibleSelectionsFromList(self, potentialValues, numValuesToChoose, valuesAlreadyChosen):
-		potentialSelections = []
-		for value in potentialValues:
-			# make sure we are selecting values in ascending order to minimize duplication
-			if(len(valuesAlreadyChosen) >= 1 and value < valuesAlreadyChosen[len(valuesAlreadyChosen) - 1]):
-				continue
-		
-			newValuesChosen = valuesAlreadyChosen + [value]
-			potentialValuesLeft = potentialValues.copy()
-			potentialValuesLeft.remove(value)
-			if (numValuesToChoose == 1):
-				potentialSelections.append(newValuesChosen)
+	def getAllPossibleSelectionsOfLength5(self, potentialValues):
+		possibleSelections = []
+		for val1 in range(0, len(potentialValues)):
+			for val2 in range(val1+1, len(potentialValues)):
+				for val3 in range(val2+1, len(potentialValues)):
+					for val4 in range(val3+1, len(potentialValues)):
+						for val5 in range(val4+1, len(potentialValues)):
+							possibleSelections.append([potentialValues[val1], potentialValues[val2], potentialValues[val3], potentialValues[val4], potentialValues[val5]])
+		return possibleSelections
+	
+	def getProductOfSelectionsMap(self, possibleSelectionsOfLength5):
+		productMap = {}
+		for possibleSelection in possibleSelectionsOfLength5:
+			product = possibleSelection[0]*possibleSelection[1]*possibleSelection[2]*possibleSelection[3]*possibleSelection[4]
+			if product in productMap:
+				productMap[product] = productMap[product] + [possibleSelection]
 			else:
-				possibleSelections = self.generateAllPossibleSelectionsFromList(potentialValuesLeft, numValuesToChoose - 1, newValuesChosen)
-				potentialSelections = potentialSelections + possibleSelections
-		return potentialSelections
+				productMap[product] = [possibleSelection]
+		return productMap
 			
 minNumber = 2 # we can ignore the edge case of 1. it isn't composite and it doesn't have 2 distinct prime factors so it cannot be chose
 maxNumber = 70
@@ -67,6 +70,8 @@ for value in range(minNumber, maxNumber + 1):
 	if(len(distinctPrimeFactors) >= 2):
 		valuesWithAtLeast2DistinctPrimeFactors.append(value)
 lotteryGenerator = LotteryGenerator()
-possibleSelections = lotteryGenerator.generateAllPossibleSelectionsFromList([1, 2, 3, 4, 5], 5, [])
-for selection in possibleSelections:
-	print(selection)
+possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesWithAtLeast2DistinctPrimeFactors)
+
+productMap = lotteryGenerator.getProductOfSelectionsMap(possibleSelections)
+for key in productMap.keys():
+	print(str(key) + ', ' + str(len(productMap[key])))
