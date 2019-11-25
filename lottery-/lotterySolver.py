@@ -3,7 +3,7 @@ import math
 
 class Factor:
 	def __init__(self):
-		self.factors = {}		
+		self.factors = {}
 
 	# gets prime factors of a value (excludes 1 because it behaves strangely)
 	def getPrimeFactors(self, value):
@@ -32,13 +32,40 @@ class Factor:
 	def getDistinctPrimeFactors(self, value):
 		return list(set(self.getPrimeFactors(value)))
 
-
+	# due to the fact that each number can't appear in multiple lists, we can remove any number based on a prime factor that doesn't appear at least 5 times. 
+	# For instance: 23 is prime. of numbers less than 70 that are divisible by 23, only 46 and 69 fit. Therefore those numbers aren't possible because if the product is a multiple of
+	# 23, then 46 or 69 must be in the list. Pidgeonhole principle says multiple lists must have same number
+	def prunePotentialCompositeNumbers(self, potentialValues):
+		prunedPotentialValues = potentialValues.copy()
+		factorCountMap = {}
+		for value in valuesWithAtLeast2DistinctPrimeFactors:
+			# note, i think it's possible to use distinctPrimeFactors here to apply a more aggressive filter. But I'm not 100% sure, so going with safe route
+			factors = self.getPrimeFactors(value)
+			for factor in factors:
+				if factor in factorCountMap:
+					factorCountMap[factor] = factorCountMap[factor] + 1
+				else:
+					factorCountMap[factor] = 1
+		
+		invalidFactors = []
+		for factor in factorCountMap.keys():
+			if factorCountMap[factor] < 5:
+				invalidFactors.append(factor)
+						
+		for value in valuesWithAtLeast2DistinctPrimeFactors:
+			factors = self.getPrimeFactors(value)
+			for factor in factors:
+				if(factor in invalidFactors and value in prunedPotentialValues):
+					prunedPotentialValues.remove(value)
+		
+		return prunedPotentialValues
+		
 class LotteryGenerator:
-	def generateValidCombinations(p):
+	def isProductPotentiallyCorrect(self, product, selectionsGeneratingProduct):
 		# in this case, each of the 5 people must pick different numbers, each of which multiply to the same number
-		
-		return None
-		
+		if len(selectionsGeneratingProduct) < 5:
+			return False
+			
 	def getAllPossibleSelectionsOfLength5(self, potentialValues):
 		possibleSelections = []
 		for val1 in range(0, len(potentialValues)):
@@ -69,9 +96,17 @@ for value in range(minNumber, maxNumber + 1):
 	distinctPrimeFactors = factor.getDistinctPrimeFactors(value)
 	if(len(distinctPrimeFactors) >= 2):
 		valuesWithAtLeast2DistinctPrimeFactors.append(value)
+
+valuesThatCanBeInLottery = factor.prunePotentialCompositeNumbers(valuesWithAtLeast2DistinctPrimeFactors)
+print(valuesThatCanBeInLottery)
 lotteryGenerator = LotteryGenerator()
-possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesWithAtLeast2DistinctPrimeFactors)
+possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesThatCanBeInLottery)
 
 productMap = lotteryGenerator.getProductOfSelectionsMap(possibleSelections)
+print(len(possibleSelections))
+print(len(productMap.keys()))
+numValidKeys = 0
 for key in productMap.keys():
-	print(str(key) + ', ' + str(len(productMap[key])))
+	if(lotteryGenerator.isProductPotentiallyCorrect(key, productMap[key])):
+		numValidKeys = numValidKeys + 1
+print(numValidKeys)
