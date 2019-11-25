@@ -61,10 +61,30 @@ class Factor:
 		return prunedPotentialValues
 		
 class LotteryGenerator:
+	# returns true if you can find N lists in selections each of which share no common elements
+	def doesListOfListsContainNNonOverlappingLists(self, selections, numListsRequired):
+		if len(selections) < numListsRequired:
+			return False
+		if numListsRequired == 1:
+			return True
+		for list1Index in range(0, len(selections)):
+			potentialLists = []
+			for list2Index in range(list1Index+1, len(selections)):
+				doesList2NotOverlap = True
+				for el in selections[list1Index]:
+					if el in selections[list2Index]:
+						doesList2NotOverlap = False
+						break
+				if (doesList2NotOverlap):
+					potentialLists.append(selections[list2Index])
+			
+			return self.doesListOfListsContainNNonOverlappingLists(potentialLists, numListsRequired - 1)
+			
 	def isProductPotentiallyCorrect(self, product, selectionsGeneratingProduct):
 		# in this case, each of the 5 people must pick different numbers, each of which multiply to the same number
 		if len(selectionsGeneratingProduct) < 5:
 			return False
+		return self.doesListOfListsContainNNonOverlappingLists(selectionsGeneratingProduct, 4)
 			
 	def getAllPossibleSelectionsOfLength5(self, potentialValues):
 		possibleSelections = []
@@ -103,10 +123,11 @@ lotteryGenerator = LotteryGenerator()
 possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesThatCanBeInLottery)
 
 productMap = lotteryGenerator.getProductOfSelectionsMap(possibleSelections)
+
 print(len(possibleSelections))
 print(len(productMap.keys()))
 numValidKeys = 0
 for key in productMap.keys():
 	if(lotteryGenerator.isProductPotentiallyCorrect(key, productMap[key])):
-		numValidKeys = numValidKeys + 1
+		print(key)
 print(numValidKeys)
