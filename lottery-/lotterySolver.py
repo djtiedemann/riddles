@@ -66,7 +66,9 @@ class LotteryGenerator:
 		if len(selections) < numListsRequired:
 			return None
 		if numListsRequired == 1:
-			return [selections[0]]
+			#return [selections[0]]
+			return [[selection] for selection in selections]
+		results = []
 		for list1Index in range(0, len(selections)):
 			potentialLists = []
 			for list2Index in range(list1Index+1, len(selections)):
@@ -80,15 +82,19 @@ class LotteryGenerator:
 			
 			nonOverlappingLists = self.doesListOfListsContainNNonOverlappingLists(potentialLists, numListsRequired - 1)
 			if nonOverlappingLists is not None:
-				return [selections[list1Index]] + nonOverlappingLists
-			
+				results = results + [[selections[list1Index]] + element for element in nonOverlappingLists]
+		if len(results) > 0:
+			return results
+		else:
+			return None
+		
 	def isProductPotentiallyCorrect(self, product, selectionsGeneratingProduct):
 		# in this case, each of the 5 people must pick different numbers, each of which multiply to the same number
 		if len(selectionsGeneratingProduct) < 5:
 			return False
 		nonOverlappingLists = self.doesListOfListsContainNNonOverlappingLists(selectionsGeneratingProduct, 5)
 		if nonOverlappingLists is not None:
-			print(key)
+			print(product)
 			print(nonOverlappingLists)
 			return True
 		return False
@@ -125,15 +131,21 @@ for value in range(minNumber, maxNumber + 1):
 		valuesWithAtLeast2DistinctPrimeFactors.append(value)
 
 valuesThatCanBeInLottery = factor.prunePotentialCompositeNumbers(valuesWithAtLeast2DistinctPrimeFactors)
-print(valuesThatCanBeInLottery)
 lotteryGenerator = LotteryGenerator()
 possibleSelections = lotteryGenerator.getAllPossibleSelectionsOfLength5(valuesThatCanBeInLottery)
 
 productMap = lotteryGenerator.getProductOfSelectionsMap(possibleSelections)
 
-print(len(possibleSelections))
-print(len(productMap.keys()))
 numValidKeys = 0
+#lotteryGenerator.isProductPotentiallyCorrect(19958400, productMap[19958400])
 for key in productMap.keys():
-	if(lotteryGenerator.isProductPotentiallyCorrect(key, productMap[key])):
+	answer = lotteryGenerator.doesListOfListsContainNNonOverlappingLists(productMap[key], 5)
+	if answer is not None:
 		print(key)
+		print(len(answer))
+						
+# answers: 19958400
+# Num ways they could pick it -
+	# 12781 distinct combinations
+	# if you take into account the way that the friends order them, that number could be
+	# multiplied by 5!, then 1533720
