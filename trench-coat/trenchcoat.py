@@ -10,10 +10,10 @@ class Trenchcoat:
 		pGuessIsCorrect = 1.0 / numValuesThatCouldHaveBeenGuessed
 		pGuessIsLow = (guess - currentMin) / numValuesThatCouldHaveBeenGuessed
 		pGuessIsHigh = (currentMax - guess) / numValuesThatCouldHaveBeenGuessed
-		print('sample size: ' + str(numValuesThatCouldHaveBeenGuessed))
-		print('pGuessIsCorrect: ' + str(pGuessIsCorrect))
-		print('pGuessIsLow: ' + str(pGuessIsLow))
-		print('pGuessIsHigh: ' + str(pGuessIsHigh))
+		
+		if (numGuessesRemainingAfterThisGuess == 0):
+			return guess * pGuessIsCorrect
 		
 trenchcoat = Trenchcoat()
-trenchcoat.guess(4, 1, 10, 0)
+expectedValue = trenchcoat.guess(10, 1, 10, 0)
+print(expectedValue)
