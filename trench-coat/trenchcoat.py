@@ -16,4 +16,4 @@ class Trenchcoat:
 		print('pGuessIsHigh: ' + str(pGuessIsHigh))
 		
 trenchcoat = Trenchcoat()
-trenchcoat.guess(1, 10, 3, 0)
+trenchcoat.guess(4, 1, 10, 0)
