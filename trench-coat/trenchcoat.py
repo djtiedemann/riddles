@@ -7,13 +7,13 @@ class Trenchcoat:
 		
 	def guess(self, guess, currentMin, currentMax, numGuessesRemainingAfterThisGuess):
 		numValuesThatCouldHaveBeenGuessed = (currentMax - currentMin + 1)
-		pGuessIsCorrect = 1.0 / numValuesThatCouldHaveBeenGuessed
-		pGuessIsLow = (guess - currentMin) / numValuesThatCouldHaveBeenGuessed
-		pGuessIsHigh = (currentMax - guess) / numValuesThatCouldHaveBeenGuessed
+		pGuessIsCorrect = (1.0 if guess >= currentMin and guess <= currentMax else 0.0) / numValuesThatCouldHaveBeenGuessed
+		pGuessIsLow = (guess - currentMin) / numValuesThatCouldHaveBeenGuessed if guess >= currentMin and guess <= currentMax else (1.0 if guess < currentMin else 0.0)
+		pGuessIsHigh = (currentMax - guess) / numValuesThatCouldHaveBeenGuessed if guess >= currentMin and guess <= currentMax else (0.0 if guess < currentMin else 1.0)
 		
 		if (numGuessesRemainingAfterThisGuess == 0):
 			return guess * pGuessIsCorrect
 		
 trenchcoat = Trenchcoat()
-expectedValue = trenchcoat.guess(10, 1, 10, 0)
+expectedValue = trenchcoat.guess(8, 1, 10, 0)
 print(expectedValue)
