@@ -5,15 +5,21 @@ class Trenchcoat:
 	def __init__(self):
 		self.lookupMatrix = []
 		
-	def guess(self, guess, currentMin, currentMax, numGuessesRemainingAfterThisGuess):
+	def guess(self, currentMin, currentMax, numGuessesRemainingAfterThisGuess):
 		numValuesThatCouldHaveBeenGuessed = (currentMax - currentMin + 1)
-		pGuessIsCorrect = (1.0 if guess >= currentMin and guess <= currentMax else 0.0) / numValuesThatCouldHaveBeenGuessed
-		pGuessIsLow = (guess - currentMin) / numValuesThatCouldHaveBeenGuessed if guess >= currentMin and guess <= currentMax else (1.0 if guess < currentMin else 0.0)
-		pGuessIsHigh = (currentMax - guess) / numValuesThatCouldHaveBeenGuessed if guess >= currentMin and guess <= currentMax else (0.0 if guess < currentMin else 1.0)
-		
-		if (numGuessesRemainingAfterThisGuess == 0):
-			return guess * pGuessIsCorrect
+		bestExpectedValue = -1.0
+		bestGuess = -1.0
+		for guess in range(currentMin, currentMax+1):
+			pGuessIsCorrect = (1.0 if guess >= currentMin and guess <= currentMax else 0.0) / numValuesThatCouldHaveBeenGuessed
+			pGuessIsLow = (guess - currentMin) / numValuesThatCouldHaveBeenGuessed if guess >= currentMin and guess <= currentMax else (1.0 if guess < currentMin else 0.0)
+			pGuessIsHigh = (currentMax - guess) / numValuesThatCouldHaveBeenGuessed if guess >= currentMin and guess <= currentMax else (0.0 if guess < currentMin else 1.0)		
+			expectedValue = guess * pGuessIsCorrect
+			if (expectedValue > bestExpectedValue):
+				bestExpectedValue = expectedValue
+				bestGuess = guess
+		return (bestGuess, bestExpectedValue)
 		
 trenchcoat = Trenchcoat()
-expectedValue = trenchcoat.guess(8, 1, 10, 0)
-print(expectedValue)
+(bestGuess, bestExpectedValue) = trenchcoat.guess(1, 10, 0)
+print(bestGuess)
+print(bestExpectedValue)
