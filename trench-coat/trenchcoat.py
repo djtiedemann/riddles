@@ -11,6 +11,20 @@ class Trenchcoat:
 	def printLookupMatrix(self):
 		print(self.lookupMatrix)
 		
+	def guess_efficient(self, currentMin, currentMax, numGuesses):
+		sizeOfRange = (currentMax - currentMin) + 1
+		guessFootprint = 2**(numGuesses) - 1
+		probabilityOfCorrectGuess = guessFootprint / sizeOfRange
+		minValueInGuessFootprint = currentMax - guessFootprint + 1
+		averageValueInGuessFootprint = (currentMax + minValueInGuessFootprint) / 2
+		expectedValue = averageValueInGuessFootprint * probabilityOfCorrectGuess
+		print('sizeOfRange: ' + str(sizeOfRange))
+		print('guessFootprint: ' + str(guessFootprint))
+		print('probabilityOfCorrectGuess:' + str(probabilityOfCorrectGuess))
+		print('minValueInGuessFootprint:' + str(minValueInGuessFootprint))
+		print('averageValueInGuessFootprint:' + str(averageValueInGuessFootprint))
+		print('expectedValue:' + str(expectedValue))
+		
 	def guess(self, currentMin, currentMax, numGuessesRemainingAfterThisGuess):
 		numValuesThatCouldHaveBeenGuessed = (currentMax - currentMin + 1)
 		bestExpectedValue = -1.0
@@ -35,6 +49,4 @@ class Trenchcoat:
 		return (bestGuess, bestExpectedValue)
 		
 trenchcoat = Trenchcoat()
-(bestGuess, bestExpectedValue) = trenchcoat.guess(1, 100, 3)
-print(bestGuess)
-print(bestExpectedValue)
+trenchcoat.guess_efficient(1, 1000, 9)
