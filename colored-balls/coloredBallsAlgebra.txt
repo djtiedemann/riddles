@@ -1,0 +1,31 @@
+ABCD = 1 + AABC
+AABC = 1 + (1/2)AABC + (1/6) AABB + (1/3)AAAB
+AABB = 1 + (1/3)AABB + (2/3)AAAB
+AAAB = 1 + (1/2)AAAB + (1/4)AABB
+
+(3/4)AAAB = 1 + (1/2)AABB
+AAAB = (4/3) + (2/3)AABB
+
+(2/3)AAAB = (2/3)AABB - 1
+AAAB = AABB - 3/2
+AABB = AAAB + 3/2
+
+AAAB = 1 + (1/2)AAAB + (1/4)AABB
+(1/2)AAAB = 1 + (1/4)AABB
+AAAB = 2 + (1/2)AABB
+
+AABB - 3/2 = 2 + (1/2)AABB
+(1/2)AABB = 4/2 + 3/2
+AABB = 7
+AAAB = AABB - 3/2
+AAAB = 7 - 3/2
+AAAB = 11/2
+
+AABC = 1 + (1/2)AABC + (1/6)AABB + (1/3)AAAB
+(1/2)AABC = 1 + (1/6)*7 + (1/3)*11/2
+(1/2)AABC = 4
+AABC = 8
+
+ABCD = AABC + 1
+ABCD = 8 + 1
+ABCD = 9
