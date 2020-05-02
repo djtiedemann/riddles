@@ -4,15 +4,40 @@ solutionSpaceList = []
 # in order to find out how to break up a square into 
 for i in range(1, 14):
 	for j in range(1, i+1):
-		solution = math.floor(i/j)
 		if(i % j == 0):
 			# if j fits evenly into i, then the solution is the number of j*j squares that can be formed
+			# for instance, a 3x9 rectange can be split into 3 3x3 squares
+			solution = math.floor(i/j)
 			solutionSpace[(j, i)] = solution
 			solutionSpaceList.append(((j, i), solution))
 			continue
+
+		
+		solution = i*j
+		# k is the size of the proposed top left rectange
+		# i is the longer edge of the rectangle we're solving for
+		# j is the shorter edge of the rectange we're solving for
+		for k in range(1, j+1):
+			solution1 = i*j
+			solution2 = i*j			
+			if k == j:
+				remainingRectangle = (i-j, j) if i-j < j else (j, i-j)
+				solution1 = 1 + solutionSpace[remainingRectangle]
+				solution2 = 1 + solutionSpace[remainingRectangle]
+				
+			else:	
+				solution1Rectangle1 = (i-k, j) if i-k < j else (j, i-k)
+				solution1Rectangle2 = (j-k, k) if j-k < k else (k, j-k)
+				solution2Rectangle1 = (j-k, i) if j-k < i else (i, j-k)
+				solution2Rectangle2 = (i-k, k) if i-k < k else (k, i-k)
+				solution1 = 1 + solutionSpace[solution1Rectangle1] + solutionSpace[solution1Rectangle2]
+				solution2 = 1 + solutionSpace[solution2Rectangle1] + solutionSpace[solution2Rectangle2]
+				
+			if solution1 < solution:
+				solution = solution1
+			if solution2 < solution:
+				solution = solution2
 			
-		# i>j. find as many j*j squares as you can. then the rest are individual squares
-		solution = math.floor(i/j) + solutionSpace[((i % j), j)]
 		solutionSpace[(j, i)] = solution
 		solutionSpaceList.append(((j, i), solution))
 
