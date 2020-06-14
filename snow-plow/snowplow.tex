@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{fullpage}
+\usepackage{enumerate}
+\usepackage{fancyvrb}
+\usepackage{color}
+\usepackage{verbatim}
+
+\renewcommand{\arraystretch}{1.5}
+
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
+
+\begin{document}
+\begin{flushleft}
+
+https://fivethirtyeight.com/features/can-you-tell-when-the-snow-started/
+
+To find the distance traveled during an interval, we need to integrate velocity over time: \\
+$d  = \int v dt$ \\
+\medskip
+We know that the speed is inversely proportional to the depth of the snow: \\
+$v = \frac{k_0}{depth}$ \\
+\medskip
+We know that the depth of the snow is directly proportional to the time since the snow started since the snow is falling at a constant rate \\
+$depth = k_1 t$ \\
+\medskip
+Putting these equations together and introducing a new constant combining $k_0$ and $k_1$ gives us:\\
+$d = \int \frac{k_0}{t} dt$\\
+\bigskip
+Let $c$ be the number of hours after the snow started that the snowplow started. We know that the snowplow travelled twice as far in the first hour as it did the second hour \\
+$\int_{c}^{c+1} \frac{k_0}{t} dt  = 2 \int_{c+1}^{c+2} \frac{k_0}{t} dt$\\
+\bigskip
+Solving the integral gives us \\
+$ln(c+1) - ln(c) = 2(ln(c+2) - ln(c+1))$ \\
+\smallskip
+$2ln(c+2) - 3ln(c+1) + ln(c) = 0$ \\
+\smallskip
+$ln(c+2)^2 - ln(c+1)^3 + ln(c) = 0$\\
+\smallskip
+$ln(\frac{(c+2)^2c}{(c+1)^3}) = 0$\\
+\smallskip
+$e^{\frac{(c+2)^2c}{(c+1)^3}} = 0$\\
+\smallskip
+$\frac{(c+2)^2c}{(c+1)^3} = 1$\\
+\smallskip
+$c^3 + 4c^2 + 4c = c^3 + 3c^2 + 3c + 1$\\
+\smallskip
+$c^2 + c - 1 = 0$ \\
+\medskip
+Solving the quadratic equation \\
+$\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$\\
+\smallskip
+$\frac{-1 \pm \sqrt{1^2 - 4*1*-1}}{2*1}$\\
+$\frac{-1 \pm \sqrt{5}}{2}$ \\
+\medskip
+The positive value is the solution:
+$\frac{\sqrt{5} - 1}{2}$ \\
+\medskip
+Converting from hours to minutes tells you that the snow plow started 37 minutes ago, or at 11:23
+\end{flushleft}
+\end{document}
