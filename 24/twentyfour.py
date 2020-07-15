@@ -20,6 +20,7 @@ class TwentyFour:
 					nextValue = self.evaluateExpression(signOrdering, numberOrdering, parenthesisOrdering)
 					if(nextValue == 24):
 						print(nextEquation + str(': ') + str(nextValue))
+						return
 	
 	def generatePrintableEquationFromSpecificOrdering(self, signOrdering, numberOrdering, parenthesisOrdering):
 		# if this equation is just a variable, return it
@@ -120,7 +121,6 @@ class TwentyFour:
 	def generateSignOrderings(self):
 		signOrderings = []
 		nextSign = [0]*(len(self.numbers)-1)
-		print(nextSign)
 		while(nextSign is not None):
 			signOrderings.append(nextSign)
 			nextSign = self.generateNextSign(nextSign)
