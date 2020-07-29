@@ -10,7 +10,8 @@ class PinballSolver:
 	def findOptimalTarget(self, startingPosition, minValue, maxValue, increment):
 		target = minValue
 		while(target<=maxValue):
-			print(target)
+			collisionPoints = self.findCollisionPoints(startingPosition, (target, -2))
+			print(str(target) + ': ' + str(len(collisionPoints)))
 			target = target + increment
 			
 	def findCollisionPoints(self, positionOffWall, targetLocationOnWall):
@@ -190,6 +191,6 @@ startingPosition = (2, 0)
 minX = (startingPosition[0]+leftSideOfBall[0]) / 2
 maxX = (startingPosition[0]+rightSideOfBall[0]) / 2
 initialTargetPosition = ((minX + maxX)/2, -2)
-collisionPoint = pinballSolver.findCollisionPointOnBall(startingPosition, initialTargetPosition)
 
-print(pinballSolver.findOptimalTarget(startingPosition, minX, maxX, 0.05))
+print(pinballSolver.findCollisionPoints(startingPosition, (0.8224863249400002, -2)))
+# 0.8224863249400002
