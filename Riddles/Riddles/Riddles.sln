@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riddles", "Riddles\Riddles.csproj", "{FC69AEC2-F650-47AB-839C-5EB4D7294E72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Riddles", "Riddles\Riddles.csproj", "{FC69AEC2-F650-47AB-839C-5EB4D7294E72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Riddles.Tests", "Riddles.Tests\Riddles.Tests.csproj", "{965F3E13-DC49-4F5F-B93A-D18FA11CE158}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FC69AEC2-F650-47AB-839C-5EB4D7294E72} = {FC69AEC2-F650-47AB-839C-5EB4D7294E72}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{FC69AEC2-F650-47AB-839C-5EB4D7294E72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC69AEC2-F650-47AB-839C-5EB4D7294E72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC69AEC2-F650-47AB-839C-5EB4D7294E72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{965F3E13-DC49-4F5F-B93A-D18FA11CE158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{965F3E13-DC49-4F5F-B93A-D18FA11CE158}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{965F3E13-DC49-4F5F-B93A-D18FA11CE158}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{965F3E13-DC49-4F5F-B93A-D18FA11CE158}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
