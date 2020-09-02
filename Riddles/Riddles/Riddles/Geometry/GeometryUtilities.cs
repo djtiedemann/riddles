@@ -31,5 +31,7 @@ namespace Riddles.Geometry
             }
             return solution;
         }
+
+
     }
 }

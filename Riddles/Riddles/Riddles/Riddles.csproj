@@ -9,4 +9,8 @@
     <None Remove="Words\enable1Dictionary.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Graphs\" />
+  </ItemGroup>
+
 </Project>

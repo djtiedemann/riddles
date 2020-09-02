@@ -4,7 +4,7 @@ using System;
 
 namespace Riddles.Tests
 {
-    public class Tests
+    public class GeometryUtilitiesTest
     {
         const double Epsilon = 0.000001;
 
