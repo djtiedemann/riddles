@@ -36,7 +36,7 @@ namespace Riddles.Tests.Probability
 			var actualProbability = duplicateCardProbabilityUtility.FindProbabilityOfDrawingDuplicateCardAfterDrawing2CardsUntilEmpty(
 				numDistinctCards, numCopiesOfEachCard);
 			Console.WriteLine($"Num distinct cards: {numDistinctCards}, Probability: {actualProbability}");
-			//Assert.LessOrEqual(Math.Abs(expectedPobability - actualProbability), epsilon);
+			Assert.LessOrEqual(Math.Abs(expectedPobability - actualProbability), epsilon);
 		}
 	}
 }
