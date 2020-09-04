@@ -25,37 +25,48 @@ namespace Riddles.Probability
 				mappingFromNumRemainingCopiesToNumCardsWithNCopies[i] = 0;
 			}
 			mappingFromNumRemainingCopiesToNumCardsWithNCopies[numCopiesOfEachCard] = numDistinctCards;
-			var probabilitiesForSetsOfRemainingCards = new Dictionary<Dictionary<int, int>, double>();
+			var probabilitiesForSetsOfRemainingCards = new Dictionary<string, double>();
 			return 1 - this.FindProbabilityOfNotDrawingDuplicateCardAfterDrawing2CardsUntilEmpty(
 				mappingFromNumRemainingCopiesToNumCardsWithNCopies,
-				numDistinctCards*numCopiesOfEachCard,
+				probabilitiesForSetsOfRemainingCards,
+				numDistinctCards *numCopiesOfEachCard,
 				numCopiesOfEachCard);
 		}
 
 		public double FindProbabilityOfNotDrawingDuplicateCardAfterDrawing2CardsUntilEmpty(
 			Dictionary<int, int> numCopiesForCardDictionary,
+			Dictionary<string, double> memoizedProbabilities,
 			int numCardsRemaining,
 			int initialNumCopiesOfEachCard)
 		{
+			var memoizationKey = this.ComputeMemoizationKey(numCopiesForCardDictionary, initialNumCopiesOfEachCard);
+			if (memoizedProbabilities.ContainsKey(memoizationKey))
+			{
+				return memoizedProbabilities[memoizationKey];
+			}
 			if(numCardsRemaining == 2)
 			{
+				var probabilityOfNotDrawingADuplicateCard = 0.0;
 				if(numCopiesForCardDictionary[1] == 2)
 				{
-					return 1.0;
+					probabilityOfNotDrawingADuplicateCard = 1.0;
 				}
-				return 0.0;
+				memoizedProbabilities[memoizationKey] = probabilityOfNotDrawingADuplicateCard;
+				return probabilityOfNotDrawingADuplicateCard;
 			}
 			if(numCardsRemaining == 3)
 			{
-				if(numCopiesForCardDictionary[1] == 3)
+				var probabilityOfNotDrawingADuplicateCard = 0.0;
+				if (numCopiesForCardDictionary[1] == 3)
 				{
-					return 1.0;
+					probabilityOfNotDrawingADuplicateCard = 1.0;
 				}
 				if(numCopiesForCardDictionary[2] == 1)
 				{
-					return 2.0 / 3.0;
+					probabilityOfNotDrawingADuplicateCard = 2.0 / 3.0;
 				}
-				return 0.0;
+				memoizedProbabilities[memoizationKey] = probabilityOfNotDrawingADuplicateCard;
+				return probabilityOfNotDrawingADuplicateCard;
 			}
 			double oddsOfNotDrawingADuplicate = 0.0;
 			for (int n=1; n<=initialNumCopiesOfEachCard; n++)
@@ -101,6 +112,7 @@ namespace Riddles.Probability
 					}
 					var probabilityOfNotDrawingDuplicateCardAfterDrawing2CardsUntilEmpty = this.FindProbabilityOfNotDrawingDuplicateCardAfterDrawing2CardsUntilEmpty(
 						numCopiesForCardDictionary,
+						memoizedProbabilities,
 						numCardsRemaining - 2,
 						initialNumCopiesOfEachCard);
 					var incrementalProbability = oddsForPairOfDraws * probabilityOfNotDrawingDuplicateCardAfterDrawing2CardsUntilEmpty;
@@ -121,8 +133,18 @@ namespace Riddles.Probability
 					numCopiesForCardDictionary[n - 1] = numCopiesForCardDictionary[n - 1] - 1;
 				}
 			}
-
+			memoizedProbabilities[memoizationKey] = oddsOfNotDrawingADuplicate;
 			return oddsOfNotDrawingADuplicate;
+		}
+
+		public string ComputeMemoizationKey(Dictionary<int, int> numCopiesForCardDictionary, int initialNumCopiesOfEachCard)
+		{
+			string key = "";
+			for (int n = 1; n <= initialNumCopiesOfEachCard; n++)
+			{
+				key = $"{key}({n}: {numCopiesForCardDictionary[n]})";
+			}
+			return key;
 		}
 	}
 }
