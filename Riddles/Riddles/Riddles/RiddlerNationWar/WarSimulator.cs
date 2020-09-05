@@ -15,28 +15,36 @@ namespace Riddles.RiddlerNationWar
 			this._numTroops = numTroops;
 		}
 
-		public void SimulateWars(List<List<int>> submissions)
+		public IEnumerable<WarSimulationResult> SimulateWars(List<List<int>> submissions)
 		{
 			if (!this.ValidateSubmissions(submissions))
 			{
 				throw new InvalidOperationException("Not all submissions are valid");
 			}
-
+			return this.EvaluateSubmissions(submissions);
 		}
 
-		//private List<Tuple<List<int>, double>> EvaluateSubmissions(List<List<int>> submissions)
-		//{
-		//	for(int submission1 = 0; submission1 < submissions.Count; submission1++)
-		//	{
-		//		for(int submission2 = 0; submission2 < submissions.Count; submission2++)
-		//		{
-		//			if(submission1 != submission2)
-		//			{
-
-		//			}
-		//		}
-		//	}
-		//}
+		private IEnumerable<WarSimulationResult> EvaluateSubmissions(List<List<int>> submissions)
+		{
+			var results = new List<WarSimulationResult>();
+			for (int submission1 = 0; submission1 < submissions.Count; submission1++)
+			{
+				var wins = 0;
+				for (int submission2 = 0; submission2 < submissions.Count; submission2++)
+				{
+					if (submission1 != submission2)
+					{
+						(var playerScore, var opponentScore) = this.PlayGame(submissions[submission1], submissions[submission2]);
+						if(playerScore > opponentScore)
+						{
+							wins += 1;
+						}
+					}
+				}
+				results.Add(new WarSimulationResult { Submission = submissions[submission1], NumWins = wins });
+			}
+			return results.OrderByDescending(r => r.NumWins);
+		}
 
 		public (double playerScore, double opponentScore) PlayGame(List<int> playerSubmission, List<int> opponentSubmission)
 		{
@@ -77,6 +85,12 @@ namespace Riddles.RiddlerNationWar
 				}
 			}
 			return true;
+		}
+
+		public class WarSimulationResult
+		{
+			public List<int> Submission { get; set; }
+			public double NumWins { get; set; }
 		}
 	}
 }

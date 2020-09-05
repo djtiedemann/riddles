@@ -9,6 +9,11 @@ namespace Riddles.Tests.RiddlerNationWar
 {
 	public class WarSimulatorTest
 	{
+		private List<int> submission1 = new List<int> { 3, 0, 0 };
+		private List<int> submission2 = new List<int> { 0, 3, 0 };
+		private List<int> submission3 = new List<int> { 0, 0, 3 };
+		private List<int> submission4 = new List<int> { 1, 1, 1 };
+
 
 		private List<int> tooFewCastles = new List<int> { 100, 100, 100, 700 };
 		private List<int> tooManyCastles = new List<int> { 100, 100, 100, 100, 100, 500 };
@@ -17,6 +22,19 @@ namespace Riddles.Tests.RiddlerNationWar
 		private List<int> validDistribution1 = new List<int> { 200, 200, 200, 200, 200 };
 		private List<int> validDistribution2 = new List<int> { 500, 0, 0, 0, 500 };
 		private List<int> validDistribution3 = new List<int> { 0, 0, 1000, 0, 0 };
+		
+		[Test]
+		public void TestSimulation()
+		{
+			var submissions = new List<List<int>> { submission1, submission2, submission3, submission4 };
+			var warSimulator = new WarSimulator(3, 3);
+			var results = warSimulator.SimulateWars(submissions);
+			Assert.AreEqual(0, results.Single(r => r.Submission.Equals(submission1)).NumWins);
+			Assert.AreEqual(1, results.Single(r => r.Submission.Equals(submission2)).NumWins);
+			Assert.AreEqual(2, results.Single(r => r.Submission.Equals(submission3)).NumWins);
+			Assert.AreEqual(2, results.Single(r => r.Submission.Equals(submission4)).NumWins);
+		}
+
 
 		[Test]
 		public void TestValidation()
@@ -44,7 +62,7 @@ namespace Riddles.Tests.RiddlerNationWar
 		}
 
 		[TestCase(new int [] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 }, new int [] { 10, 10, 5, 0, 0, 0, 0, 25, 25, 25 }, 26.5, 28.5, 10, 100)]
-		[TestCase(new int[] { 0, 3, 0 }, new int[] { 0, 0, 3 }, 2, 4, 2.5, 3.5)]
+		[TestCase(new int[] { 0, 3, 0 }, new int[] { 0, 0, 3 }, 2.5, 3.5, 3, 3)]
 		public void TestPlayGame(int[] playerSubmission, int[] opponentSubmission, double expectedPlayerScore, double expectedOpponentScore, int numCastles,
 			int numTroops)
 		{
