@@ -20,9 +20,13 @@ namespace Riddles.Tests.RiddlerNationWar
 			int valueToAssignPerNonTargetedCastle)
 		{
 			var castleTargeter = new CastleTargeter();
-			var strategy = new TargetCastlesEvenlyStrategy(numCastles, numTroops, castleTargeter);
+			var strategy = new TargetCastlesStrategy(numCastles, numTroops, castleTargeter);
 			var castlesToTarget = castleTargeter.GetCastlesToTargetForPermuation(numCastles, seed);
-			var troopPlacements = strategy.GenerateSingleTroopPlacement(castlesToTarget, valueToAssignPerNonTargetedCastle);
+			var troopPlacements = strategy.GenerateSingleTroopPlacement(
+				castlesToTarget, 
+				valueToAssignPerNonTargetedCastle,
+				TroopAllocationStrategy.EvenDistribution,
+				TroopAllocationStrategy.EvenDistribution);
 			for(int i=0; i<troopPlacements.Count; i++)
 			{
 				Assert.AreEqual(expectedTroopPlacement[i], troopPlacements[i]);
@@ -37,8 +41,13 @@ namespace Riddles.Tests.RiddlerNationWar
 			int valueToAssignPerNonTargetedCastle)
 		{
 			var castleTargeter = new CastleTargeter();
-			var strategy = new TargetCastlesEvenlyStrategy(numCastles, numTroops, castleTargeter);
-			var trainingData = strategy.GenerateTroopPlacements(restrictToStrategiesTargetingMajorityOfPoints, valueToAssignPerNonTargetedCastle);
+			var strategy = new TargetCastlesStrategy(numCastles, numTroops, castleTargeter);
+			var trainingData = strategy.GenerateTroopPlacements(
+				restrictToStrategiesTargetingMajorityOfPoints, 
+				valueToAssignPerNonTargetedCastle,
+				TroopAllocationStrategy.EvenDistribution,
+				TroopAllocationStrategy.EvenDistribution
+			);
 
 			var warSimulator = new WarSimulator(numCastles, numTroops);
 			var results = warSimulator.SimulateWars(trainingData).ToArray();
