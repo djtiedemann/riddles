@@ -56,7 +56,7 @@ namespace Riddles.Tests.RiddlerNationWar
 		}
 
 		[TestCase(1023, 10, 100, new int[] { 2, 4, 5, 7, 9, 11, 13, 15, 16, 18})]
-		[TestCase(859, 10, 100, new int[] { 3, 5, 11, 13, 18, 24, 26 })]
+		[TestCase(859, 10, 100, new int[] { 3, 5, 0, 11, 13, 0, 18, 0, 24, 26 })]
 		public void TestTargetCastlesProportionally(int seed, int numCastles, int numTroops, int[] expectedResults)
 		{
 			var castleTargeter = new CastleTargeter();
