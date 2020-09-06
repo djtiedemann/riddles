@@ -19,14 +19,14 @@ namespace Riddles.RiddlerNationWar
 			this._numPointsAvailable = Enumerable.Range(1, numCastles).Sum();
 		}
 
-		public List<List<int>> GenerateTroopPlacements(bool restrictToStrategiesTargetingMajorityOfPoints)
+		public List<List<int>> GenerateTroopPlacements(bool restrictToStrategiesTargetingMajorityOfPoints, int valueToAssignPerNonTargetedCastle)
 		{
 			var troopPlacements = new List<List<int>>();
 			var numberOfCombinations = Math.Pow(2, this._numCastles);
 			// note: i = 0 means you target no castles
 			for(int i=1; i<numberOfCombinations; i++)
 			{
-				var troopPlacement = this.GenerateSingleTroopPlacement(i);
+				var troopPlacement = this.GenerateSingleTroopPlacement(i, valueToAssignPerNonTargetedCastle);
 				if (restrictToStrategiesTargetingMajorityOfPoints)
 				{
 					var numPointsTargeted = this.NumPointsTargeted(i);
@@ -41,15 +41,20 @@ namespace Riddles.RiddlerNationWar
 			return troopPlacements;
 		}
 
-		public List<int> GenerateSingleTroopPlacement(int seed)
+		public List<int> GenerateSingleTroopPlacement(int seed, int valueToAssignPerNonTargetedCastle)
 		{
 			string binaryString = Convert.ToString(seed, 2);
 			var castlePlacements = binaryString.PadLeft(this._numCastles, '0').ToCharArray().Select(a => a - '0');
 			var numCastlesTargeted = castlePlacements.Where(c => c == 1).ToList().Count;
-			var numTroopsToAllocateImmediatelyPerCastle = this._numTroops / numCastlesTargeted;
-			var leftoverTroops = this._numTroops % numCastlesTargeted;
+			var numCastlesNotTargeted = this._numCastles - numCastlesTargeted;
+			var numTroopsToAllocateImmediatelyPerTargetedCastle 
+				= (this._numTroops - valueToAssignPerNonTargetedCastle * numCastlesNotTargeted) / numCastlesTargeted;
+			var leftoverTroops = (this._numTroops - valueToAssignPerNonTargetedCastle * numCastlesNotTargeted) % numCastlesTargeted;
 
-			var troopPlacement = castlePlacements.Select(c => c == 1 ? numTroopsToAllocateImmediatelyPerCastle : 0).ToArray();
+			var troopPlacement = castlePlacements.Select(c => c == 1 
+				? numTroopsToAllocateImmediatelyPerTargetedCastle 
+				: valueToAssignPerNonTargetedCastle
+			).ToArray();
 			for (int i=0; i<this._numCastles; i++)
 			{
 				if(troopPlacement[i] > 0 && leftoverTroops > 0)
