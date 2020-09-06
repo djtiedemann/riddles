@@ -55,12 +55,19 @@ namespace Riddles.Tests.RiddlerNationWar
 			var secondBestStrategyInTrainingSet = results[1];
 		}
 
-		[TestCase(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 10, 100, new int[] { 2, 4, 5, 7, 9, 11, 13, 15, 16, 18})]
-		[TestCase(new int[] { 1, 2, 4, 5, 7, 9, 10 }, 10, 100, new int[] { 3, 5, 11, 13, 18, 24, 26 })]
-		public void TestTargetCastlesProportionally(int[] castlesTargeted, int numCastles, int numTroops, int[] expectedResults)
+		[TestCase(1023, 10, 100, new int[] { 2, 4, 5, 7, 9, 11, 13, 15, 16, 18})]
+		[TestCase(859, 10, 100, new int[] { 3, 5, 11, 13, 18, 24, 26 })]
+		public void TestTargetCastlesProportionally(int seed, int numCastles, int numTroops, int[] expectedResults)
 		{
-			var strategy = new TargetCastlesProportionally(10, 100);
-			var actualTroopPlacements = strategy.GetProportionalTroopPlacement(castlesTargeted.ToList()).ToArray();
+			var castleTargeter = new CastleTargeter();
+			var strategy = new TargetCastlesStrategy(numCastles, numTroops, castleTargeter);
+			var castlesToTarget = castleTargeter.GetCastlesToTargetForPermuation(numCastles, seed);
+			var actualTroopPlacements = strategy.GenerateSingleTroopPlacement(
+				castlesToTarget,
+				0,
+				TroopAllocationStrategy.ProportionalDistribution,
+				TroopAllocationStrategy.EvenDistribution).ToArray();
+
 			Assert.AreEqual(expectedResults.Length, actualTroopPlacements.Length);
 			for(int i=0; i<expectedResults.Length; i++)
 			{
