@@ -9,73 +9,72 @@ namespace Riddles.RiddlerNationWar
 	{
 		private int _numCastles;
 		private int _numTroops;
-		private int _numPointsAvailable;
+		private CastleTargeter _castleTargeter;
 
 		// the idea behind this strategy is to pick a subset of castles to target and to place all of your troops attacking those castles
-		public TargetCastlesEvenlyStrategy(int numCastles, int numTroops)
+		public TargetCastlesEvenlyStrategy(int numCastles, int numTroops, CastleTargeter castleTargeter)
 		{
 			this._numCastles = numCastles;
 			this._numTroops = numTroops;
-			this._numPointsAvailable = Enumerable.Range(1, numCastles).Sum();
+			this._castleTargeter = castleTargeter;
 		}
 
 		public List<List<int>> GenerateTroopPlacements(bool restrictToStrategiesTargetingMajorityOfPoints, int valueToAssignPerNonTargetedCastle)
 		{
+			var subsetsOfCastlesToTarget = this._castleTargeter.GetPossibleTargetingStrategies(this._numCastles, restrictToStrategiesTargetingMajorityOfPoints);
+
 			var troopPlacements = new List<List<int>>();
-			var numberOfCombinations = Math.Pow(2, this._numCastles);
-			// note: i = 0 means you target no castles
-			for(int i=1; i<numberOfCombinations; i++)
+			foreach (var castlesToTarget in subsetsOfCastlesToTarget)
 			{
-				var troopPlacement = this.GenerateSingleTroopPlacement(i, valueToAssignPerNonTargetedCastle);
-				if (restrictToStrategiesTargetingMajorityOfPoints)
-				{
-					var numPointsTargeted = this.NumPointsTargeted(i);
-					if(numPointsTargeted >= Math.Ceiling((this._numPointsAvailable + 1) / 2.0))
-					{
-						troopPlacements.Add(troopPlacement);
-					}
-					continue;
-				}
+				var troopPlacement = this.GenerateSingleTroopPlacement(castlesToTarget, valueToAssignPerNonTargetedCastle);
 				troopPlacements.Add(troopPlacement);
-			} 
+			}
 			return troopPlacements;
 		}
 
-		public List<int> GenerateSingleTroopPlacement(int seed, int valueToAssignPerNonTargetedCastle)
+		public List<int> GenerateSingleTroopPlacement(CastleTargeter.CastlesTargetedInfo castleTargetingInfo, int valueToAssignPerNonTargetedCastle)
 		{
-			string binaryString = Convert.ToString(seed, 2);
-			var castlePlacements = binaryString.PadLeft(this._numCastles, '0').ToCharArray().Select(a => a - '0');
-			var numCastlesTargeted = castlePlacements.Where(c => c == 1).ToList().Count;
-			var numCastlesNotTargeted = this._numCastles - numCastlesTargeted;
-			var numTroopsToAllocateImmediatelyPerTargetedCastle 
-				= (this._numTroops - valueToAssignPerNonTargetedCastle * numCastlesNotTargeted) / numCastlesTargeted;
-			var leftoverTroops = (this._numTroops - valueToAssignPerNonTargetedCastle * numCastlesNotTargeted) % numCastlesTargeted;
+			var numCastlesTargeted = castleTargetingInfo.CastlesTargeted.Count;
+			var numCastlesNotTargeted = castleTargetingInfo.CastlesNotTargeted.Count;
+			var numTroopsToAllocateForNonTargetedCastles = valueToAssignPerNonTargetedCastle * numCastlesNotTargeted;
+			var numTroopsToAllocateForTargetedCastles = this._numTroops - numTroopsToAllocateForNonTargetedCastles;
 
-			var troopPlacement = castlePlacements.Select(c => c == 1 
-				? numTroopsToAllocateImmediatelyPerTargetedCastle 
-				: valueToAssignPerNonTargetedCastle
-			).ToArray();
-			for (int i=0; i<this._numCastles; i++)
-			{
-				if(troopPlacement[i] > 0 && leftoverTroops > 0)
-				{
-					troopPlacement[i]++;
-					leftoverTroops--;
-				}
-			}
-			var troopPlacementList = troopPlacement.ToList();
-			troopPlacementList.Reverse();
-			return troopPlacementList;
+			var troopPlacementForTargetedCastles = this.AllocateTroopsToCastlesEvenly(
+				castleTargetingInfo.CastlesTargeted, 
+				numTroopsToAllocateForTargetedCastles
+			);
+			var troopPlacementForNonTargetedCastles = this.AllocateTroopsToCastlesEvenly(
+				castleTargetingInfo.CastlesNotTargeted, 
+				numTroopsToAllocateForNonTargetedCastles
+			);
+
+			var troopPlacementList = troopPlacementForTargetedCastles.ToList().Concat(troopPlacementForNonTargetedCastles.ToList());
+			return troopPlacementList.OrderBy(t => t.CastleNum).Select(t => t.NumTroops).ToList();
 		}
 
-		public int NumPointsTargeted(int seed)
+		public List<CastleTroopPlacement> AllocateTroopsToCastlesEvenly(List<int> castles, int numTroopsToAllocate)
 		{
-			string binaryString = Convert.ToString(seed, 2);
-			var castlePlacements = binaryString.PadLeft(this._numCastles, '0').ToCharArray().Select(a => a - '0').ToList();
-			castlePlacements.Reverse();
-			castlePlacements = castlePlacements.ToList();
-			var pointsTargeted = castlePlacements.Select((isTargeted, castleNum) => isTargeted == 1 ? castleNum + 1 : 0).Sum();
-			return pointsTargeted;
+			if(castles.Count == 0)
+			{
+				return new List<CastleTroopPlacement>();
+			}
+			var numTroopsToAllocateImmediately = numTroopsToAllocate / castles.Count;
+			var numTroopsLeftover = numTroopsToAllocate % castles.Count;
+
+			var troopPlacement = castles
+				.Select(c => new CastleTroopPlacement { CastleNum = c, NumTroops = numTroopsToAllocateImmediately }).ToArray();
+
+			for (int i = troopPlacement.Length - 1; i > troopPlacement.Length - 1 - numTroopsLeftover; i--)
+			{
+				troopPlacement[i].NumTroops++;
+			}
+			return troopPlacement.ToList();
+		}
+
+		public class CastleTroopPlacement
+		{
+			public int CastleNum { get; set; }
+			public int NumTroops { get; set; }
 		}
 	}
 }

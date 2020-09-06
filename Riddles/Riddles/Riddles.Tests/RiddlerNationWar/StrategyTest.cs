@@ -19,14 +19,14 @@ namespace Riddles.Tests.RiddlerNationWar
 		public void TestTargetCastlesEvenlyStrategy(int seed, int[] expectedTroopPlacement, int expectedNumPointsTargeted, int numCastles, int numTroops,
 			int valueToAssignPerNonTargetedCastle)
 		{
-			var strategy = new TargetCastlesEvenlyStrategy(10, 100);
-			var troopPlacements = strategy.GenerateSingleTroopPlacement(seed, valueToAssignPerNonTargetedCastle);
+			var castleTargeter = new CastleTargeter();
+			var strategy = new TargetCastlesEvenlyStrategy(numCastles, numTroops, castleTargeter);
+			var castlesToTarget = castleTargeter.GetCastlesToTargetForPermuation(numCastles, seed);
+			var troopPlacements = strategy.GenerateSingleTroopPlacement(castlesToTarget, valueToAssignPerNonTargetedCastle);
 			for(int i=0; i<troopPlacements.Count; i++)
 			{
 				Assert.AreEqual(expectedTroopPlacement[i], troopPlacements[i]);
 			}
-			var numPointsTargeted = strategy.NumPointsTargeted(seed);
-			Assert.AreEqual(expectedNumPointsTargeted, numPointsTargeted);
 		}
 
 		[TestCase(10, 100, false, 0)]
@@ -36,7 +36,8 @@ namespace Riddles.Tests.RiddlerNationWar
 		public void GenerateTrainingDataTargetAllCastlesEvenlyStrategy(int numCastles, int numTroops, bool restrictToStrategiesTargetingMajorityOfPoints,
 			int valueToAssignPerNonTargetedCastle)
 		{
-			var strategy = new TargetCastlesEvenlyStrategy(numCastles, numTroops);
+			var castleTargeter = new CastleTargeter();
+			var strategy = new TargetCastlesEvenlyStrategy(numCastles, numTroops, castleTargeter);
 			var trainingData = strategy.GenerateTroopPlacements(restrictToStrategiesTargetingMajorityOfPoints, valueToAssignPerNonTargetedCastle);
 
 			var warSimulator = new WarSimulator(numCastles, numTroops);
