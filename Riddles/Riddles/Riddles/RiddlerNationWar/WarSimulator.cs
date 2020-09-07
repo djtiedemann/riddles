@@ -15,7 +15,7 @@ namespace Riddles.RiddlerNationWar
 			this._numTroops = numTroops;
 		}
 
-		public IEnumerable<WarSimulationResult> SimulateWars(List<List<int>> submissions)
+		public IEnumerable<WarSimulationResultForTesting> SimulateWars(List<SimulationEntry> submissions)
 		{
 			if (!this.ValidateSubmissions(submissions))
 			{
@@ -24,9 +24,16 @@ namespace Riddles.RiddlerNationWar
 			return this.EvaluateSubmissions(submissions);
 		}
 
-		private IEnumerable<WarSimulationResult> EvaluateSubmissions(List<List<int>> submissions)
+		public IEnumerable<WarSimulationResult> SimulateWars(List<List<int>> submissions)
 		{
-			var results = new List<WarSimulationResult>();
+			var sumbissionsTransformed = submissions.Select(s => new SimulationEntry { Id = null, IsTestSubmission = false, TroopAllocation = s }).ToList();
+			var result = this.EvaluateSubmissions(sumbissionsTransformed);
+			return result.Select(r => new WarSimulationResult { Submission = r.Submission, NumWins = r.NumWins });
+		}
+
+		private IEnumerable<WarSimulationResultForTesting> EvaluateSubmissions(List<SimulationEntry> submissions)
+		{
+			var results = new List<WarSimulationResultForTesting>();
 			for (int submission1 = 0; submission1 < submissions.Count; submission1++)
 			{
 				var wins = 0;
@@ -34,14 +41,20 @@ namespace Riddles.RiddlerNationWar
 				{
 					if (submission1 != submission2)
 					{
-						(var playerScore, var opponentScore) = this.PlayGame(submissions[submission1], submissions[submission2]);
+						(var playerScore, var opponentScore) = this.PlayGame(submissions[submission1].TroopAllocation, 
+							submissions[submission2].TroopAllocation);
 						if(playerScore > opponentScore)
 						{
 							wins += 1;
 						}
 					}
 				}
-				results.Add(new WarSimulationResult { Submission = submissions[submission1], NumWins = wins });
+				results.Add(new WarSimulationResultForTesting { 
+					Submission = submissions[submission1].TroopAllocation, 
+					NumWins = wins,
+					IsTestSubmission = submissions[submission1].IsTestSubmission,
+					Id = submissions[submission1].Id
+				});
 			}
 			return results.OrderByDescending(r => r.NumWins);
 		}
@@ -72,13 +85,19 @@ namespace Riddles.RiddlerNationWar
 
 		public bool ValidateSubmissions(List<List<int>> submissions)
 		{
+			var sumbissionsTransformed = submissions.Select(s => new SimulationEntry { Id = null, IsTestSubmission = false, TroopAllocation = s }).ToList();
+			return this.ValidateSubmissions(sumbissionsTransformed);
+		}
+
+		public bool ValidateSubmissions(List<SimulationEntry> submissions)
+		{
 			foreach(var submission in submissions)
 			{
-				if(submission.Count != this._numCastles)
+				if(submission.TroopAllocation.Count != this._numCastles)
 				{
 					return false;
 				}
-				var sum = submission.Sum(x => x);
+				var sum = submission.TroopAllocation.Sum(x => x);
 				if(sum != this._numTroops)
 				{
 					return false;
@@ -87,10 +106,24 @@ namespace Riddles.RiddlerNationWar
 			return true;
 		}
 
+		public class SimulationEntry
+		{
+			public int? Id { get; set; }
+			public bool IsTestSubmission { get; set; }
+			public List<int> TroopAllocation { get; set; }
+		}
 		public class WarSimulationResult
 		{
 			public List<int> Submission { get; set; }
 			public double NumWins { get; set; }
+		}
+
+		public class WarSimulationResultForTesting
+		{
+			public List<int> Submission { get; set; }
+			public double NumWins { get; set; }
+			public int? Id { get; set; }
+			public bool IsTestSubmission { get; set; }
 		}
 	}
 }

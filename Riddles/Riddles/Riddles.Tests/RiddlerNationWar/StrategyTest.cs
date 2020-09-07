@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Riddles.RiddlerNationWar;
+using System.IO;
 
 namespace Riddles.Tests.RiddlerNationWar
 {
@@ -73,6 +74,94 @@ namespace Riddles.Tests.RiddlerNationWar
 			{
 				Assert.AreEqual(expectedResults[i], actualTroopPlacements[i]);
 			}
+		}
+
+		[TestCase(10, 100)]
+		public void GenerateDataSetForOptimization(int numCastles, int numTroops)
+		{
+			var castleTargeter = new CastleTargeter();
+			var strategyGenerator = new TargetCastlesStrategy(numCastles, numTroops, castleTargeter);
+			var strategy1 = strategyGenerator.GenerateTroopPlacements(false, 0, TroopAllocationStrategy.EvenDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy2 = strategyGenerator.GenerateTroopPlacements(false, 1, TroopAllocationStrategy.EvenDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy3 = strategyGenerator.GenerateTroopPlacements(false, 2, TroopAllocationStrategy.EvenDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy4 = strategyGenerator.GenerateTroopPlacements(true, 0, TroopAllocationStrategy.EvenDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy5 = strategyGenerator.GenerateTroopPlacements(true, 1, TroopAllocationStrategy.EvenDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy6 = strategyGenerator.GenerateTroopPlacements(true, 2, TroopAllocationStrategy.EvenDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy7 = strategyGenerator.GenerateTroopPlacements(false, 0, TroopAllocationStrategy.ProportionalDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy8 = strategyGenerator.GenerateTroopPlacements(false, 1, TroopAllocationStrategy.ProportionalDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy9 = strategyGenerator.GenerateTroopPlacements(false, 2, TroopAllocationStrategy.ProportionalDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy10 = strategyGenerator.GenerateTroopPlacements(true, 0, TroopAllocationStrategy.ProportionalDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy11 = strategyGenerator.GenerateTroopPlacements(true, 1, TroopAllocationStrategy.ProportionalDistribution, TroopAllocationStrategy.EvenDistribution);
+			var strategy12 = strategyGenerator.GenerateTroopPlacements(true, 2, TroopAllocationStrategy.ProportionalDistribution, TroopAllocationStrategy.EvenDistribution);
+
+			var trainingData = new List<List<int>>();
+			trainingData.AddRange(strategy1);
+			trainingData.AddRange(strategy2);
+			trainingData.AddRange(strategy3);
+			trainingData.AddRange(strategy4);
+			trainingData.AddRange(strategy5);
+			trainingData.AddRange(strategy6);
+			trainingData.AddRange(strategy7);
+			trainingData.AddRange(strategy8);
+			trainingData.AddRange(strategy9);
+			trainingData.AddRange(strategy10);
+			trainingData.AddRange(strategy11);
+			trainingData.AddRange(strategy12);
+			trainingData = trainingData.ToList();
+
+			var warSimulator = new WarSimulator(numCastles, numTroops);
+			var results = warSimulator.SimulateWars(trainingData);
+		}
+
+		// passed in parameters that would generate something similar to winner's strategy
+		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+			new int[] { 3, 6, 9, 13, 16, 2, 22, 25, 2, 2 })]
+		// came in first, naive version
+		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+			new int[] { 0, 0, 0, 0, 18, 21, 0, 29, 32, 0 })]
+		// came in second, naive version
+		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+			new int[] { 1, 1, 1, 1, 17, 20, 1, 27, 30, 1 })]
+		// came in third, naive version
+		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+			new int[] { 1, 1, 1, 1, 17, 20, 23, 1, 1, 34 })]
+		public void TestAgainstTrainingData(string filename, int[] testSubmission)
+		{
+			List<WarSimulator.SimulationEntry> testData = new List<WarSimulator.SimulationEntry>();
+			using (StreamReader sr = new StreamReader(filename))
+			{
+				// ignore the header line
+				var submission = sr.ReadLine();				
+				while (sr.Peek() >= 0)
+				{
+					submission = sr.ReadLine();
+					var troopDeployment = submission.Split(',');
+					troopDeployment = troopDeployment.Where((t, index) => index < 10).ToArray();
+					int n;
+					if(troopDeployment.Any(t => !int.TryParse(t, out n))){
+						continue;
+					}
+					var troopDeploymentSanitized = troopDeployment.Select(c => int.Parse(c)).ToList();
+					if(troopDeploymentSanitized.Count != 10 || troopDeploymentSanitized.Sum() != 100)
+					{
+						continue;
+					}
+					testData.Add(new WarSimulator.SimulationEntry { 
+						Id = null,
+						IsTestSubmission = false,
+						TroopAllocation = troopDeploymentSanitized
+					});
+				}
+			}
+			
+			var castleTargeter = new CastleTargeter();
+			var castlesToTarget = castleTargeter.GetCastlesToTargetForPermuation(10, 223);
+			var strategyGenerator = new TargetCastlesStrategy(10, 100, castleTargeter);
+			testData.Add(new WarSimulator.SimulationEntry { Id = 1, IsTestSubmission = true, TroopAllocation = testSubmission });
+			var warSimulator = new WarSimulator(10, 100);
+			var results = warSimulator.SimulateWars(testData);
+			var resultsWithRank = results.Select((r, index) => new { Id = r.Id, TroopAllocation = r.Submission, NumWins = r.NumWins, Rank = index + 1 });
+			var submissionResult = resultsWithRank.Single(r => r.Id == 1);
 		}
 	}
 }
