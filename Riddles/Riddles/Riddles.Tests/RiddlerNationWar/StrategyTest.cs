@@ -157,7 +157,7 @@ namespace Riddles.Tests.RiddlerNationWar
 			var castleTargeter = new CastleTargeter();
 			var castlesToTarget = castleTargeter.GetCastlesToTargetForPermuation(10, 223);
 			var strategyGenerator = new TargetCastlesStrategy(10, 100, castleTargeter);
-			testData.Add(new WarSimulator.SimulationEntry { Id = 1, IsTestSubmission = true, TroopAllocation = testSubmission });
+			testData.Add(new WarSimulator.SimulationEntry { Id = 1, IsTestSubmission = true, TroopAllocation = testSubmission.ToList() });
 			var warSimulator = new WarSimulator(10, 100);
 			var results = warSimulator.SimulateWars(testData);
 			var resultsWithRank = results.Select((r, index) => new { Id = r.Id, TroopAllocation = r.Submission, NumWins = r.NumWins, Rank = index + 1 });
