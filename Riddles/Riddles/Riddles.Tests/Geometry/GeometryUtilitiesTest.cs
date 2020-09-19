@@ -1,12 +1,25 @@
 using NUnit.Framework;
 using Riddles.Geometry;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Riddles.Tests
 {
     public class GeometryUtilitiesTest
     {
         const double Epsilon = 0.000001;
+
+        public Dictionary<int, List<Point>> PointsForCenterOfMassDictionary = new Dictionary<int, List<Point>>
+        {
+            {1, new List<Point>{ new Point { X = 3, Y = 0 } } },
+            {2, new List<Point>{ new Point { X = 3, Y = 0 }, new Point { X = -1, Y = 2 }, new Point { X = -1, Y = -3 } } },
+            {3, new List<Point> {
+                new Point { X = 1, Y = 0 } , new Point { X = 0.86602, Y = 0.5 }, new Point { X = 0.5, Y = 0.86602 },
+                new Point { X = 0, Y = 1 } , new Point { X = -0.5, Y = 0.86602 }, new Point { X = -0.86602, Y = 0.5 },
+                new Point { X = -1, Y = 0 } , new Point { X = -0.86602, Y = -0.5 }, new Point { X = -0.5, Y = -0.86602 },
+                new Point { X = 0, Y = -1 } ,  new Point { X = 0.5, Y = -0.86602 }, new Point { X = 0.86602, Y = -0.5 }} }
+        };
 
         [SetUp]
         public void Setup()
@@ -36,6 +49,18 @@ namespace Riddles.Tests
             Assert.AreEqual(quadraticFormulaSolutions.Count, 2);
             Assert.LessOrEqual(Math.Abs(solution1.Value - quadraticFormulaSolutions[0]), Epsilon);
             Assert.LessOrEqual(Math.Abs(solution2.Value - quadraticFormulaSolutions[1]), Epsilon);
+        }
+
+        [TestCase(1, 3, 0, Description = "Single Point")]
+        [TestCase(2, 0.333333, -0.333333, Description = "Multiple points, not centered on (0, 0)")]
+        [TestCase(3, 0, 0, Description = "points equally spaced among unit circle")]
+        public void TestCenterOfMass(int testCaseNum, double expectedCenterOfMassX, double expectedCenterOfMassY)
+		{
+            GeometryUtilities utilities = new GeometryUtilities();
+            var actualCenterOfMass = utilities.CalculateCenterOfMass(PointsForCenterOfMassDictionary[testCaseNum]);
+            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassX - actualCenterOfMass.X), Epsilon);
+            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassY - actualCenterOfMass.Y), Epsilon);
+
         }
     }
 }

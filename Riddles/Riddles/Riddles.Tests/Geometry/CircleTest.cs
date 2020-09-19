@@ -15,6 +15,11 @@ namespace Riddles.Tests.Geometry
 			{2, new List<Point>{ new Point { X = 2, Y = 0 }, new Point { X = -2, Y = 0} } },
 			{3, new List<Point>{ new Point { X = 3, Y = 1 }, new Point { X = -1, Y = 1} } },
 			{4, new List<Point>{ new Point { X = 0, Y = 3 }, new Point { X = -3, Y = 0}, new Point { X = 0, Y = -3}, new Point { X = 3, Y = 0} } },
+			{5, new List<Point> { 
+				new Point { X = 1, Y = 0 } , new Point { X = 0.86602, Y = 0.5 }, new Point { X = 0.5, Y = 0.86602 }, 
+				new Point { X = 0, Y = 1 } , new Point { X = -0.5, Y = 0.86602 }, new Point { X = -0.86602, Y = 0.5 },
+				new Point { X = -1, Y = 0 } , new Point { X = -0.86602, Y = -0.5 }, new Point { X = -0.5, Y = -0.86602 }, 
+				new Point { X = 0, Y = -1 } ,  new Point { X = 0.5, Y = -0.86602 }, new Point { X = 0.86602, Y = -0.5 }} }
 		};
 		
 		[OneTimeSetUp]
@@ -27,6 +32,7 @@ namespace Riddles.Tests.Geometry
 		[TestCase(2, 2, 0, 0, 2, 0, Description = "2 points, circle at (0,0) radius 2")]
 		[TestCase(3, 2, 1, 1, 2, 0, Description = "2 points, circle at (1,1) radius 2")]
 		[TestCase(4, 3, 0, 0, 4, Math.PI/2.0, Description = "4 points, circle at (0,0) radius 3, starting at Pi/2")]
+		[TestCase(5, 1, 0, 0, 12, 0, Description = "Twelve points, equal distance around unit cicle")]
 		public void TestGenerateNPointsEvenlyAroundCircle(int testCaseId, int radius, double initialX, double initialY, int numPoints, double initialAngle)
 		{
 			var circle = new Circle { Center = new Point { X = initialX, Y = initialY }, Radius = radius };

@@ -32,6 +32,18 @@ namespace Riddles.Geometry
             return solution;
         }
 
+        public Point CalculateCenterOfMass(List<Point> points)
+		{
+            var numPoints = points.Count;
+            var sumX = 0.0;
+            var sumY = 0.0;
+            foreach(var point in points)
+			{
+                sumX += point.X;
+                sumY += point.Y;
+			}
+            return new Point { X = sumX / (double)numPoints, Y = sumY / (double)numPoints };
+		}
 
     }
 }
