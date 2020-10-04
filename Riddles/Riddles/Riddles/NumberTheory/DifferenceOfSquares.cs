@@ -8,9 +8,11 @@ namespace Riddles.NumberTheory
 	public class DifferenceOfSquares
 	{
 		private Factorization factorization;
+		private SquaresUtility squaresUtility;
 		public DifferenceOfSquares()
 		{
 			factorization = new Factorization();
+			squaresUtility = new SquaresUtility();
 		}
 
 		public List<PairOfSquares> FindSquaresWhereDifferenceIs(int n)
@@ -41,36 +43,32 @@ namespace Riddles.NumberTheory
 		// if averageValue = 12, n = 4, we're looking for 9, 11, 13, 15. with the difference in squares being 12*4 = 48. 8^2 - 4^2 = 48
 		public PairOfSquares GetPairOfSquaresWithCriteria(int averageValue, int numSquaresTotal)
 		{
-			// case where n is odd. numSquaresTotal must also be odd
-			if(averageValue % 2 == 1 && numSquaresTotal % 2 == 1)
+			// if we're not requesting any squares, then just return
+			if(numSquaresTotal < 1)
 			{
-				int rootJustGreaterThanAverage = (int)(averageValue + 1) / 2;
-				int lowerRootInDifference = rootJustGreaterThanAverage - (int)Math.Ceiling(numSquaresTotal / 2.0);
-				if(lowerRootInDifference < 0)
-				{
-					return null;
-				}
-				int greaterRootInDifference = rootJustGreaterThanAverage + (int)Math.Floor(numSquaresTotal / 2.0);
-				return new PairOfSquares((int)Math.Pow(lowerRootInDifference, 2), (int)Math.Pow(greaterRootInDifference, 2));
+				return null;
 			}
-			// case where n is even. numSquaresTotal must also be even
-			if(averageValue % 2 == 0 && numSquaresTotal % 2 == 0)
+
+			// if exactly one of averageValue and numSquaresTotal is odd, then there isn't a pair of squares that matches the criteria
+			if(averageValue % 2 != numSquaresTotal % 2)
 			{
-				var oddNumberJustGreaterThanAverage = averageValue + 1;
-				var oddNumberJustLessThanAverage = averageValue - 1;
-				var rootJustGreaterThanAverage = (int)(oddNumberJustGreaterThanAverage + 1) / 2;
-				var rootJustLessThanAverage = (int)(oddNumberJustLessThanAverage + 1) / 2;
-				var differenceValuesNeedToShift = (numSquaresTotal - 2) / 2;
-				var lowerRootInDifference = rootJustLessThanAverage - differenceValuesNeedToShift;
-				if (lowerRootInDifference < 0)
-				{
-					return null;
-				}
-				var greaterRootInDifference = rootJustGreaterThanAverage + differenceValuesNeedToShift;
-				return new PairOfSquares((int)Math.Pow(lowerRootInDifference, 2), (int)Math.Pow(greaterRootInDifference, 2));
+				return null;
 			}
-			// if averageValue and numSquares have a different value mod 1, there are no solutions
-			return null;
+			int startingPointForSmallerSquare = averageValue % 2 == 1 ? averageValue - 2 : averageValue - 3;
+			int startingPointForLargerSquare = averageValue % 2 == 1 ? averageValue : averageValue + 1;
+			// the simplest calculation works for the base cases of 1 or 2 squares. If we want more than that, we need to provide an additional offset
+			int additionalOffset = (int)Math.Floor((numSquaresTotal - 1) / 2.0) * 2;
+			int lastOddNumberSummedForSmallerSquareInDifference = startingPointForSmallerSquare - additionalOffset;
+			int lastOddNumberSummedForLargerSquareInDifference = startingPointForLargerSquare + additionalOffset;
+
+			var smallerSquare = this.squaresUtility.FindSquareBySummingOddNumbersUpTo(lastOddNumberSummedForSmallerSquareInDifference);
+			var largerSquare = this.squaresUtility.FindSquareBySummingOddNumbersUpTo(lastOddNumberSummedForLargerSquareInDifference);
+			if(!smallerSquare.HasValue || !largerSquare.HasValue)
+			{
+				return null;
+			}
+
+			return new PairOfSquares(smallerSquare.Value, largerSquare.Value);
 		}
 	}
 
@@ -78,7 +76,7 @@ namespace Riddles.NumberTheory
 		public long LargerSquare { get; private set; }
 		public long SmallerSquare { get; private set; }
 
-		public PairOfSquares(int a, int b)
+		public PairOfSquares(long a, long b)
 		{
 			SmallerSquare = Math.Min(a, b);
 			LargerSquare = Math.Max(a, b);
