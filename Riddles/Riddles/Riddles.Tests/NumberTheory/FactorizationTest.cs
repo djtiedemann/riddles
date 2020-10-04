@@ -15,7 +15,15 @@ namespace Riddles.Tests.NumberTheory
 			{2, new List<Factorization.FactorPair> { new Factorization.FactorPair(2, 1) } },
 			{3, new List<Factorization.FactorPair> { new Factorization.FactorPair(3, 1) } },
 			{7, new List<Factorization.FactorPair> { new Factorization.FactorPair(7, 1) } },
-			{4, new List<Factorization.FactorPair> { new Factorization.FactorPair(4, 1), new Factorization.FactorPair(2, 3) } },
+			{4, new List<Factorization.FactorPair> { new Factorization.FactorPair(4, 1), new Factorization.FactorPair(2, 2) } },
+			{16, new List<Factorization.FactorPair> { new Factorization.FactorPair(16, 1), new Factorization.FactorPair(8, 2),
+				new Factorization.FactorPair(4, 4)} },
+			{36, new List<Factorization.FactorPair> { new Factorization.FactorPair(36, 1), new Factorization.FactorPair(18, 2),
+				new Factorization.FactorPair(12, 3), new Factorization.FactorPair(9, 4), new Factorization.FactorPair(6, 6)} },
+			{210, new List<Factorization.FactorPair> { new Factorization.FactorPair(210, 1), new Factorization.FactorPair(105, 2),
+				new Factorization.FactorPair(70, 3), new Factorization.FactorPair(42, 5), new Factorization.FactorPair(35, 6),
+				new Factorization.FactorPair(30, 7), new Factorization.FactorPair(21, 10), new Factorization.FactorPair(15, 14),
+			} },
 		};
 
 		[TestCase(1, new int[] { 1 })]
@@ -41,11 +49,14 @@ namespace Riddles.Tests.NumberTheory
 		[TestCase(3)]
 		[TestCase(7)]
 		[TestCase(4)]
+		[TestCase(16)]
+		[TestCase(36)]
+		[TestCase(210)]
 		public void TestGetFactors(int n)
 		{
 			var factorization = new Factorization();
 			var factors = factorization.GetFactors(n).OrderBy(n => n.SmallerFactor).ToArray();
-			var expectedFactors = factorization.GetFactors(n).OrderBy(n => n.SmallerFactor).ToArray();
+			var expectedFactors = expectedFactorPairs[n].OrderBy(n => n.SmallerFactor).ToArray();
 			Assert.AreEqual(expectedFactors.Length, factors.Length);
 			for(int i=0; i<factors.Length; i++)
 			{

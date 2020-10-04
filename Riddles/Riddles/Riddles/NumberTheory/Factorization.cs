@@ -66,7 +66,7 @@ namespace Riddles.NumberTheory
 			{
 				var bitString = Convert.ToString(i, 2).PadLeft(numPrimesInPrimeFactorization, '0').ToCharArray().Select(a => a - '0').ToArray();
 				var factor1 = 1;
-				var factor2 = 2;
+				var factor2 = 1;
 				for(int prime=0; prime < numPrimesInPrimeFactorization; prime++)
 				{
 					if(bitString[prime] == 1)
