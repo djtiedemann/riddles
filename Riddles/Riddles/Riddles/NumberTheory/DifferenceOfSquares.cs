@@ -18,7 +18,9 @@ namespace Riddles.NumberTheory
 		public List<PairOfSquares> FindSquaresWhereDifferenceIs(int n)
 		{
 			var pairsOfSquares = new List<PairOfSquares> { };
-			return pairsOfSquares;
+			var factors = factorization.GetFactors(n);
+			var factorsThatAreValidForDifferenceBetweenSquares = factors.Where(f => f.LargerFactor % 2 == f.SmallerFactor % 2);
+			return factorsThatAreValidForDifferenceBetweenSquares.Select(f => this.GetPairOfSquaresWithCriteria(f.LargerFactor, f.SmallerFactor)).ToList();			
 		}
 
 		// https://fivethirtyeight.com/features/can-you-eat-all-the-chocolates/
@@ -35,7 +37,6 @@ namespace Riddles.NumberTheory
 		// for a number n. if n is odd, >=1, there will be two consecutive squares. if n is even >=2, and n/2 is even, there will be two squares separated
 		// by 1. if n is odd >=3 and n/3 is even, then there will be two squares separated by 2, and so on.
 		
-
 
 		// so this takes in the average value, the total number of squares in the sequence (so the base case has numSquaresTotal = 1), and finds
 		// the squares that give that value, if any
