@@ -23,8 +23,6 @@ namespace Riddles.Probability
 
 	public class OddsOfCertainTypeBeingLastObjectDrawn
 	{
-		
-
 		public OddsOfCertainTypeBeingLastObjectDrawn()
 		{
 
