@@ -19,10 +19,72 @@ namespace Riddles.Tests.LinearAlgebra
 				},
 				Constants = new double[] {3, 5},
 				Solution = new double[] {1, 1}
-			} }
+			} },
+			{2, new TestCase
+			{
+				Equations = new double[][]
+				{
+					new double[]{ 1, 2, 1 },
+					new double[]{ 3, 8, 1 },
+					new double[]{ 0, 4, 1 },
+				},
+				Constants = new double[] {2, 12, 2},
+				Solution = new double[] {2, 1, -2}
+			} },
+			{3, new TestCase
+			{
+				Equations = new double[][]
+				{
+					new double[]{ 0, 1, 1, 1 },
+					new double[]{ 1, 0, 1, 1 },
+					new double[]{ 1, 1, 0, 1 },
+					new double[]{ 1, 1, 1, 0 },
+				},
+				Constants = new double[] {70, 75, 80, 75},
+				Solution = new double[] {30, 25, 20, 25}
+			} },
+			{4, new TestCase
+			{
+				Equations = new double[][]
+				{
+					new double[]{ 0, 1, 1, 1 },
+					new double[]{ 1, 1, 0, 1 },
+					new double[]{ 1, 0, 1, 1 },					
+					new double[]{ 1, 1, 1, 0 },
+				},
+				Constants = new double[] {70, 80, 75, 75},
+				Solution = new double[] {30, 25, 20, 25}
+			} },
+			{5, new TestCase
+			{
+				Equations = new double[][]
+				{
+					new double[]{ 0, 0, 1 },
+					new double[]{ 1, 0, 1 },
+					new double[]{ 0, 1, 0 },					
+				},
+				Constants = new double[] {5, 7, 3},
+				Solution = new double[] {2, 3, 5}
+			} },
+			{6, new TestCase
+			{
+				Equations = new double[][]
+				{
+					new double[]{ 2, 0, 0 },
+					new double[]{ 4, 1, 0 },
+					new double[]{ 6, 0, 1 },
+				},
+				Constants = new double[] {2, 5, 7},
+				Solution = new double[] {1, 1, 1}
+			} },
 		};
 
-		[TestCase(1)]
+		[TestCase(1, Description = "2x2 matrix, simple solution")]
+		[TestCase(2, Description = "3x3 matrix, simple solution")]
+		[TestCase(3, Description = "4x4 matrix, requires switching rows")]
+		[TestCase(4, Description = "same as 3, but rows in different orders")]
+		[TestCase(5, Description = "3x3 requires switching rows")]
+		[TestCase(6, Description = "3x3 requires eliminating multiple rows at once")]
 		public void TestSolveNEquationsNUnknowns(int testCaseId)
 		{
 			double epsilon = 0.0001;
