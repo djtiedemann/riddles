@@ -10,13 +10,13 @@ namespace Riddles.Tests.RiddlerNationWar
 {
 	public class StrategyTest
 	{
-		// only assigning points to targeted castles
-		[TestCase(1, new int[] {100, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 1, 10, 100, 0)]
-		[TestCase(560, new int[] { 0, 0, 0, 0, 33, 33, 0, 0, 0, 34 }, 21, 10, 100, 0)]
-		[TestCase(452, new int[] { 0, 0, 25, 0, 0, 0, 25, 25, 25, 0}, 27, 10, 100, 0)]
-		[TestCase(1023, new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 }, 55, 10, 100, 0)]
-		// assigning points to non-targeted castles
-		[TestCase(560, new int[] { 1, 1, 1, 1, 31, 31, 1, 1, 1, 31 }, 21, 10, 100, 1)]
+		//// only assigning points to targeted castles
+		//[TestCase(1, new int[] {100, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 1, 10, 100, 0)]
+		//[TestCase(560, new int[] { 0, 0, 0, 0, 33, 33, 0, 0, 0, 34 }, 21, 10, 100, 0)]
+		//[TestCase(452, new int[] { 0, 0, 25, 0, 0, 0, 25, 25, 25, 0}, 27, 10, 100, 0)]
+		//[TestCase(1023, new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 }, 55, 10, 100, 0)]
+		//// assigning points to non-targeted castles
+		//[TestCase(560, new int[] { 1, 1, 1, 1, 31, 31, 1, 1, 1, 31 }, 21, 10, 100, 1)]
 		public void TestTargetCastlesEvenlyStrategy(int seed, int[] expectedTroopPlacement, int expectedNumPointsTargeted, int numCastles, int numTroops,
 			int valueToAssignPerNonTargetedCastle)
 		{
@@ -34,10 +34,10 @@ namespace Riddles.Tests.RiddlerNationWar
 			}
 		}
 
-		[TestCase(10, 100, false, 0)]
-		[TestCase(10, 100, true, 0)]
-		[TestCase(10, 100, false, 1)]
-		[TestCase(10, 100, false, 2)]
+		//[TestCase(10, 100, false, 0)]
+		//[TestCase(10, 100, true, 0)]
+		//[TestCase(10, 100, false, 1)]
+		//[TestCase(10, 100, false, 2)]
 		public void GenerateTrainingDataTargetAllCastlesEvenlyStrategy(int numCastles, int numTroops, bool restrictToStrategiesTargetingMajorityOfPoints,
 			int valueToAssignPerNonTargetedCastle)
 		{
@@ -56,8 +56,8 @@ namespace Riddles.Tests.RiddlerNationWar
 			var secondBestStrategyInTrainingSet = results[1];
 		}
 
-		[TestCase(1023, 10, 100, new int[] { 2, 4, 5, 7, 9, 11, 13, 15, 16, 18})]
-		[TestCase(859, 10, 100, new int[] { 3, 5, 0, 11, 13, 0, 18, 0, 24, 26 })]
+		//[TestCase(1023, 10, 100, new int[] { 2, 4, 5, 7, 9, 11, 13, 15, 16, 18})]
+		//[TestCase(859, 10, 100, new int[] { 3, 5, 0, 11, 13, 0, 18, 0, 24, 26 })]
 		public void TestTargetCastlesProportionally(int seed, int numCastles, int numTroops, int[] expectedResults)
 		{
 			var castleTargeter = new CastleTargeter();
@@ -76,7 +76,7 @@ namespace Riddles.Tests.RiddlerNationWar
 			}
 		}
 
-		[TestCase(10, 100)]
+		//[TestCase(10, 100)]
 		public void GenerateDataSetForOptimization(int numCastles, int numTroops)
 		{
 			var castleTargeter = new CastleTargeter();
@@ -113,18 +113,18 @@ namespace Riddles.Tests.RiddlerNationWar
 			var results = warSimulator.SimulateWars(trainingData);
 		}
 
-		// passed in parameters that would generate something similar to winner's strategy
-		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
-			new int[] { 3, 6, 9, 13, 16, 2, 22, 25, 2, 2 })]
-		// came in first, naive version
-		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
-			new int[] { 0, 0, 0, 0, 18, 21, 0, 29, 32, 0 })]
-		// came in second, naive version
-		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
-			new int[] { 1, 1, 1, 1, 17, 20, 1, 27, 30, 1 })]
-		// came in third, naive version
-		[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
-			new int[] { 1, 1, 1, 1, 17, 20, 23, 1, 1, 34 })]
+		//// passed in parameters that would generate something similar to winner's strategy
+		//[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+		//	new int[] { 3, 6, 9, 13, 16, 2, 22, 25, 2, 2 })]
+		//// came in first, naive version
+		//[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+		//	new int[] { 0, 0, 0, 0, 18, 21, 0, 29, 32, 0 })]
+		//// came in second, naive version
+		//[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+		//	new int[] { 1, 1, 1, 1, 17, 20, 1, 27, 30, 1 })]
+		//// came in third, naive version
+		//[TestCase(@"C:\Users\djt74_000\Projects\riddles\Riddles\Riddles\Riddles.Tests\RiddlerNationWar\Data\submissions-1.txt",
+		//	new int[] { 1, 1, 1, 1, 17, 20, 23, 1, 1, 34 })]
 		public void TestAgainstTrainingData(string filename, int[] testSubmission)
 		{
 			List<WarSimulator.SimulationEntry> testData = new List<WarSimulator.SimulationEntry>();
