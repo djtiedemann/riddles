@@ -49,6 +49,34 @@ namespace Riddles.LinearAlgebra
 			return this.PerformBackSubstitution(resultMatrix, resultConstants);
 		}
 
+		// Note: this currently requires a square matrix. It's probably very easy to generalize matrix multiplication but I haven't done that yet
+		public double[] MultiplyMatrixByVector(double[][] matrix, double[] vector)
+		{
+			if (matrix.Length != vector.Length)
+			{
+				throw new InvalidOperationException("You must input the same number of vector as the size of the matrix");
+			}
+			for (int row = 0; row < matrix.Length; row++)
+			{
+				if (matrix[row].Length != matrix.Length)
+				{
+					throw new InvalidOperationException("The matrix must be square");
+				}
+			}
+
+			var results = new double[vector.Length];
+			for(int row=0; row<matrix.Length; row++)
+			{
+				var total = 0.0;
+				for(int col=0; col<matrix.Length; col++)
+				{
+					total += matrix[row][col] * vector[col];
+				}
+				results[row] = total;
+			}
+			return results;
+		}
+
 		private (double[][] resultMatrix, double[] resultConstants) PerformEliminationStartingAtRowIColI(
 			double [][] matrix, double [] constants, int pivotRowAndCol)
 		{
@@ -126,7 +154,7 @@ namespace Riddles.LinearAlgebra
 				var resultOfOtherVariables = 0.0;
 				for(int col=row+1; col<constants.Length; col++)
 				{
-					resultOfOtherVariables += matrixU[row][col] * solution[row];
+					resultOfOtherVariables += matrixU[row][col] * solution[col]; ;
 				}
 				solution[row] = (constants[row] - resultOfOtherVariables) / coefficientAtPivot;
 			}
