@@ -11,11 +11,13 @@ namespace Riddles.Tests.Probability.RandomWalk
 		private Dictionary<int, double[]> _testCaseToProbabilityDistribution = new Dictionary<int, double[]>
 		{
 			{1, new double[] { 0.5 } },
-			{2, new double[] { 2.0/3.0, 1.0/3.0 } }
+			{2, new double[] { 2.0/3.0, 1.0/3.0 } },
+			{3, new double[] { 3.0/4.0, 1.0/2.0, 1.0/4.0} }
 		};
 
 		[TestCase(1)]
 		[TestCase(2)]
+		[TestCase(3)]
 		public void TestOddsWalkingXNetStepsLeftBeforeYNetStepsRight(int numStepsWithinRange)
 		{
 			double epsilon = 0.0001;

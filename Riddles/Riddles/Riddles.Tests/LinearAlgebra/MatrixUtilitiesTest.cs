@@ -108,8 +108,8 @@ namespace Riddles.Tests.LinearAlgebra
 					new double[]{ -0.5, 1, -0.5 },
 
 				},
-				Constants = new double[] {1, 0.5, 0},
-				Solution = new double[] {0, 0, 0}
+				Constants = new double[] {1.5, 0.5, 0},
+				Solution = new double[] {0.75, 0.5, 0.25}
 			} },
 		};
 
@@ -121,7 +121,7 @@ namespace Riddles.Tests.LinearAlgebra
 		[TestCase(6, Description = "3x3 requires eliminating multiple rows at once")]
 		[TestCase(7, Description = "Test case from randomly passing left or right")]
 		[TestCase(8, Description = "Test case from randomly passing left or right")]
-		//[TestCase(9, Description = "Test case from randomly passing left or right - 3 steps")]
+		[TestCase(9, Description = "Test case from randomly passing left or right - 3 steps")]
 		public void TestSolveNEquationsNUnknowns(int testCaseId)
 		{
 			double epsilon = 0.0001;

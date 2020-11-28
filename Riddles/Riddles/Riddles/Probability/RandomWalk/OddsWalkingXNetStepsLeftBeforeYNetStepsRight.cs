@@ -82,7 +82,7 @@ namespace Riddles.Probability.RandomWalk
 			var constants = new double[numStepsWithinRange];
 			// the first equation ensures that all probabilities sum to 1
 			equations[0] = Enumerable.Range(1, numStepsWithinRange).Select(s => 1.0).ToArray();
-			constants[0] = 1;
+			constants[0] = numStepsWithinRange/2.0;
 			// the second equation: x_1 - (1/2)x_2 = 1/2
 			equations[1] = Enumerable.Range(1, numStepsWithinRange).Select(s => 0.0).ToArray();
 			equations[1][0] = 1;
