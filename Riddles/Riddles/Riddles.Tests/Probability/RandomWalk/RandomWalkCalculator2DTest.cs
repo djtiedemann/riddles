@@ -6,7 +6,7 @@ using Riddles.Probability.RandomWalk;
 
 namespace Riddles.Tests.Probability.RandomWalk
 {
-	public class OddsWalkingXNetStepsLeftBeforeYNetStepsRightTest
+	public class RandomWalkCalculator2DTest
 	{
 		private Dictionary<int, double[]> _testCaseToProbabilityDistribution = new Dictionary<int, double[]>
 		{
@@ -27,7 +27,7 @@ namespace Riddles.Tests.Probability.RandomWalk
 		public void TestOddsWalkingXNetStepsLeftBeforeYNetStepsRight(int numStepsWithinRange)
 		{
 			double epsilon = 0.0001;
-			var oddsWalkingXNetStepsLeftBeforeYNetStepsRight = new OddsWalkingXNetStepsLeftBeforeYNetStepsRight();
+			var oddsWalkingXNetStepsLeftBeforeYNetStepsRight = new RandomWalkCalculator2D();
 			var actualSolution = oddsWalkingXNetStepsLeftBeforeYNetStepsRight.GetProbabilityDistributionForARangeOfNSteps(numStepsWithinRange);
 			var expectedSolution = this._testCaseToProbabilityDistribution[numStepsWithinRange];
 			Assert.AreEqual(expectedSolution.Length, actualSolution.Length);

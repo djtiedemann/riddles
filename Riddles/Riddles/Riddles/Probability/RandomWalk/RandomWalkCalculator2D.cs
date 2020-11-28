@@ -6,11 +6,11 @@ using Riddles.LinearAlgebra;
 
 namespace Riddles.Probability.RandomWalk
 {
-	public class OddsWalkingXNetStepsLeftBeforeYNetStepsRight
+	public class RandomWalkCalculator2D
 	{
 		private Dictionary<int, double[]> _probabilitiesCacheForRangeOfSteps;
 		private MatrixUtilities _matrixUtilities;
-		public OddsWalkingXNetStepsLeftBeforeYNetStepsRight()
+		public RandomWalkCalculator2D()
 		{
 			
 			this._probabilitiesCacheForRangeOfSteps = new Dictionary<int, double[]>();
