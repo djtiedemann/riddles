@@ -51,7 +51,7 @@ namespace Riddles.Tests.Probability
 		[TestCase(10, ChocolateType.Dark)]
 		[TestCase(11, ChocolateType.Milk)]
 
-		public void TestGetOddsOfEachChocolateTypeBeingLastChocolateDrawn(int testCaseId, ChocolateType lastChocolateDrawn)
+		public void TestGetOddsOfEachChocolateTypeBeingLastChocolateDrawn(int testCaseId, ChocolateType? lastChocolateDrawn)
 		{
 			double epsilon = 0.0001;
 			var initialChocolateCounts = this.initialChocolateCounts[testCaseId];
