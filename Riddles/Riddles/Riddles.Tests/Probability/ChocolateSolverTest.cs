@@ -45,7 +45,7 @@ namespace Riddles.Tests.Probability
 		[TestCase(4, null)]
 		[TestCase(5, null)]
 		[TestCase(6, null)]
-		[TestCase(7, null)]
+		[TestCase(7, null)] // this is the actual test case
 		[TestCase(8, ChocolateType.Milk)]
 		[TestCase(9, ChocolateType.Milk)]
 		[TestCase(10, ChocolateType.Dark)]
