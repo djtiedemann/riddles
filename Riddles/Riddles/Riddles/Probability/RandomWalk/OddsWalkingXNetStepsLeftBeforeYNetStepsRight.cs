@@ -105,7 +105,7 @@ namespace Riddles.Probability.RandomWalk
 					}
 					else
 					{
-						equation[i] = 0.0;
+						equation[j] = 0.0;
 					}
 				}
 				equations[i] = equation;

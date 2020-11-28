@@ -111,6 +111,19 @@ namespace Riddles.Tests.LinearAlgebra
 				Constants = new double[] {1.5, 0.5, 0},
 				Solution = new double[] {0.75, 0.5, 0.25}
 			} },
+			{10, new TestCase
+			{
+				Equations = new double[][]
+				{
+					new double[]{ 1, 1, 1, 1 },
+					new double[]{ 1, -0.5, 0, 0 },
+					new double[]{ -0.5, 1, -0.5, 0 },
+					new double[]{ 0, -0.5, 1, -0.5  },
+
+				},
+				Constants = new double[] {2, 0.5, 0, 0},
+				Solution = new double[] {0.8, 0.6, 0.4, 0.2}
+			} }
 		};
 
 		[TestCase(1, Description = "2x2 matrix, simple solution")]
@@ -122,6 +135,7 @@ namespace Riddles.Tests.LinearAlgebra
 		[TestCase(7, Description = "Test case from randomly passing left or right")]
 		[TestCase(8, Description = "Test case from randomly passing left or right")]
 		[TestCase(9, Description = "Test case from randomly passing left or right - 3 steps")]
+		[TestCase(10, Description = "Test case from randomly passing left or right - 4 steps")]
 		public void TestSolveNEquationsNUnknowns(int testCaseId)
 		{
 			double epsilon = 0.0001;
