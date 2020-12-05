@@ -178,7 +178,15 @@ namespace Riddles.Probability
 						// the first ball's group + 1 will gain 1 and the second ball's group - 1 will gain 1
 						var nextStateDistribution = this.DeepCloneBallDistribution(currentState);
 						nextStateDistribution[key1] = nextStateDistribution[key1] - 1;
+						if(nextStateDistribution[key1] == 0)
+						{
+							nextStateDistribution.Remove(key1);
+						}
 						nextStateDistribution[key2] = nextStateDistribution[key2] - 1;
+						if (nextStateDistribution[key2] == 0)
+						{
+							nextStateDistribution.Remove(key2);
+						}
 						nextStateDistribution[key1 + 1] = (nextStateDistribution.ContainsKey(key1 + 1) ? nextStateDistribution[key1 + 1] : 0) + 1;
 						if (key2 - 1 > 0)
 						{

@@ -10,6 +10,8 @@ namespace Riddles.Tests.Probability
 	{
 		[TestCase(1, 0, Description = "Single ball")]
 		[TestCase(2, 1, Description = "Two balls")]
+		[TestCase(3, 4, Description = "Three balls")]
+		[TestCase(4, 9, Description = "Four balls")]
 		public void TestGetExpectedNumberOfTurnsToPaintBalls(int numBalls, double? expectedValue)
 		{
 			double epsilon = 0.0001;
