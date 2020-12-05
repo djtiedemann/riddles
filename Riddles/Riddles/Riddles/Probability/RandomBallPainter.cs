@@ -109,7 +109,7 @@ namespace Riddles.Probability
 					{
 						terms.Add(new LinearTerm(
 							coefficient: stateTransitionDictionary[state][transitionState]*-1,
-							variableId: termDictionary[state]
+							variableId: termDictionary[transitionState]
 						));
 					}
 				}
@@ -124,7 +124,7 @@ namespace Riddles.Probability
 		/// returns a tuple of (state, probability transition to this state)
 		/// </summary>
 		/// <returns></returns>
-		public Dictionary<State, double> GetStateTransitions(State currentState, int numBalls)
+		private Dictionary<State, double> GetStateTransitions(State currentState, int numBalls)
 		{
 			Dictionary<State, double> stateProbabilityTransition = new Dictionary<State, double>();
 			foreach (var key1 in currentState.BallDistributionForState.Keys)
@@ -155,6 +155,11 @@ namespace Riddles.Probability
 						// so we increment the value for key1+1 by 1, increment the value for key1-1 by 1, decrement the value for key1 by 2
 						nextStateDistribution[key1 + 1] = (nextStateDistribution.ContainsKey(key1 + 1) ? nextStateDistribution[key1 + 1] : 0) + 1;
 						nextStateDistribution[key1] = nextStateDistribution[key1] - 2;
+						// if there are no longer values for this key, remove it
+						if (nextStateDistribution[key1] == 0)
+						{
+							nextStateDistribution.Remove(key1);
+						}
 						if (key1 - 1 > 0)
 						{
 							nextStateDistribution[key1 - 1] = (nextStateDistribution.ContainsKey(key1 - 1) ? nextStateDistribution[key1 - 1] : 0) + 1;
@@ -189,13 +194,13 @@ namespace Riddles.Probability
 			return stateProbabilityTransition;
 		}
 
-		public bool IsStateTerminalState(State state, int numBalls)
+		private bool IsStateTerminalState(State state, int numBalls)
 		{
 			// we've reached the final state when the only key is numBalls
 			return state.BallDistributionForState.ContainsKey(numBalls);
 		}
 
-		public Dictionary<int, int> DeepCloneBallDistribution(State state)
+		private Dictionary<int, int> DeepCloneBallDistribution(State state)
 		{
 			var clone = new Dictionary<int, int>();
 			foreach (var key in state.BallDistributionForState.Keys)
@@ -205,12 +210,12 @@ namespace Riddles.Probability
 			return clone;
 		}
 
-		public State DeepCloneState(State state)
+		private State DeepCloneState(State state)
 		{
 			return new State(this.DeepCloneBallDistribution(state));
 		}
 
-		public class State {
+		private class State {
 			/// <summary>
 			/// This keeps track of the current state by tracking how many balls there are of similar colors.
 			/// The key to this dictionary is the number of balls of the same color, and the value is the number of colors who have that many balls
