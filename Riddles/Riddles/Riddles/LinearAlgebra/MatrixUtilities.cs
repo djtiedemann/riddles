@@ -77,6 +77,37 @@ namespace Riddles.LinearAlgebra
 			return results;
 		}
 
+		/// <summary>
+		/// Solves a system of equations that isn't in matrix form, but is instead a list of linear equations
+		/// </summary>
+		/// <param name="equations"></param>
+		/// <returns></returns>
+		public double[] SolveLinearSystemOfEquations(List<LinearEquation> equations)
+		{
+			var equationsArray = equations.ToArray();
+			var largestVariableId = equations.Select(e => e.Terms.Max(t => t.VariableId)).Max(v => v);
+			// in order to solve the system of equations you need to have the same number of unknowns as variables
+			if(largestVariableId + 1 != equationsArray.Length)
+			{
+				return null;
+			}
+
+			var matrix = new double[equationsArray.Length][];
+			var constants = new double[equationsArray.Length];
+			for(int i=0; i< equationsArray.Length; i++)
+			{
+				var equationInArrayForm = new double[equationsArray.Length];
+				foreach(var term in equationsArray[i].Terms)
+				{
+					equationInArrayForm[term.VariableId] = term.Coefficient;
+				}
+				constants[i] = equationsArray[i].Constant;
+				matrix[i] = equationInArrayForm;
+			}
+
+			return this.SolveNEquationsNUnknowns(matrix, constants);
+		}
+
 		private (double[][] resultMatrix, double[] resultConstants) PerformEliminationStartingAtRowIColI(
 			double [][] matrix, double [] constants, int pivotRowAndCol)
 		{

@@ -150,6 +150,33 @@ namespace Riddles.Tests.LinearAlgebra
 				Assert.LessOrEqual(Math.Abs(solution[i] - testCase.Solution[i]), epsilon);
 				Assert.LessOrEqual(Math.Abs(resultFromMultiplication[i] - testCase.Constants[i]), epsilon);
 			}
+
+			var linearEquationRepresentation = this.ConvertMatrixIntoLinearEquations(testCase.Equations, testCase.Constants);
+			var solutionOfLinearEquations = matrixUtilities.SolveLinearSystemOfEquations(linearEquationRepresentation);
+
+			Assert.AreEqual(testCase.Solution.Length, solutionOfLinearEquations.Length);
+			for (int i = 0; i < solution.Length; i++)
+			{
+				Assert.LessOrEqual(Math.Abs(solution[i] - testCase.Solution[i]), epsilon);
+			}
+		}
+
+		private List<LinearEquation> ConvertMatrixIntoLinearEquations(double[][] matrix, double[] constants)
+		{
+			List<LinearEquation> equations = new List<LinearEquation>();
+			for(int i=0; i<matrix.Length; i++)
+			{
+				var terms = new List<LinearTerm>();
+				for(int j=0; j<matrix.Length; j++)
+				{
+					if(matrix[i][j] != 0)
+					{
+						terms.Add(new LinearTerm(coefficient: matrix[i][j], variableId: j));
+					}
+				}
+				equations.Add(new LinearEquation(terms: terms, constant: constants[i]));
+			}
+			return equations;
 		}
 	}	
 

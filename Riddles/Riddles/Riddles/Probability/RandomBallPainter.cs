@@ -13,7 +13,8 @@ namespace Riddles.Probability
 	{
 		private Dictionary<int, double> _numBallsToProbabilityDictionary;
 		// this tracks which terms are assigned to each column in the matrix equation that we form
-		Dictionary<string, int> _termDictionary;
+		private Dictionary<string, int> _termDictionary;
+		private List<State> _statesToProcess;
 		public RandomBallPainter()
 		{
 			this._numBallsToProbabilityDictionary = new Dictionary<int, double>();
@@ -34,6 +35,7 @@ namespace Riddles.Probability
 				return 0;
 			}
 			this._termDictionary = new Dictionary<string, int>();
+			this._statesToProcess = new List<State>();
 			return null;
 		}
 
