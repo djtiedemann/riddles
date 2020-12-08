@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Riddles.Tests.Probability
 {
-	public class HatSolverTest
+	public class HatProblemSolverTest
 	{
 	}
 }
