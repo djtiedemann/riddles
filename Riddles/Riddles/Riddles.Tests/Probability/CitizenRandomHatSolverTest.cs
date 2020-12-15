@@ -13,6 +13,19 @@ namespace Riddles.Tests.Probability
 		private Dictionary<int, List<Tuple<List<int>, List<int>>>> codeDictionary = new Dictionary<int, List<Tuple<List<int>, List<int>>>>
 		{
 			{1, new List<Tuple<List<int>, List<int>>>{
+				Tuple.Create(new List<int>{ 1, 1}, new List<int> { 1, 1, 1}),
+				Tuple.Create(new List<int>{ 1, 2}, new List<int> { 2, 2, 2}),
+				Tuple.Create(new List<int>{ 3, 1}, new List<int> { 3, 3, 3}),
+
+				Tuple.Create(new List<int>{ 2, 2}, new List<int> { 1, 2, 3}),
+				Tuple.Create(new List<int>{ 2, 1}, new List<int> { 2, 3, 1}),
+				Tuple.Create(new List<int>{ 3, 2}, new List<int> { 3, 1, 2}),
+
+				Tuple.Create(new List<int>{ 3, 3}, new List<int> { 1, 3, 2}),
+				Tuple.Create(new List<int>{ 1, 3}, new List<int> { 3, 2, 1}),
+				Tuple.Create(new List<int>{ 2, 3}, new List<int> { 2, 1, 3}),
+			}},
+			{2, new List<Tuple<List<int>, List<int>>>{
 				Tuple.Create(new List<int>{ 2, 1}, new List<int> { 1, 1, 1}),
 				Tuple.Create(new List<int>{ 2, 2}, new List<int> { 2, 2, 2}),
 				Tuple.Create(new List<int>{ 1, 1}, new List<int> { 3, 3, 3}),
@@ -45,7 +58,7 @@ namespace Riddles.Tests.Probability
 			{ 5, new List<int>{ 3, 1 } },
 		};
 
-		[TestCase(1, 3)]
+		[TestCase(2, 3)]
 		public void TestGetSecondCodeFromFirstCode(int codeId, int numDifferentColors)
 		{
 			var code = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
