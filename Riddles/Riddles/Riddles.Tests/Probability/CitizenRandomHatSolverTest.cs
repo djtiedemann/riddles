@@ -54,11 +54,11 @@ namespace Riddles.Tests.Probability
 		}
 
 
-		//[TestCase(1, 1, 1, 2, 3, 3)]
-		//[TestCase(1, 2, 2, 2, 3, 3)]
-		//[TestCase(1, 3, 3, 2, 3, 3)]
-		//[TestCase(1, 4, 4, 2, 3, 3)]
-		//[TestCase(1, 5, 5, 2, 3, 3)]
+		[TestCase(1, 1, 1, 2, 3, 3)]
+		[TestCase(1, 2, 2, 2, 3, 3)]
+		[TestCase(1, 3, 3, 2, 3, 3)]
+		[TestCase(1, 4, 4, 2, 3, 3)]
+		[TestCase(1, 5, 5, 2, 3, 3)]
 		public void TestGetResponseFromSignal(
 			int codeId, int signalId, int responseId, int numPeopleInFirstLine, int numPeopleInSecondLine, int numDifferentColors)
 		{
@@ -80,14 +80,12 @@ namespace Riddles.Tests.Probability
 				return;
 			}
 
-			Assert.AreEqual(response.Assignment.Count, expectedResponse.Assignment.Count);
-			var expectedResponseInternal = expectedResponse.Assignment.ToArray();
-			var responseInternal = response.Assignment.ToArray();
+			Assert.AreEqual(response.Assignment.Length, expectedResponse.Assignment.Length);
 
-			for(int i=0; i<responseInternal.Length; i++)
+			for(int i=0; i< response.Assignment.Length; i++)
 			{
-				Assert.AreEqual(expectedResponseInternal[i].MemberId, responseInternal[i].MemberId);
-				Assert.AreEqual(expectedResponseInternal[i].GroupId, responseInternal[i].GroupId);
+				Assert.AreEqual(expectedResponse.Assignment[i].MemberId, response.Assignment[i].MemberId);
+				Assert.AreEqual(expectedResponse.Assignment[i].GroupId, response.Assignment[i].GroupId);
 			}
 		}
 
@@ -96,8 +94,8 @@ namespace Riddles.Tests.Probability
 			var signals = new List<CitizenRandomHatSolver.OneWaySignal> { };
 			foreach(var tuple in data)
 			{
-				var signal = tuple.Item1.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToList();
-				var response = tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToList();
+				var signal = tuple.Item1.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
+				var response = tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
 
 
 				signals.Add(new CitizenRandomHatSolver.OneWaySignal
@@ -111,7 +109,7 @@ namespace Riddles.Tests.Probability
 
 		private GroupAssignment CreateSignalFromTestCase(List<int> data)
 		{
-			var signal = data.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToList();
+			var signal = data.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
 			return new GroupAssignment(signal);
 		}
 	}

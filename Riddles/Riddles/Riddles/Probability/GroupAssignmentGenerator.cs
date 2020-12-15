@@ -32,7 +32,7 @@ namespace Riddles.Probability
 			{
 				initialGroupAssignmentInternal[i] = new GroupAssignmentMember(i+1, 1);
 			}
-			var initialGroupAssignment = new GroupAssignment(initialGroupAssignmentInternal.ToList());
+			var initialGroupAssignment = new GroupAssignment(initialGroupAssignmentInternal);
 			assignments.Add(initialGroupAssignment);
 			var currentAssignment = initialGroupAssignment;
 			while (currentAssignment != null)
@@ -73,7 +73,7 @@ namespace Riddles.Probability
 					break;
 				}
 			}
-			return new GroupAssignment(nextAssignment.ToList());
+			return new GroupAssignment(nextAssignment);
 		}
 	}	
 }

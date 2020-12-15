@@ -20,23 +20,21 @@ namespace Riddles.Probability
 				numPeople, 
 				numHats);
 
-			var numPeopleInSmallerLine = code.Code1.OneWaySignals.First().Signal.Assignment.Count;
-			var numPeopleInLargerLine = code.Code2.OneWaySignals.First().Signal.Assignment.Count;
+			var numPeopleInSmallerLine = code.Code1.OneWaySignals.First().Signal.Assignment.Length;
+			var numPeopleInLargerLine = code.Code2.OneWaySignals.First().Signal.Assignment.Length;
 
 			foreach (var combination in possibleCombinationsOfHats)
 			{
-				var combinationInternal = combination.Assignment.ToArray();
-
 				var signalFromSmallerLine = new GroupAssignmentMember[numPeopleInSmallerLine];
 				var signalFromLargerLine = new GroupAssignmentMember[numPeopleInLargerLine];
 				for(int i=0; i< numPeopleInSmallerLine; i++)
 				{
-					signalFromSmallerLine[i] = new GroupAssignmentMember(combinationInternal[i].MemberId, combinationInternal[i].GroupId);
+					signalFromSmallerLine[i] = new GroupAssignmentMember(combination.Assignment[i].MemberId, combination.Assignment[i].GroupId);
 				}
 				for(int i=0; i<numPeopleInLargerLine; i++)
 				{
 					signalFromLargerLine[i] = new GroupAssignmentMember(
-						combinationInternal[i+numPeopleInSmallerLine].MemberId, combinationInternal[i+numPeopleInSmallerLine].GroupId);
+						combination.Assignment[i+numPeopleInSmallerLine].MemberId, combination.Assignment[i+numPeopleInSmallerLine].GroupId);
 				}				
 			}
 			throw new NotImplementedException("TODO");
@@ -51,8 +49,8 @@ namespace Riddles.Probability
 		// So this takes in the code from the smaller line to the larger line and computes the code that the larger line needs to return
 		public OneWayCode GetSecondCodeFromFirstCode(OneWayCode code, int numDifferentColors)
 		{
-			var numPeopleInLineSendingFirstCode = code.OneWaySignals.First().Signal.Assignment.Count;
-			var numPeopleInLineSendingSecondCode = code.OneWaySignals.First().Response.Assignment.Count;
+			var numPeopleInLineSendingFirstCode = code.OneWaySignals.First().Signal.Assignment.Length;
+			var numPeopleInLineSendingSecondCode = code.OneWaySignals.First().Response.Assignment.Length;
 
 			var keySetOfFirstCode = this._groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
 				numPeopleInLineSendingFirstCode,
@@ -105,21 +103,19 @@ namespace Riddles.Probability
 
 		public bool PairContainsAtLeastOneMatchingHat(GroupAssignment assignment1, GroupAssignment assignment2)
 		{
-			if(assignment1.Assignment.Count != assignment2.Assignment.Count)
+			if(assignment1.Assignment.Length != assignment2.Assignment.Length)
 			{
 				throw new InvalidOperationException("the rows being compared must contain the same number of people");
 			}
 
-			var assignment1Internal = assignment1.Assignment.ToArray();
-			var assignment2Internal = assignment2.Assignment.ToArray();
-			for(int i=0; i<assignment1.Assignment.Count; i++)
+			for(int i=0; i<assignment1.Assignment.Length; i++)
 			{
-				if (assignment1Internal[i].MemberId != assignment2Internal[i].MemberId)
+				if (assignment1.Assignment[i].MemberId != assignment2.Assignment[i].MemberId)
 				{
 					throw new InvalidOperationException("the memberIds don't line up");
 				}
 
-				if (assignment1Internal[i].GroupId == assignment2Internal[i].GroupId)
+				if (assignment1.Assignment[i].GroupId == assignment2.Assignment[i].GroupId)
 				{
 					return true;
 				}

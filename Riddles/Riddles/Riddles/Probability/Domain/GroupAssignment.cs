@@ -6,17 +6,17 @@ namespace Riddles.Probability.Domain
 {
 	public class GroupAssignment
 	{
-		public GroupAssignment(List<GroupAssignmentMember> assignment)
+		public GroupAssignment(GroupAssignmentMember[] assignment)
 		{
 			this.Assignment = assignment;
 		}
 
 		public GroupAssignment DeepCopyGroupAssignment()
 		{
-			var newMembers = new List<GroupAssignmentMember>();
-			foreach(var member in this.Assignment)
+			var newMembers = new GroupAssignmentMember[this.Assignment.Length];
+			for (int i = 0; i < this.Assignment.Length; i++)
 			{
-				newMembers.Add(new GroupAssignmentMember(member.MemberId, member.GroupId));
+				newMembers[i] = new GroupAssignmentMember(this.Assignment[i].MemberId, this.Assignment[i].GroupId);
 			}
 			return new GroupAssignment(newMembers);
 		}
@@ -28,7 +28,7 @@ namespace Riddles.Probability.Domain
 			return hash;
 		}
 
-		public List<GroupAssignmentMember> Assignment { get; }
+		public GroupAssignmentMember[] Assignment { get; }
 	}
 
 	public class GroupAssignmentMember
