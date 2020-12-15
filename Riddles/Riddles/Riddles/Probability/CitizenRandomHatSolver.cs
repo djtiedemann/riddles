@@ -86,7 +86,12 @@ namespace Riddles.Probability
 			var assignment2Internal = assignment2.Assignment.ToArray();
 			for(int i=0; i<assignment1.Assignment.Count; i++)
 			{
-				if(assignment1Internal[i] == assignment2Internal[i])
+				if (assignment1Internal[i].MemberId != assignment2Internal[i].MemberId)
+				{
+					throw new InvalidOperationException("the memberIds don't line up");
+				}
+
+				if (assignment1Internal[i].GroupId == assignment2Internal[i].GroupId)
 				{
 					return true;
 				}

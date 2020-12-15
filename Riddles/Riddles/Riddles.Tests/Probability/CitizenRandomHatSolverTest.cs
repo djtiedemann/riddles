@@ -29,10 +29,23 @@ namespace Riddles.Tests.Probability
 
 		private Dictionary<int, List<int>> signalDictionary = new Dictionary<int, List<int>>
 		{
-			{ 1, new List<int>{ 1, 2, 3} }
+			{ 1, new List<int>{ 1, 2, 3} },
+			{ 2, new List<int>{ 3, 3, 3} },
+			{ 3, new List<int>{ 3, 2, 1} },
+			{ 4, new List<int>{ 2, 2, 1} },
+			{ 5, new List<int>{ 3, 2, 3} },
 		};
 
-		[TestCase(1, 3)]
+		private Dictionary<int, List<int>> responseDictionary = new Dictionary<int, List<int>>
+		{
+			{ 1, new List<int>{ 2, 2 } },
+			{ 2, new List<int>{ 1, 1 } },
+			{ 3, new List<int>{ 1, 3 } },
+			{ 4, new List<int>{ 3, 1 } },
+			{ 5, new List<int>{ 3, 1 } },
+		};
+
+		//[TestCase(1, 3)]
 		public void TestGetSecondCodeFromFirstCode(int codeId, int numDifferentColors)
 		{
 			var code = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
@@ -41,8 +54,13 @@ namespace Riddles.Tests.Probability
 		}
 
 
-		[TestCase(1, 1, 2, 3, 3)]
-		public void TestGetResponseFromSignal(int codeId, int signalId, int numPeopleInFirstLine, int numPeopleInSecondLine, int numDifferentColors)
+		[TestCase(1, 1, 1, 2, 3, 3)]
+		[TestCase(1, 2, 2, 2, 3, 3)]
+		[TestCase(1, 3, 3, 2, 3, 3)]
+		[TestCase(1, 4, 4, 2, 3, 3)]
+		[TestCase(1, 5, 5, 2, 3, 3)]
+		public void TestGetResponseFromSignal(
+			int codeId, int signalId, int responseId, int numPeopleInFirstLine, int numPeopleInSecondLine, int numDifferentColors)
 		{
 			var code = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
 			var signal = this.CreateSignalFromTestCase(signalDictionary[signalId]);
@@ -54,7 +72,23 @@ namespace Riddles.Tests.Probability
 				numPeopleInFirstLine,
 				numDifferentColors);
 
-			var result = citizenRandomHatSolver.GetResponseFromSignal(signal, code, keySetOfFirstCode);
+			var response = citizenRandomHatSolver.GetResponseFromSignal(signal, code, keySetOfFirstCode);
+			var expectedResponse = this.CreateSignalFromTestCase(responseDictionary[responseId]);
+
+			if(response == null && expectedResponse == null)
+			{
+				return;
+			}
+
+			Assert.AreEqual(response.Assignment.Count, expectedResponse.Assignment.Count);
+			var expectedResponseInternal = expectedResponse.Assignment.ToArray();
+			var responseInternal = response.Assignment.ToArray();
+
+			for(int i=0; i<responseInternal.Length; i++)
+			{
+				Assert.AreEqual(expectedResponseInternal[i].MemberId, responseInternal[i].MemberId);
+				Assert.AreEqual(expectedResponseInternal[i].GroupId, responseInternal[i].GroupId);
+			}
 		}
 
 		private CitizenRandomHatSolver.OneWayCode CreateOneWayCodeFromTestCase(List<Tuple<List<int>, List<int>>> data)
