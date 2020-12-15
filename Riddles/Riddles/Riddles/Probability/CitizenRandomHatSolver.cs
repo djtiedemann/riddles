@@ -34,37 +34,45 @@ namespace Riddles.Probability
 				numDifferentColors);		
 
 			var signals = new List<OneWaySignal>();
-			foreach(var key in keySetOfSecondCode)
+			foreach(var signal in keySetOfSecondCode)
 			{
-				var responsesToMatch = new List<GroupAssignment>();
-				foreach(var signal in code.OneWaySignals)
+				var response = this.GetResponseFromSignal(signal, code, keySetOfFirstCode);
+				if(response == null)
 				{
-					if(!this.PairContainsAtLeastOneMatchingHat(key, signal.Response))
-					{
-						responsesToMatch.Add(signal.Signal);
-					}
-				}
-
-				var foundValidResponse = false;
-				foreach(var possibleResponse in keySetOfFirstCode)
-				{
-					if(responsesToMatch.All(r => this.PairContainsAtLeastOneMatchingHat(possibleResponse, r)))
-					{
-						foundValidResponse = true;
-						var signalCopy = key.DeepCopyGroupAssignment();
-						var responseCopy = key.DeepCopyGroupAssignment();
-						signals.Add(new OneWaySignal {
-							Signal = signalCopy,
-							Response = responseCopy
-						});
-					}
-				}
-				if (!foundValidResponse)
-				{
+					// if we couldn't find a valid response for a signal, then the original code was faulty
 					return null;
 				}
+				var signalCopy = signal.DeepCopyGroupAssignment();
+				var responseCopy = response.DeepCopyGroupAssignment();
+				signals.Add(new OneWaySignal
+				{
+					Signal = signalCopy,
+					Response = responseCopy
+				});
 			}
 			return new OneWayCode { OneWaySignals = signals };
+		}
+
+		public GroupAssignment GetResponseFromSignal(GroupAssignment signal, OneWayCode code, List<GroupAssignment> keySetOfFirstCode)
+		{
+			var responsesToMatch = new List<GroupAssignment>();
+			foreach (var oldSignal in code.OneWaySignals)
+			{
+				if (!this.PairContainsAtLeastOneMatchingHat(signal, oldSignal.Response))
+				{
+					responsesToMatch.Add(oldSignal.Signal);
+				}
+			}
+
+			foreach (var possibleResponse in keySetOfFirstCode)
+			{
+				if (responsesToMatch.All(r => this.PairContainsAtLeastOneMatchingHat(possibleResponse, r)))
+				{
+					
+					return possibleResponse;
+				}
+			}
+			return null;			
 		}
 
 		public bool PairContainsAtLeastOneMatchingHat(GroupAssignment assignment1, GroupAssignment assignment2)
