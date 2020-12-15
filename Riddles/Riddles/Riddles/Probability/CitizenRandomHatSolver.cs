@@ -63,11 +63,6 @@ namespace Riddles.Probability
 			foreach(var signal in keySetOfSecondCode)
 			{
 				var response = this.GetResponseFromSignal(signal, code, keySetOfFirstCode);
-				if(response == null)
-				{
-					// if we couldn't find a valid response for a signal, then the original code was faulty
-					var x = 3;
-				}
 				var signalCopy = signal.DeepCopyGroupAssignment();
 				var responseCopy = response?.DeepCopyGroupAssignment();
 				signals.Add(new OneWaySignal
