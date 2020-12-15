@@ -40,8 +40,8 @@ namespace Riddles.Tests.Probability
 			var signals = new List<CitizenRandomHatSolver.OneWaySignal> { };
 			foreach(var tuple in data)
 			{
-				var signal = tuple.Item1.Select((group, member) => new GroupAssignmentMember(memberId: member, groupId: group)).ToList();
-				var response = tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member, groupId: group)).ToList();
+				var signal = tuple.Item1.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToList();
+				var response = tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToList();
 
 
 				signals.Add(new CitizenRandomHatSolver.OneWaySignal
