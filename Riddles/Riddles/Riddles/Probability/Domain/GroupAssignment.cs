@@ -11,6 +11,16 @@ namespace Riddles.Probability.Domain
 			this.Assignment = assignment;
 		}
 
+		public GroupAssignment DeepCopyGroupAssignment()
+		{
+			var newMembers = new List<GroupAssignmentMember>();
+			foreach(var member in this.Assignment)
+			{
+				newMembers.Add(new GroupAssignmentMember(member.MemberId, member.GroupId));
+			}
+			return new GroupAssignment(newMembers);
+		}
+
 		public List<GroupAssignmentMember> Assignment { get; }
 	}
 
