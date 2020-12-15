@@ -21,6 +21,13 @@ namespace Riddles.Probability.Domain
 			return new GroupAssignment(newMembers);
 		}
 
+		public override int GetHashCode()
+		{
+			int hash = 17;
+			hash = hash * 23 + Assignment.GetHashCode();
+			return hash;
+		}
+
 		public List<GroupAssignmentMember> Assignment { get; }
 	}
 

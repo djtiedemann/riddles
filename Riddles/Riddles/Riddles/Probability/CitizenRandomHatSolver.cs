@@ -14,6 +14,34 @@ namespace Riddles.Probability
 			this._groupAssignmentGenerator = new GroupAssignmentGenerator();
 		}
 
+		public Code VerifySolution(Code code, int numPeople, int numHats)
+		{
+			var possibleCombinationsOfHats = this._groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
+				numPeople, 
+				numHats);
+
+			var numPeopleInSmallerLine = code.Code1.OneWaySignals.First().Signal.Assignment.Count;
+			var numPeopleInLargerLine = code.Code2.OneWaySignals.First().Signal.Assignment.Count;
+
+			foreach (var combination in possibleCombinationsOfHats)
+			{
+				var combinationInternal = combination.Assignment.ToArray();
+
+				var signalFromSmallerLine = new GroupAssignmentMember[numPeopleInSmallerLine];
+				var signalFromLargerLine = new GroupAssignmentMember[numPeopleInLargerLine];
+				for(int i=0; i< numPeopleInSmallerLine; i++)
+				{
+					signalFromSmallerLine[i] = new GroupAssignmentMember(combinationInternal[i].MemberId, combinationInternal[i].GroupId);
+				}
+				for(int i=0; i<numPeopleInLargerLine; i++)
+				{
+					signalFromLargerLine[i] = new GroupAssignmentMember(
+						combinationInternal[i+numPeopleInSmallerLine].MemberId, combinationInternal[i+numPeopleInSmallerLine].GroupId);
+				}				
+			}
+			throw new NotImplementedException("TODO");
+		}
+
 		// If the citizens are put in 2 lines, each which can see the other line, but not themselves, they need to determine which hats to guess
 		// based on the set of hats in the other line. So there are 2 signals being sent, 1 by each line. There are 2 responses, 1 by each line.
 		//
@@ -40,10 +68,10 @@ namespace Riddles.Probability
 				if(response == null)
 				{
 					// if we couldn't find a valid response for a signal, then the original code was faulty
-					return null;
+					var x = 3;
 				}
 				var signalCopy = signal.DeepCopyGroupAssignment();
-				var responseCopy = response.DeepCopyGroupAssignment();
+				var responseCopy = response?.DeepCopyGroupAssignment();
 				signals.Add(new OneWaySignal
 				{
 					Signal = signalCopy,
