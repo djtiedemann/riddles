@@ -58,8 +58,8 @@ namespace Riddles.Tests.Probability
 			{ 5, new List<int>{ 3, 1 } },
 		};
 
-		[TestCase(2, 3, 2, 3)]
-		public void TestSolution(int codeId, int numDifferentColors, int numPeopleInFirstLine, int numPeopleInSecondLine)
+		[TestCase(2, 3, 2, 3, true)]
+		public void TestSolution(int codeId, int numDifferentColors, int numPeopleInFirstLine, int numPeopleInSecondLine, bool expectedResult)
 		{
 			var code1 = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
 			var citizenRandomHatSolver = new CitizenRandomHatSolver();
@@ -70,16 +70,8 @@ namespace Riddles.Tests.Probability
 				Code2 = code2
 			};
 			var isCorrectCode = citizenRandomHatSolver.VerifySolution(code, (numPeopleInFirstLine + numPeopleInSecondLine), numDifferentColors);
+			Assert.AreEqual(expectedResult, isCorrectCode);
 		}
-
-		[TestCase(2, 3)]
-		public void TestGetSecondCodeFromFirstCode(int codeId, int numDifferentColors)
-		{
-			var code = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
-			var citizenRandomHatSolver = new CitizenRandomHatSolver();
-			var result = citizenRandomHatSolver.GetSecondCodeFromFirstCode(code, numDifferentColors);
-		}
-
 
 		[TestCase(1, 1, 1, 2, 3, 3)]
 		[TestCase(1, 2, 2, 2, 3, 3)]
