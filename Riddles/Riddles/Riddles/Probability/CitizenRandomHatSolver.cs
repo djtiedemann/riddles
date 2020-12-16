@@ -14,7 +14,7 @@ namespace Riddles.Probability
 			this._groupAssignmentGenerator = new GroupAssignmentGenerator();
 		}
 
-		public Code VerifySolution(Code code, int numPeople, int numHats)
+		public bool VerifySolution(Code code, int numPeople, int numHats)
 		{
 			var possibleCombinationsOfHats = this._groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
 				numPeople, 
@@ -25,19 +25,30 @@ namespace Riddles.Probability
 
 			foreach (var combination in possibleCombinationsOfHats)
 			{
-				var signalFromSmallerLine = new GroupAssignmentMember[numPeopleInSmallerLine];
-				var signalFromLargerLine = new GroupAssignmentMember[numPeopleInLargerLine];
+				var signalFromSmallerLineMembers = new GroupAssignmentMember[numPeopleInSmallerLine];
+				var signalFromLargerLineMembers = new GroupAssignmentMember[numPeopleInLargerLine];
 				for(int i=0; i< numPeopleInSmallerLine; i++)
 				{
-					signalFromSmallerLine[i] = new GroupAssignmentMember(combination.Assignment[i].MemberId, combination.Assignment[i].GroupId);
+					signalFromSmallerLineMembers[i] = new GroupAssignmentMember(combination.Assignment[i].MemberId, combination.Assignment[i].GroupId);
 				}
 				for(int i=0; i<numPeopleInLargerLine; i++)
 				{
-					signalFromLargerLine[i] = new GroupAssignmentMember(
+					signalFromLargerLineMembers[i] = new GroupAssignmentMember(
 						combination.Assignment[i+numPeopleInSmallerLine].MemberId, combination.Assignment[i+numPeopleInSmallerLine].GroupId);
-				}				
+				}
+				var signalFromSmallerLine = new GroupAssignment(signalFromSmallerLineMembers);
+				var signalFromLargerLine = new GroupAssignment(signalFromLargerLineMembers);
+
+				var responseFromSmallerLine = code.Code2.OneWaySignals.Single(c => c.Signal.Equals(signalFromLargerLine)).Response;
+				var responseFromLargerLine = code.Code1.OneWaySignals.Single(c => c.Signal.Equals(signalFromSmallerLine)).Response;
+
+				if(!(this.PairContainsAtLeastOneMatchingHat(signalFromSmallerLine, responseFromSmallerLine)
+					|| this.PairContainsAtLeastOneMatchingHat(signalFromLargerLine, responseFromLargerLine)))
+				{
+					return false;
+				}
 			}
-			throw new NotImplementedException("TODO");
+			return true;
 		}
 
 		// If the citizens are put in 2 lines, each which can see the other line, but not themselves, they need to determine which hats to guess

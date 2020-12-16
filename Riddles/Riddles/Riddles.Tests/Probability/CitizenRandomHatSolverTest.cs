@@ -58,6 +58,20 @@ namespace Riddles.Tests.Probability
 			{ 5, new List<int>{ 3, 1 } },
 		};
 
+		[TestCase(2, 3, 2, 3)]
+		public void TestSolution(int codeId, int numDifferentColors, int numPeopleInFirstLine, int numPeopleInSecondLine)
+		{
+			var code1 = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
+			var citizenRandomHatSolver = new CitizenRandomHatSolver();
+			var code2 = citizenRandomHatSolver.GetSecondCodeFromFirstCode(code1, numDifferentColors);
+			var code = new CitizenRandomHatSolver.Code
+			{
+				Code1 = code1,
+				Code2 = code2
+			};
+			var isCorrectCode = citizenRandomHatSolver.VerifySolution(code, (numPeopleInFirstLine + numPeopleInSecondLine), numDifferentColors);
+		}
+
 		[TestCase(2, 3)]
 		public void TestGetSecondCodeFromFirstCode(int codeId, int numDifferentColors)
 		{
