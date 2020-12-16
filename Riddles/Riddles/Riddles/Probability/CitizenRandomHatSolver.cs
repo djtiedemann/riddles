@@ -18,7 +18,8 @@ namespace Riddles.Probability
 		{
 			var possibleCombinationsOfHats = this._groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
 				numPeople, 
-				numHats);
+				numHats,
+				1);
 
 			var numPeopleInSmallerLine = code.Code1.OneWaySignals.First().Signal.Assignment.Length;
 			var numPeopleInLargerLine = code.Code2.OneWaySignals.First().Signal.Assignment.Length;
@@ -65,10 +66,12 @@ namespace Riddles.Probability
 
 			var keySetOfFirstCode = this._groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
 				numPeopleInLineSendingFirstCode,
-				numDifferentColors);
+				numDifferentColors,
+				1);
 			var keySetOfSecondCode = this._groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
 				numPeopleInLineSendingSecondCode,
-				numDifferentColors);		
+				numDifferentColors,
+				1 + numPeopleInLineSendingFirstCode);		
 
 			var signals = new List<OneWaySignal>();
 			foreach(var signal in keySetOfSecondCode)

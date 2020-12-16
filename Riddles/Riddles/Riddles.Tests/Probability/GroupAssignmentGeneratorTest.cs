@@ -17,7 +17,8 @@ namespace Riddles.Tests.Probability
 		public void TestGenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(int numMembers, int numGroups)
 		{
 			var groupAssignmentGenerator = new GroupAssignmentGenerator();
-			var groupAssignments = groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(numMembers, numGroups);
+			var groupAssignments = groupAssignmentGenerator
+				.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(numMembers, numGroups, 1);
 			Assert.AreEqual(groupAssignments.Count, Math.Pow(numGroups, numMembers));
 			var maxScore = 0;
 			// note, this only works for n < 10

@@ -90,17 +90,18 @@ namespace Riddles.Tests.Probability
 			int codeId, int signalId, int responseId, int numPeopleInFirstLine, int numPeopleInSecondLine, int numDifferentColors)
 		{
 			var code = this.CreateOneWayCodeFromTestCase(codeDictionary[codeId]);
-			var signal = this.CreateSignalFromTestCase(signalDictionary[signalId]);
+			var signal = this.CreateSignalFromTestCase(signalDictionary[signalId], numPeopleInFirstLine + 1);
 
 			var citizenRandomHatSolver = new CitizenRandomHatSolver();
 			var groupAssignmentGenerator = new GroupAssignmentGenerator();
 
 			var keySetOfFirstCode = groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
 				numPeopleInFirstLine,
-				numDifferentColors);
+				numDifferentColors,
+				1);
 
 			var response = citizenRandomHatSolver.GetResponseFromSignal(signal, code, keySetOfFirstCode);
-			var expectedResponse = this.CreateSignalFromTestCase(responseDictionary[responseId]);
+			var expectedResponse = this.CreateSignalFromTestCase(responseDictionary[responseId], 1);
 
 			if(response == null && expectedResponse == null)
 			{
@@ -116,13 +117,18 @@ namespace Riddles.Tests.Probability
 			}
 		}
 
-		private CitizenRandomHatSolver.OneWayCode CreateOneWayCodeFromTestCase(List<Tuple<List<int>, List<int>>> data)
+		private CitizenRandomHatSolver.OneWayCode CreateOneWayCodeFromTestCase(
+			List<Tuple<List<int>, 
+			List<int>>> data
+		)
 		{
 			var signals = new List<CitizenRandomHatSolver.OneWaySignal> { };
 			foreach(var tuple in data)
 			{
-				var signal = tuple.Item1.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
-				var response = tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
+				var signal = tuple.Item1.Select((group, member) => 
+					new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
+				var response = 
+					tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member + tuple.Item1.Count + 1, groupId: group)).ToArray();
 
 
 				signals.Add(new CitizenRandomHatSolver.OneWaySignal
@@ -134,9 +140,9 @@ namespace Riddles.Tests.Probability
 			return new CitizenRandomHatSolver.OneWayCode { OneWaySignals = signals };
 		}
 
-		private GroupAssignment CreateSignalFromTestCase(List<int> data)
+		private GroupAssignment CreateSignalFromTestCase(List<int> data, int minMemberId)
 		{
-			var signal = data.Select((group, member) => new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
+			var signal = data.Select((group, member) => new GroupAssignmentMember(memberId: member + minMemberId, groupId: group)).ToArray();
 			return new GroupAssignment(signal);
 		}
 	}

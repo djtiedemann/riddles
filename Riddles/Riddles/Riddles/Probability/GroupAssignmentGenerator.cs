@@ -20,7 +20,7 @@ namespace Riddles.Probability
 		/// <param name="numMembers"></param>
 		/// <param name="numGroups"></param>
 		/// <returns></returns>
-		public List<GroupAssignment> GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(int numMembers, int numGroups)
+		public List<GroupAssignment> GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(int numMembers, int numGroups, int firstMemberId)
 		{
 			if(numMembers <= 0 || numGroups <= 0)
 			{
@@ -30,7 +30,7 @@ namespace Riddles.Probability
 			var initialGroupAssignmentInternal = new GroupAssignmentMember[numMembers];
 			for(int i=0; i< initialGroupAssignmentInternal.Length; i++)
 			{
-				initialGroupAssignmentInternal[i] = new GroupAssignmentMember(i+1, 1);
+				initialGroupAssignmentInternal[i] = new GroupAssignmentMember(i+firstMemberId, 1);
 			}
 			var initialGroupAssignment = new GroupAssignment(initialGroupAssignmentInternal);
 			assignments.Add(initialGroupAssignment);
