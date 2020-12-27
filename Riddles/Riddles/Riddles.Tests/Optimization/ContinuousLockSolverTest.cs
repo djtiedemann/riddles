@@ -10,6 +10,11 @@ namespace Riddles.Tests.Optimization
 	public class ContinuousLockSolverTest
 	{
 		[TestCase(1, 1)]
+		[TestCase(1, 10)]
+		[TestCase(3, 1)]
+		[TestCase(2, 2)]
+		[TestCase(3, 2)]
+		[TestCase(3, 3)]
 		public void TestFindShortestStringContainingAllPossiblePasscodes(int lengthOfPasscode, int numDigits)
 		{
 			var continuousLockSolver = new ContinuousLockSolver();
@@ -18,6 +23,14 @@ namespace Riddles.Tests.Optimization
 			var expectedLengthOfSolution = totalNumberOfPasscodes + (lengthOfPasscode - 1);
 			Assert.AreEqual(expectedLengthOfSolution, solution.Length);
 			var areAllPasswordsUnique = this.AreAllPasscodesUnique(solution, lengthOfPasscode, totalNumberOfPasscodes);
+			Assert.IsTrue(areAllPasswordsUnique);
+		}
+
+		//[TestCase("123123", 3, 4, false)]
+		//[TestCase("112233", 2, 5, true)]
+		public void TestAreAllPasscodesUnique(string passcode, int lengthOfPasscode, int totalNumberOfPasscodes, bool expectedValue)
+		{
+			var areAllPasswordsUnique = this.AreAllPasscodesUnique(passcode, lengthOfPasscode, totalNumberOfPasscodes);
 			Assert.IsTrue(areAllPasswordsUnique);
 		}
 
