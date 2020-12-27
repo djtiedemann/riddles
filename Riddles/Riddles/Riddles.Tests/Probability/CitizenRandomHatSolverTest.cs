@@ -5,7 +5,6 @@ using System.Linq;
 using NUnit.Framework;
 using Riddles.Probability;
 using Riddles.Probability.Domain;
-
 namespace Riddles.Tests.Probability
 {
 	public class CitizenRandomHatSolverTest
@@ -85,9 +84,8 @@ namespace Riddles.Tests.Probability
 			var signal = this.CreateSignalFromTestCase(signalDictionary[signalId], numPeopleInFirstLine + 1);
 
 			var citizenRandomHatSolver = new CitizenRandomHatSolver();
-			var groupAssignmentGenerator = new GroupAssignmentGenerator();
-
-			var keySetOfFirstCode = groupAssignmentGenerator.GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(
+			
+			var keySetOfFirstCode = citizenRandomHatSolver.GenerateAllPossibleHatAssignments(
 				numPeopleInFirstLine,
 				numDifferentColors,
 				1);
@@ -104,8 +102,8 @@ namespace Riddles.Tests.Probability
 
 			for(int i=0; i< response.Assignment.Length; i++)
 			{
-				Assert.AreEqual(expectedResponse.Assignment[i].MemberId, response.Assignment[i].MemberId);
-				Assert.AreEqual(expectedResponse.Assignment[i].GroupId, response.Assignment[i].GroupId);
+				Assert.AreEqual(expectedResponse.Assignment[i].CitizenId, response.Assignment[i].CitizenId);
+				Assert.AreEqual(expectedResponse.Assignment[i].HatColor, response.Assignment[i].HatColor);
 			}
 		}
 
@@ -117,25 +115,34 @@ namespace Riddles.Tests.Probability
 			var signals = new List<CitizenRandomHatSolver.OneWaySignal> { };
 			foreach(var tuple in data)
 			{
-				var signal = tuple.Item1.Select((group, member) => 
-					new GroupAssignmentMember(memberId: member + 1, groupId: group)).ToArray();
+				var signal = tuple.Item1.Select((hatColor, citizenId) => 
+					new CitizenRandomHatSolver.IndividualAssignment { 
+						CitizenId = citizenId + 1, 
+						HatColor = (CitizenRandomHatSolver.HatColor)hatColor
+					}).ToArray();
 				var response = 
-					tuple.Item2.Select((group, member) => new GroupAssignmentMember(memberId: member + tuple.Item1.Count + 1, groupId: group)).ToArray();
+					tuple.Item2.Select((hatColor, citizenId) => new CitizenRandomHatSolver.IndividualAssignment {
+						CitizenId = citizenId + tuple.Item1.Count + 1,
+						HatColor = (CitizenRandomHatSolver.HatColor)hatColor
+					}).ToArray();
 
 
 				signals.Add(new CitizenRandomHatSolver.OneWaySignal
 				{
-					Signal = new GroupAssignment(signal),
-					Response = new GroupAssignment(response)
+					Signal = new CitizenRandomHatSolver.HatAssignment { Assignment = signal },
+					Response = new CitizenRandomHatSolver.HatAssignment { Assignment = response }
 				});
 			}
 			return new CitizenRandomHatSolver.OneWayCode { OneWaySignals = signals };
 		}
 
-		private GroupAssignment CreateSignalFromTestCase(List<int> data, int minMemberId)
+		private CitizenRandomHatSolver.HatAssignment CreateSignalFromTestCase(List<int> data, int minCitizenId)
 		{
-			var signal = data.Select((group, member) => new GroupAssignmentMember(memberId: member + minMemberId, groupId: group)).ToArray();
-			return new GroupAssignment(signal);
+			var signal = data.Select((hatColor, citizenId) => new CitizenRandomHatSolver.IndividualAssignment {
+				CitizenId = citizenId + minCitizenId,
+				HatColor = (CitizenRandomHatSolver.HatColor)hatColor
+			}).ToArray();
+			return new CitizenRandomHatSolver.HatAssignment { Assignment = signal };
 		}
 	}
 }
