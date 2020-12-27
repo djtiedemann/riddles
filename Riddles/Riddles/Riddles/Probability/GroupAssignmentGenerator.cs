@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Riddles.Probability.Domain;
+using Riddles.Probability.SetGeneration;
 
 namespace Riddles.Probability
 {
 	public class GroupAssignmentGenerator
 	{
+		private PasscodeGenerator _passcodeGenerator;
 		public GroupAssignmentGenerator()
 		{
-
+			this._passcodeGenerator = new PasscodeGenerator();
 		}
 
 		/// <summary>
@@ -22,58 +24,13 @@ namespace Riddles.Probability
 		/// <returns></returns>
 		public List<GroupAssignment> GenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(int numMembers, int numGroups, int firstMemberId)
 		{
-			if(numMembers <= 0 || numGroups <= 0)
-			{
-				return null;
-			}
-			List<GroupAssignment> assignments = new List<GroupAssignment>();
-			var initialGroupAssignmentInternal = new GroupAssignmentMember[numMembers];
-			for(int i=0; i< initialGroupAssignmentInternal.Length; i++)
-			{
-				initialGroupAssignmentInternal[i] = new GroupAssignmentMember(i+firstMemberId, 1);
-			}
-			var initialGroupAssignment = new GroupAssignment(initialGroupAssignmentInternal);
-			assignments.Add(initialGroupAssignment);
-			var currentAssignment = initialGroupAssignment;
-			while (currentAssignment != null)
-			{
-				currentAssignment = this.GenerateNextGroupAssignment(currentAssignment, numMembers, numGroups);
-				if(currentAssignment != null)
-				{
-					assignments.Add(currentAssignment);
-				}
-			}
-			return assignments;
-		}
+			var passcodes = this._passcodeGenerator.GenerateAllPasscodes(numMembers, numGroups, '1');
 
-		private GroupAssignment GenerateNextGroupAssignment(GroupAssignment currentAssignment, int numMembers, int numGroups)
-		{
-			var currentAssignmentInternal = currentAssignment.Assignment.ToArray();
-			// this is the last assignment if all members are assigned to the last group
-			if(currentAssignmentInternal.All(a => a.GroupId == numGroups))
+			return passcodes.Select(p =>
 			{
-				return null;
-			}
-			var nextAssignment = new GroupAssignmentMember[numMembers];
-			// first start by copying over the group assignment
-			for (int i=0; i<currentAssignmentInternal.Length; i++)
-			{
-				nextAssignment[i] = new GroupAssignmentMember(currentAssignmentInternal[i].MemberId, currentAssignmentInternal[i].GroupId);
-			}
-
-			for(int i=nextAssignment.Length - 1; i>=0; i--)
-			{
-				if(nextAssignment[i].GroupId != numGroups)
-				{
-					nextAssignment[i].GroupId++;
-					for(int j=i+1; j<nextAssignment.Length; j++)
-					{
-						nextAssignment[j].GroupId = 1;
-					}
-					break;
-				}
-			}
-			return new GroupAssignment(nextAssignment);
+				var groupAssignmentMembers = p.Select((character, index) => new GroupAssignmentMember(index + firstMemberId, (character - '1') + 1)).ToArray();
+				return new GroupAssignment(groupAssignmentMembers);
+			}).ToList();
 		}
 	}	
 }

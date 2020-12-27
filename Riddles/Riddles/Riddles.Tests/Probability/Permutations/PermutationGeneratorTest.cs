@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using NUnit.Framework;
-using Riddles.Probability.Permutations;
+using Riddles.Probability.SetGeneration;
 
 namespace Riddles.Tests.Probability.Permutations
 {

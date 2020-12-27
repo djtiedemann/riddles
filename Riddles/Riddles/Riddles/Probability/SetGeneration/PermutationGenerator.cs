@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using Riddles.Probability.Domain;
 
-namespace Riddles.Probability.Permutations
+namespace Riddles.Probability.SetGeneration
 {
 	public class PermutationGenerator
 	{
