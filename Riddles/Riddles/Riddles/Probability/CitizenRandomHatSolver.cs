@@ -9,11 +9,9 @@ namespace Riddles.Probability
 {
 	public class CitizenRandomHatSolver
 	{
-		private GroupAssignmentGenerator _groupAssignmentGenerator;
 		private PasscodeGenerator _passcodeGenerator;
 		public CitizenRandomHatSolver()
 		{
-			this._groupAssignmentGenerator = new GroupAssignmentGenerator();
 			this._passcodeGenerator = new PasscodeGenerator();
 		}
 
