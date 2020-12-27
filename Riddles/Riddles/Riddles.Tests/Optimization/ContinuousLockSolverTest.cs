@@ -15,6 +15,9 @@ namespace Riddles.Tests.Optimization
 		[TestCase(2, 2)]
 		[TestCase(3, 2)]
 		[TestCase(3, 3)]
+		[TestCase(2, 10)]
+		[TestCase(3, 10)]
+		[TestCase(4, 10)]
 		public void TestFindShortestStringContainingAllPossiblePasscodes(int lengthOfPasscode, int numDigits)
 		{
 			var continuousLockSolver = new ContinuousLockSolver();
