@@ -10,8 +10,8 @@ namespace Riddles.Tests.Optimization
 	public class ContinuousLockSolverTest
 	{
 		[TestCase(1, 1)]
-		[TestCase(1, 10)]
 		[TestCase(3, 1)]
+		[TestCase(1, 10)]		
 		[TestCase(2, 2)]
 		[TestCase(3, 2)]
 		[TestCase(3, 3)]

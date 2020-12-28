@@ -8,6 +8,8 @@ namespace Riddles.Optimization
 {
 	public class ContinuousLockSolver
 	{
+		private const char FirstCharacterToProcess = '0';
+
 		private PasscodeGenerator _passcodeGenerator;
 		// problem: https://fivethirtyeight.com/features/what-are-the-odds-world-cup-teams-play-each-other-twice/
 		// answer: https://fivethirtyeight.com/features/how-fast-can-you-deliver-pbjs-how-many-meerkats-can-survive/
@@ -18,67 +20,118 @@ namespace Riddles.Optimization
 
 		public string FindShortestStringContainingAllPossiblePasscodes(int lengthOfPasscode, int numDigitsOnPadlock)
 		{
-			var allPossiblePasscodes = this._passcodeGenerator.GenerateAllPasscodes(lengthOfPasscode, numDigitsOnPadlock, '0');
-			var digitsOnPadlock = Enumerable.Range(0, numDigitsOnPadlock).Select(digit => (char)('0' + digit)).ToList();
-			var totalNumberOfPasscodes = (int)Math.Pow(numDigitsOnPadlock, lengthOfPasscode);
-
-			var passcodesHashSet = allPossiblePasscodes.ToHashSet();
-			foreach(var startingPasscode in allPossiblePasscodes)
+			var allPossiblePasscodes = this._passcodeGenerator.GenerateAllPasscodes(lengthOfPasscode, numDigitsOnPadlock, FirstCharacterToProcess);
+			var digitsOnPadlock = Enumerable.Range(0, numDigitsOnPadlock).Select(digit => (char)(FirstCharacterToProcess + digit)).ToArray();
+			Dictionary<char, char?> nextDigitToProcess = new Dictionary<char, char?>();
+			for(int i=0; i<numDigitsOnPadlock; i++)
 			{
-				passcodesHashSet.Remove(startingPasscode);
+				nextDigitToProcess[digitsOnPadlock[i]] = i < numDigitsOnPadlock - 1 ? digitsOnPadlock[i + 1] : (char?)null;
+			}
 
-				var shortestStringContainingAllPossiblePasscodesInternal = this.FindShortestStringContainingAllPossiblePasscodesInternal(
-					currentString: startingPasscode,
-					passcodesRemaining: passcodesHashSet,
-					lengthOfPasscode: lengthOfPasscode,
-					digitsOnPadlock: digitsOnPadlock,
-					numPasscodesFound: 1,
-					totalNumberOfPasscodes: totalNumberOfPasscodes
-					);
-				if(shortestStringContainingAllPossiblePasscodesInternal != null)
+			var totalNumberOfPasscodes = (int)Math.Pow(numDigitsOnPadlock, lengthOfPasscode);
+			
+			foreach (var startingPasscode in allPossiblePasscodes)
+			{
+				var passcodesHashSet = allPossiblePasscodes.ToHashSet();
+				passcodesHashSet.Remove(startingPasscode);
+				var currentPasscodeString = startingPasscode;
+
+				var stateToProcess = new CalculationState
 				{
-					return shortestStringContainingAllPossiblePasscodesInternal;
+					CurrentString = currentPasscodeString,
+					RemainingPasscodes = passcodesHashSet,
+					NumPasscodesRemaining = totalNumberOfPasscodes - 1
+				};
+
+				while (stateToProcess != null && !stateToProcess.IsTerminalState)
+				{
+					stateToProcess = this.GetNextStateToProcess(stateToProcess, lengthOfPasscode, digitsOnPadlock, nextDigitToProcess);
 				}
-				passcodesHashSet.Add(startingPasscode);
+				if (stateToProcess.IsTerminalState)
+				{
+					return stateToProcess.CurrentString;
+				}
 			}
 			return null;
 		}
 
-		private string FindShortestStringContainingAllPossiblePasscodesInternal(
-			string currentString, 
-			HashSet<string> passcodesRemaining, 
-			int lengthOfPasscode,
-			List<char> digitsOnPadlock,
-			int numPasscodesFound,
-			int totalNumberOfPasscodes)
+		private CalculationState GetNextStateToProcess(CalculationState currentState, 
+			int lengthOfPasscode, 
+			char[] digitsOnPadlock,
+			Dictionary<char, char?> nextDigitToProcess)
 		{
-			if(numPasscodesFound == totalNumberOfPasscodes)
-			{
-				return currentString;
-			}
-
+			// first see if it's possible to continue with this state
 			foreach(var digit in digitsOnPadlock)
 			{
-				var nextPassword = $"{currentString.Substring(currentString.Length - lengthOfPasscode + 1)}{digit}";
-				if (passcodesRemaining.Contains(nextPassword))
+				var nextPasscodeAdded = $"{currentState.CurrentString.Substring(currentState.CurrentString.Length - lengthOfPasscode + 1)}{digit}";
+				if (currentState.RemainingPasscodes.Contains(nextPasscodeAdded))
 				{
-					passcodesRemaining.Remove(nextPassword);
-					var solution = this.FindShortestStringContainingAllPossiblePasscodesInternal(
-						currentString: $"{currentString}{digit}",
-						passcodesRemaining: passcodesRemaining,
-						lengthOfPasscode: lengthOfPasscode,
-						digitsOnPadlock: digitsOnPadlock,
-						numPasscodesFound: numPasscodesFound + 1,
-						totalNumberOfPasscodes: totalNumberOfPasscodes
-					);
-					if(solution != null)
-					{
-						return solution;
-					}
-					passcodesRemaining.Add(nextPassword);
+					var newRemainingPasscodes = currentState.RemainingPasscodes;
+					newRemainingPasscodes.Remove(nextPasscodeAdded);
+					var newPasscodeString = $"{currentState.CurrentString}{digit}";
+					return new CalculationState { 
+						CurrentString = newPasscodeString,
+						RemainingPasscodes = newRemainingPasscodes,
+						NumPasscodesRemaining = currentState.NumPasscodesRemaining - 1
+					};
 				}
 			}
-			return null;
+
+			// if it's not possible to continue with the current state, go back until we find a state where can continue
+			bool canContinueWithCurrentState = false;
+			var updatedPasscodeStringForNextState = currentState.CurrentString;
+			var updatedRemainingPasscodes = currentState.RemainingPasscodes;
+			var updatedNumPasscodesRemaining = currentState.NumPasscodesRemaining;
+			while (true)
+			{
+				var lastPasscodeAdded = updatedPasscodeStringForNextState.Substring(updatedPasscodeStringForNextState.Length - lengthOfPasscode);
+				var lastDigitAdded = lastPasscodeAdded[lastPasscodeAdded.Length - 1];
+
+				// remove the most recent digit added to the string because it was incorrect
+				updatedRemainingPasscodes.Add(lastPasscodeAdded);				
+				updatedPasscodeStringForNextState = updatedPasscodeStringForNextState.Substring(0, updatedPasscodeStringForNextState.Length - 1);
+				updatedNumPasscodesRemaining += 1;
+
+				// try each digit we haven't tried before. If we reach a branch that could be correct, add that digit and continue processing
+				var nextDigit = nextDigitToProcess[lastDigitAdded];
+				while (nextDigit != null)
+				{
+					var nextPasscodeAdded = 
+						$"{updatedPasscodeStringForNextState.Substring(updatedPasscodeStringForNextState.Length - lengthOfPasscode + 1)}{nextDigit}";
+					if (updatedRemainingPasscodes.Contains(nextPasscodeAdded))
+					{
+						updatedRemainingPasscodes.Remove(nextPasscodeAdded);
+						updatedPasscodeStringForNextState = $"{updatedPasscodeStringForNextState}{nextDigit}";
+						updatedNumPasscodesRemaining -= 1;
+						return new CalculationState
+						{
+							CurrentString = updatedPasscodeStringForNextState,
+							RemainingPasscodes = updatedRemainingPasscodes,
+							NumPasscodesRemaining = updatedNumPasscodesRemaining
+						};
+					}
+					nextDigit = nextDigitToProcess[nextDigit.Value];
+				}
+
+				// if no digits are valid, we'll need to remove the previous digit as well
+				// first check if we've exhausted the current initial password. If so, return null and try another
+				if(updatedPasscodeStringForNextState.Length <= lengthOfPasscode)
+				{
+					return null;
+				}
+			}
+		}
+
+		private class CalculationState
+		{
+			public string CurrentString	{ get; set; }		
+			public HashSet<string> RemainingPasscodes { get; set; }
+			public int NumPasscodesRemaining { get; set; }
+
+			public bool IsTerminalState
+			{
+				get { return this.NumPasscodesRemaining == 0; }
+			}
 		}
 	}
 }
