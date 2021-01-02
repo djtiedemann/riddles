@@ -16,22 +16,172 @@ namespace Riddles.Poker.Domain
 		public List<Card> IndividualCards { get;  }
 		public List<Card> CommunityCards { get; }
 
-		public class TexasHoldemScore
+		public class TexasHoldemScore : IComparable
 		{
+			public int HighCardScore { get; }
+			public int SinglePairScore { get; }
+			public int TwoPairsScore { get; }
+			public int ThreeOfAKindScore { get; }
+			public int StraightScore { get; }
+			public int FlushScore { get; }
+			public int FullHouseScore { get; }
+			public int FourOfAKindScore { get; }
+			public int StraightFlushScore { get; }
+
 			public TexasHoldemScore(List<Card> hand)
 			{
 				if(hand.Count != 5)
 				{
 					throw new InvalidOperationException("Can't score a hand that doesn't contain exactly 5 cards");
 				}
+				this.StraightFlushScore = this.CalculateStraightFlushScore(hand);
+				if(this.StraightFlushScore > 0)
+				{
+					return;
+				}
+				this.FourOfAKindScore = this.CalculateFourOfAKindScore(hand);
+				if(this.FourOfAKindScore > 0)
+				{
+					return;
+				}
+				this.FullHouseScore = this.CalculateFullHouseScore(hand);
+				if(this.FullHouseScore > 0)
+				{
+					return;
+				}
+				this.FlushScore = this.CalculateFlushScore(hand);
+				if(this.FlushScore > 0)
+				{
+					return;
+				}
+				this.StraightScore = this.CalculateStraightScore(hand);
+				if(this.StraightScore > 0)
+				{
+					return;
+				}
+				this.ThreeOfAKindScore = this.CalculateThreeOfAKindScore(hand);
+				if(this.ThreeOfAKindScore > 0)
+				{
+					return;
+				}
+				this.TwoPairsScore = this.CalculateTwoPairsScore(hand);
+				if(this.TwoPairsScore > 0)
+				{
+					return;
+				}
+				this.SinglePairScore = this.CalculateSinglePairScore(hand);
+				if(this.SinglePairScore > 0)
+				{
+					return;
+				}
+				this.HighCardScore = this.CalculateHighCardScore(hand);
 			}
 
-			public int CalculateHighCardScore(List<Card> hand)
+			public int CompareTo(object? obj)
+			{
+				if(obj == null || !(obj is TexasHoldemScore))
+				{
+					return 0;
+				}
+				var otherScore = (TexasHoldemScore)obj;
+				// check if one hand has a higher straight flush, or they are the same straight flush
+				var straightFlushCompairson = this.StraightFlushScore > otherScore.StraightFlushScore
+					? 1
+					: this.StraightFlushScore < otherScore.StraightFlushScore
+						? -1
+						: this.StraightFlushScore > 0
+							? 0
+							: (int?)null;
+				if (straightFlushCompairson.HasValue) { return straightFlushCompairson.Value;  }
+
+				// check if one hand has a higher four of a kind hand, or they are the same four of a kind hand
+				var fourOfAKindComparison = this.FourOfAKindScore > otherScore.FourOfAKindScore
+					? 1
+					: this.FourOfAKindScore < otherScore.FourOfAKindScore
+						? -1
+						: this.FourOfAKindScore > 0
+							? 0
+							: (int?)null;
+				if (fourOfAKindComparison.HasValue) { return fourOfAKindComparison.Value; }
+
+				// check if one hand has a higher full house, or if they are the same full house
+				var fullHouseComparison = this.FullHouseScore > otherScore.FullHouseScore
+					? 1
+					: this.FullHouseScore < otherScore.FullHouseScore
+						? -1
+						: this.FullHouseScore > 0
+							? 0
+							: (int?)null;
+				if (fullHouseComparison.HasValue) { return fullHouseComparison.Value; }
+
+				// check if one hand has a higher flush, or if they are the same flush
+				var flushComparison = this.FlushScore > otherScore.FlushScore
+					? 1
+					: this.FlushScore < otherScore.FlushScore
+						? -1
+						: this.FlushScore > 0
+							? 0
+							: (int?)null;
+				if (flushComparison.HasValue) { return flushComparison.Value; }
+
+				// check if one hand has a higher straight, or if they are the same straight
+				var straightComparison = this.StraightScore > otherScore.StraightScore
+					? 1
+					: this.StraightScore < otherScore.StraightScore
+						? -1
+						: this.StraightScore > 0
+							? 0
+							: (int?)null;
+				if (straightComparison.HasValue) { return straightComparison.Value; }
+
+				// check if one hand has a higher three of a kind, or if they are the same three of a kind
+				var threeOfAKindComparison = this.ThreeOfAKindScore > otherScore.ThreeOfAKindScore
+					? 1
+					: this.ThreeOfAKindScore < otherScore.ThreeOfAKindScore
+						? -1
+						: this.ThreeOfAKindScore > 0
+							? 0
+							: (int?)null;
+				if (threeOfAKindComparison.HasValue) { return threeOfAKindComparison.Value; }
+
+				// check if one hand has a higher two pairs, or if they are the same two pairs
+				var twoPairsComparison = this.TwoPairsScore > otherScore.TwoPairsScore
+					? 1
+					: this.TwoPairsScore < otherScore.TwoPairsScore
+						? -1
+						: this.TwoPairsScore > 0
+							? 0
+							: (int?)null;
+				if (twoPairsComparison.HasValue) { return twoPairsComparison.Value; }
+
+				// check if one hand has a pair, or if they are the same pair
+				var singlePairComparison = this.SinglePairScore > otherScore.SinglePairScore
+					? 1
+					: this.SinglePairScore < otherScore.SinglePairScore
+						? -1
+						: this.SinglePairScore > 0
+							? 0
+							: (int?)null;
+				if (singlePairComparison.HasValue) { return singlePairComparison.Value; }
+
+				// check if one hand has a higher high card, or if they are the same high card
+				var highCardComparison = this.HighCardScore > otherScore.HighCardScore
+					? 1
+					: this.HighCardScore < otherScore.HighCardScore
+						? -1
+						: this.HighCardScore > 0
+							? 0
+							: (int?)null;
+				if (highCardComparison.HasValue) { return highCardComparison.Value; }
+				throw new InvalidOperationException("All scores for a hand shouldn't be zero");
+			}
+
+			private int CalculateHighCardScore(List<Card> hand)
 			{
 				return int.Parse(hand.OrderByDescending(c => c.Value).Aggregate("", (agg, c) => $"{agg}{c.Value.ToString().PadLeft(2)}"));
 			}
 
-			public int CalculateSinglePairScore(List<Card> hand)
+			private int CalculateSinglePairScore(List<Card> hand)
 			{
 				var pairs = hand.GroupBy(h => h.Value).Where(g => g.Count() == 2).ToList();
 				var kickers = hand.GroupBy(h => h.Value).Where(g => g.Count() == 1).ToList();
@@ -47,7 +197,7 @@ namespace Riddles.Poker.Domain
 				return int.Parse(score);
 			}
 
-			public int CalculateTwoPairsScore(List<Card> hand)
+			private int CalculateTwoPairsScore(List<Card> hand)
 			{
 				var pairs = hand.GroupBy(h => h.Value).Where(g => g.Count() == 2).ToList();
 				var kickers = hand.GroupBy(h => h.Value).Where(g => g.Count() == 1).ToList();
@@ -62,7 +212,7 @@ namespace Riddles.Poker.Domain
 				return int.Parse(score);
 			}
 
-			public int CalculateThreeOfAKindScore(List<Card> hand)
+			private int CalculateThreeOfAKindScore(List<Card> hand)
 			{
 				var sets = hand.GroupBy(h => h.Value).Where(g => g.Count() == 3).ToList();
 				var kickers = hand.GroupBy(h => h.Value).Where(g => g.Count() == 1).ToList();
@@ -77,7 +227,7 @@ namespace Riddles.Poker.Domain
 				return int.Parse(score);
 			}
 
-			public int CalculateStraightScore(List<Card> hand)
+			private int CalculateStraightScore(List<Card> hand)
 			{
 				var cards = hand.OrderBy(c => c.Value).ToArray();
 				for(int i=1; i<hand.Count(); i++)
@@ -97,7 +247,7 @@ namespace Riddles.Poker.Domain
 				return (int)cards.Max(c => c.Value);
 			}
 
-			public int CalculateFlushScore(List<Card> hand)
+			private int CalculateFlushScore(List<Card> hand)
 			{
 				// if not all cards have the same suit, this isn't a flush
 				if(hand.GroupBy(c => c.Suit).Count() != 1)
@@ -107,7 +257,7 @@ namespace Riddles.Poker.Domain
 				return int.Parse(hand.OrderByDescending(c => c.Value).Aggregate("", (agg, c) => $"{agg}{c.Value.ToString().PadLeft(2)}"));
 			}
 
-			public int CalculateFullHouseScore(List<Card> hand)
+			private int CalculateFullHouseScore(List<Card> hand)
 			{
 				var sets = hand.GroupBy(h => h.Value).Where(g => g.Count() == 3).ToList();
 				var pairs = hand.GroupBy(h => h.Value).Where(g => g.Count() == 2).ToList();
@@ -122,7 +272,7 @@ namespace Riddles.Poker.Domain
 				return int.Parse(score);
 			}
 
-			public int CalculateFourOfAKindScore(List<Card> hand)
+			private int CalculateFourOfAKindScore(List<Card> hand)
 			{
 				var fourOfAKinds = hand.GroupBy(h => h.Value).Where(g => g.Count() == 4).ToList();
 				var kickers = hand.GroupBy(h => h.Value).Where(g => g.Count() == 1).ToList();
@@ -137,7 +287,7 @@ namespace Riddles.Poker.Domain
 				return int.Parse(score);
 			}
 
-			public int CalculateStraightFlushScore(List<Card> hand)
+			private int CalculateStraightFlushScore(List<Card> hand)
 			{
 				// if not all cards have the same suit, this isn't a straight flush
 				if (hand.GroupBy(c => c.Suit).Count() != 1)
@@ -163,7 +313,7 @@ namespace Riddles.Poker.Domain
 				return (int)cards.Max(c => c.Value);
 			}
 
-			public int CalculateRoyalFlushScore(List<Card> hand)
+			private int CalculateRoyalFlushScore(List<Card> hand)
 			{
 				// if not all cards have the same suit, this isn't a royal flush
 				if (hand.GroupBy(c => c.Suit).Count() != 1)
