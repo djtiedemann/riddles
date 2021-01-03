@@ -28,6 +28,8 @@ namespace Riddles.Poker.Domain
 			public int FourOfAKindScore { get; }
 			public int StraightFlushScore { get; }
 
+			public HandType HandType { get; }
+
 			public TexasHoldemScore(List<Card> hand)
 			{
 				if(hand.Count != 5)
@@ -37,43 +39,52 @@ namespace Riddles.Poker.Domain
 				this.StraightFlushScore = this.CalculateStraightFlushScore(hand);
 				if(this.StraightFlushScore > 0)
 				{
+					this.HandType = HandType.StraightFlush;
 					return;
 				}
 				this.FourOfAKindScore = this.CalculateFourOfAKindScore(hand);
 				if(this.FourOfAKindScore > 0)
 				{
+					this.HandType = HandType.FourOfAKind;
 					return;
 				}
 				this.FullHouseScore = this.CalculateFullHouseScore(hand);
 				if(this.FullHouseScore > 0)
 				{
+					this.HandType = HandType.FullHouse;
 					return;
 				}
 				this.FlushScore = this.CalculateFlushScore(hand);
 				if(this.FlushScore > 0)
 				{
+					this.HandType = HandType.Flush;
 					return;
 				}
 				this.StraightScore = this.CalculateStraightScore(hand);
 				if(this.StraightScore > 0)
 				{
+					this.HandType = HandType.Straight;
 					return;
 				}
 				this.ThreeOfAKindScore = this.CalculateThreeOfAKindScore(hand);
 				if(this.ThreeOfAKindScore > 0)
 				{
+					this.HandType = HandType.ThreeOfAKind;
 					return;
 				}
 				this.TwoPairsScore = this.CalculateTwoPairsScore(hand);
 				if(this.TwoPairsScore > 0)
 				{
+					this.HandType = HandType.TwoPairs;
 					return;
 				}
 				this.SinglePairScore = this.CalculateSinglePairScore(hand);
 				if(this.SinglePairScore > 0)
 				{
+					this.HandType = HandType.Pair;
 					return;
 				}
+				this.HandType = HandType.HighCard;
 				this.HighCardScore = this.CalculateHighCardScore(hand);
 			}
 
@@ -178,7 +189,7 @@ namespace Riddles.Poker.Domain
 
 			private int CalculateHighCardScore(List<Card> hand)
 			{
-				return int.Parse(hand.OrderByDescending(c => c.Value).Aggregate("", (agg, c) => $"{agg}{c.Value.ToString().PadLeft(2)}"));
+				return int.Parse(hand.OrderByDescending(c => c.Value).Aggregate("", (agg, c) => $"{agg}{((int)c.Value).ToString().PadLeft(2, '0')}"));
 			}
 
 			private int CalculateSinglePairScore(List<Card> hand)
@@ -191,8 +202,8 @@ namespace Riddles.Poker.Domain
 					return 0;
 				}
 
-				var pairScore = pairs.Single().Key.ToString().PadLeft(2);
-				var kickerScore = kickers.OrderByDescending(k => k.Key).Aggregate("", (agg, v) => $"{agg}{v.ToString().PadLeft(2)}");
+				var pairScore = ((int)pairs.Single().Key).ToString().PadLeft(2, '0');
+				var kickerScore = kickers.OrderByDescending(k => k.Key).Aggregate("", (agg, c) => $"{agg}{((int)c.Key).ToString().PadLeft(2, '0')}");
 				var score = $"{pairScore}{kickerScore}";
 				return int.Parse(score);
 			}
@@ -206,8 +217,8 @@ namespace Riddles.Poker.Domain
 				{
 					return 0;
 				}
-				var pairScore = pairs.OrderByDescending(p => p.Key).Aggregate("", (agg, v) => $"{agg}{v.ToString().PadLeft(2)}");
-				var kickerScore = kickers.Single().Key.ToString().PadLeft(2);
+				var pairScore = pairs.OrderByDescending(p => p.Key).Aggregate("", (agg, v) => $"{agg}{v.ToString().PadLeft(2, '0')}");
+				var kickerScore = kickers.Single().Key.ToString().PadLeft(2, '0');
 				var score = $"{pairScore}{kickerScore}";
 				return int.Parse(score);
 			}
@@ -221,8 +232,8 @@ namespace Riddles.Poker.Domain
 				{
 					return 0;
 				}
-				var setScore = sets.Single().Key.ToString().PadLeft(2);
-				var kickerScore = kickers.OrderByDescending(k => k.Key).Aggregate("", (agg, v) => $"{agg}{v.ToString().PadLeft(2)}");
+				var setScore = sets.Single().Key.ToString().PadLeft(2, '0');
+				var kickerScore = kickers.OrderByDescending(k => k.Key).Aggregate("", (agg, v) => $"{agg}{v.ToString().PadLeft(2, '0')}");
 				var score = $"{setScore}{kickerScore}";
 				return int.Parse(score);
 			}
@@ -254,7 +265,7 @@ namespace Riddles.Poker.Domain
 				{
 					return 0;
 				}
-				return int.Parse(hand.OrderByDescending(c => c.Value).Aggregate("", (agg, c) => $"{agg}{c.Value.ToString().PadLeft(2)}"));
+				return int.Parse(hand.OrderByDescending(c => c.Value).Aggregate("", (agg, c) => $"{agg}{((int)c.Value).ToString().PadLeft(2, '0')}"));
 			}
 
 			private int CalculateFullHouseScore(List<Card> hand)
@@ -266,8 +277,8 @@ namespace Riddles.Poker.Domain
 				{
 					return 0;
 				}
-				var setScore = sets.Single().Key.ToString().PadLeft(2);
-				var pairsScore = pairs.Single().Key.ToString().PadLeft(2);
+				var setScore = sets.Single().Key.ToString().PadLeft(2, '0');
+				var pairsScore = pairs.Single().Key.ToString().PadLeft(2, '0');
 				var score = $"{setScore}{pairsScore}";
 				return int.Parse(score);
 			}
@@ -281,8 +292,8 @@ namespace Riddles.Poker.Domain
 				{
 					return 0;
 				}
-				var fourOfAKindScore = fourOfAKinds.Single().Key.ToString().PadLeft(2);
-				var kickersScore = kickers.Single().Key.ToString().PadLeft(2);
+				var fourOfAKindScore = fourOfAKinds.Single().Key.ToString().PadLeft(2, '0');
+				var kickersScore = kickers.Single().Key.ToString().PadLeft(2, '0');
 				var score = $"{fourOfAKindScore}{kickersScore}";
 				return int.Parse(score);
 			}

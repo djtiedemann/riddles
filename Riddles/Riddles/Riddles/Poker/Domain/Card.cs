@@ -9,7 +9,7 @@ namespace Riddles.Poker.Domain
 		private Suit _suit;
 		private Value _value;
 
-		public Card(Suit suit, Value value)
+		public Card(Value value, Suit suit)
 		{
 			this._suit = suit;
 			this._value = value;
