@@ -73,6 +73,114 @@ namespace Riddles.Tests.Poker
 			new Card(Value.Six, Suit.Hearts),
 		};
 
+		private const int fourSixesId = 8;
+		private static List<Card> fourSixes = new List<Card> {
+			new Card(Value.Six, Suit.Hearts),
+			new Card(Value.Six, Suit.Spades),
+			new Card(Value.Six, Suit.Diamonds),
+			new Card(Value.Jack, Suit.Hearts),
+			new Card(Value.Six, Suit.Clubs),
+		};
+
+		private const int fourJacksId = 9;
+		private static List<Card> fourJacks = new List<Card> {
+			new Card(Value.Jack, Suit.Hearts),
+			new Card(Value.Jack, Suit.Spades),
+			new Card(Value.Jack, Suit.Diamonds),
+			new Card(Value.Six, Suit.Hearts),
+			new Card(Value.Jack, Suit.Clubs),
+		};
+
+		private const int fullHouseQueensFoursId = 10;
+		private static List<Card> fullHouseQueensFours = new List<Card> {
+			new Card(Value.Queen, Suit.Hearts),
+			new Card(Value.Four, Suit.Spades),
+			new Card(Value.Four, Suit.Diamonds),
+			new Card(Value.Queen, Suit.Spades),
+			new Card(Value.Queen, Suit.Diamonds),
+		};
+
+		private const int fullHouseFoursQueensId = 11;
+		private static List<Card> fullHouseFoursQueens = new List<Card> {
+			new Card(Value.Queen, Suit.Hearts),
+			new Card(Value.Queen, Suit.Clubs),
+			new Card(Value.Four, Suit.Diamonds),
+			new Card(Value.Four, Suit.Spades),
+			new Card(Value.Four, Suit.Clubs),
+		};
+
+		private const int threeOfAKind8s2KId = 12;
+		private static List<Card> threeOfAKind8s2K = new List<Card> {
+			new Card(Value.Eight, Suit.Hearts),
+			new Card(Value.King, Suit.Hearts),
+			new Card(Value.Eight, Suit.Diamonds),
+			new Card(Value.Two, Suit.Spades),
+			new Card(Value.Eight, Suit.Clubs),
+		};
+
+		private const int threeOfAKind8s79Id = 13;
+		private static List<Card> threeOfAKind8s79 = new List<Card> {
+			new Card(Value.Eight, Suit.Hearts),
+			new Card(Value.Eight, Suit.Clubs),
+			new Card(Value.Seven, Suit.Diamonds),
+			new Card(Value.Eight, Suit.Spades),
+			new Card(Value.Nine, Suit.Diamonds),
+		};
+
+		private const int twoPairsJKId = 14;
+		private static List<Card> twoPairsJK = new List<Card> {
+			new Card(Value.Jack, Suit.Hearts),
+			new Card(Value.King, Suit.Clubs),
+			new Card(Value.King, Suit.Diamonds),
+			new Card(Value.Jack, Suit.Spades),
+			new Card(Value.Two, Suit.Diamonds),
+		};
+
+		private const int twoPairsJ2Id = 15;
+		private static List<Card> twoPairsJ2 = new List<Card> {
+			new Card(Value.Jack, Suit.Hearts),
+			new Card(Value.Two, Suit.Clubs),
+			new Card(Value.Two, Suit.Diamonds),
+			new Card(Value.Jack, Suit.Spades),
+			new Card(Value.King, Suit.Diamonds),
+		};
+
+		private const int pair5sWith29AId = 16;
+		private static List<Card> pair5sWith29A = new List<Card> {
+			new Card(Value.Five, Suit.Hearts),
+			new Card(Value.Five, Suit.Clubs),
+			new Card(Value.Two, Suit.Diamonds),
+			new Card(Value.Ace, Suit.Spades),
+			new Card(Value.Nine, Suit.Diamonds),
+		};
+
+		private const int pair4sWith37KId = 17;
+		private static List<Card> pair4sWith37K = new List<Card> {
+			new Card(Value.King, Suit.Hearts),
+			new Card(Value.Seven, Suit.Clubs),
+			new Card(Value.Three, Suit.Diamonds),
+			new Card(Value.Four, Suit.Spades),
+			new Card(Value.Four, Suit.Diamonds),
+		};
+
+		private const int highCard79JQAhandId = 18;
+		private static List<Card> highCard79JQAhand = new List<Card> {
+			new Card(Value.Jack, Suit.Hearts),
+			new Card(Value.Ace, Suit.Clubs),
+			new Card(Value.Seven, Suit.Clubs),
+			new Card(Value.Nine, Suit.Spades),
+			new Card(Value.Queen, Suit.Clubs),
+		};
+
+		private const int highCard48JKAhandId = 19;
+		private static List<Card> highCard48JKAhand = new List<Card> {
+			new Card(Value.King, Suit.Spades),
+			new Card(Value.Ace, Suit.Spades),
+			new Card(Value.Eight, Suit.Spades),
+			new Card(Value.Four, Suit.Spades),
+			new Card(Value.Jack, Suit.Diamonds),
+		};
+
 		private Dictionary<int, List<Card>> testCaseDictionary = new Dictionary<int, List<Card>>
 		{
 			{ royalFlushClubsId, royalFlushClubs },
@@ -81,7 +189,19 @@ namespace Riddles.Tests.Poker
 			{ straight_9HighId, straight_9High },
 			{ straightAHighId, straightAHigh },
 			{ flushAHighId, flushAHigh },
-			{ flushJHighId, flushJHigh }
+			{ flushJHighId, flushJHigh },
+			{ fourSixesId, fourSixes },
+			{ fourJacksId, fourJacks },
+			{ fullHouseQueensFoursId, fullHouseQueensFours },
+			{ fullHouseFoursQueensId, fullHouseFoursQueens },
+			{ threeOfAKind8s2KId, threeOfAKind8s2K },
+			{ threeOfAKind8s79Id, threeOfAKind8s79 },
+			{ twoPairsJKId, twoPairsJK },
+			{ twoPairsJ2Id, twoPairsJ2 },
+			{ pair5sWith29AId, pair5sWith29A },
+			{ pair4sWith37KId, pair4sWith37K },
+			{ highCard79JQAhandId, highCard79JQAhand },
+			{ highCard48JKAhandId, highCard48JKAhand },
 		};
 		#endregion
 
@@ -103,38 +223,24 @@ namespace Riddles.Tests.Poker
 		[TestCase(straightAHighId, HandType.Straight, 14)]
 		[TestCase(flushAHighId, HandType.Flush, 1413110603)]
 		[TestCase(flushJHighId, HandType.Flush, 1108060302)]
+		[TestCase(fourSixesId, HandType.FourOfAKind, 611)]
+		[TestCase(fourJacksId, HandType.FourOfAKind, 1106)]
+		[TestCase(fullHouseQueensFoursId, HandType.FullHouse, 1204)]
+		[TestCase(fullHouseFoursQueensId, HandType.FullHouse, 412)]
+		[TestCase(threeOfAKind8s2KId, HandType.ThreeOfAKind, 81302)]
+		[TestCase(threeOfAKind8s79Id, HandType.ThreeOfAKind, 80907)]
+		[TestCase(twoPairsJKId, HandType.TwoPairs, 131102)]
+		[TestCase(twoPairsJ2Id, HandType.TwoPairs, 110213)]
+		[TestCase(pair5sWith29AId, HandType.Pair, 5140902)]
+		[TestCase(pair4sWith37KId, HandType.Pair, 4130703)]
+		[TestCase(highCard79JQAhandId, HandType.HighCard, 1412110907)]
+		[TestCase(highCard48JKAhandId, HandType.HighCard, 1413110804)]
 		public void TestHandType(int handId, HandType expectedHandType, int expectedScore)
 		{
 			var score = new TexasHoldemHand.TexasHoldemScore(testCaseDictionary[handId]);
 			Assert.AreEqual(expectedHandType, score.HandType);
-			Assert.AreEqual(expectedScore, this.GetScore(score));
-		}
-
-		private int GetScore(TexasHoldemHand.TexasHoldemScore score)
-		{
-			switch (score.HandType)
-			{
-				case HandType.StraightFlush:
-					return score.StraightFlushScore;
-				case HandType.FourOfAKind:
-					return score.FourOfAKindScore;
-				case HandType.FullHouse:
-					return score.FullHouseScore;
-				case HandType.Flush:
-					return score.FlushScore;
-				case HandType.Straight:
-					return score.StraightScore;
-				case HandType.ThreeOfAKind:
-					return score.ThreeOfAKindScore;
-				case HandType.TwoPairs:
-					return score.TwoPairsScore;
-				case HandType.Pair:
-					return score.SinglePairScore;
-				case HandType.HighCard:
-					return score.HighCardScore;
-			}
-			throw new InvalidOperationException($"Unexpected handType {score.HandType}");
-		}
+			Assert.AreEqual(expectedScore, score.GetScore());
+		}		
 	}
 
 	public class TestHand
