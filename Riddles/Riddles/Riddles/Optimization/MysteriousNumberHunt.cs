@@ -78,7 +78,7 @@ namespace Riddles.Optimization
 			//
 			// If any of those conditions aren't met, the solution isn't valid and we need to change one of the existing digits
 			// Otherwise, we can add another digit
-			var rowProduct = Enumerable.Range(0, lastColumnPlaced + 1).Aggregate(1, (agg,c) => agg*solution[lastRowPlaced,c]);
+			var rowProduct = Enumerable.Range(0, lastColumnPlaced+1).Aggregate(1, (agg,c) => agg*solution[lastRowPlaced,c]);
 			if(rightSideSolutions[lastRowPlaced] % rowProduct != 0)	{
 				return false;
 			} 
@@ -94,7 +94,7 @@ namespace Riddles.Optimization
 					return false;
 				}
 			}
-			var colProduct = Enumerable.Range(0, lastRowPlaced + 1).Aggregate(1, (agg, r) => agg * solution[r, lastColumnPlaced]);
+			var colProduct = Enumerable.Range(0, lastRowPlaced+1).Aggregate(1, (agg, r) => agg * solution[r, lastColumnPlaced]);
 			if (bottomRowSolutions[lastColumnPlaced] % colProduct != 0)
 			{
 				return false;
@@ -119,7 +119,8 @@ namespace Riddles.Optimization
 		{
 			for(int row = 0; row<rightSideSolutions.Length; row++)
 			{
-				var rowProduct = Enumerable.Range(0, bottomRowSolutions.Length - 1).Aggregate(1, (agg, c) => agg * solution[row, c]);
+				var columns = Enumerable.Range(0, bottomRowSolutions.Length).ToList();
+				var rowProduct = columns.Aggregate(1, (agg, c) => agg * solution[row, c]);
 				if(rowProduct != rightSideSolutions[row])
 				{
 					return false;
@@ -127,7 +128,7 @@ namespace Riddles.Optimization
 			}
 			for (int col = 0; col < bottomRowSolutions.Length; col++)
 			{
-				var colProduct = Enumerable.Range(0, rightSideSolutions.Length - 1).Aggregate(1, (agg, r) => agg * solution[r, col]);
+				var colProduct = Enumerable.Range(0, rightSideSolutions.Length).Aggregate(1, (agg, r) => agg * solution[r, col]);
 				if (colProduct != bottomRowSolutions[col])
 				{
 					return false;
