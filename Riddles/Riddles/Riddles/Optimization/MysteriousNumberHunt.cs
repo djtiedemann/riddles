@@ -7,6 +7,7 @@ namespace Riddles.Optimization
 {
 	public class MysteriousNumberHunt
 	{
+		// https://fivethirtyeight.com/features/can-you-hunt-for-the-mysterious-numbers/
 		public int[,] SolveMysteryNumbers(int[] bottomRowSolutions, int[] rightSideSolutions)
 		{
 			var solution = new int[rightSideSolutions.Length, bottomRowSolutions.Length];
