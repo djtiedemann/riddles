@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Probability;
+using Riddles.MarkovChains;
 
-namespace Riddles.Tests.Probability
+namespace Riddles.Tests.MarkovChains
 {
 	public class RandomBallPainterTest
 	{
