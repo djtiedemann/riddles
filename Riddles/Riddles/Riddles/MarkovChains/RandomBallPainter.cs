@@ -122,7 +122,7 @@ namespace Riddles.MarkovChains
 			return stateProbabilityTransition;
 		}
 
-		public class RandomBallPainterState : MarkovChainState
+		public class RandomBallPainterState : IMarkovChainState
 		{
 			/// <summary>
 			/// This keeps track of the current state by tracking how many balls there are of similar colors.

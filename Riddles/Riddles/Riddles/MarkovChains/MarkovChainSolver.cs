@@ -6,7 +6,7 @@ using Riddles.LinearAlgebra;
 
 namespace Riddles.MarkovChains
 {
-	public interface MarkovChainState
+	public interface IMarkovChainState
 	{
 		bool IsStateTerminalState();
 	}
@@ -21,7 +21,7 @@ namespace Riddles.MarkovChains
 
 		public double GetExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState>(TMarkovChainState initialState, 
 			Func<TMarkovChainState, Dictionary<TMarkovChainState, double>> getStateTransitions)
-			where TMarkovChainState : MarkovChainState
+			where TMarkovChainState : IMarkovChainState
 		{
 			var statesToProcess = new List<TMarkovChainState>();
 			var stateTransitionDictionary = new Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>>();
