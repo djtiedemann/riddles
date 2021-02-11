@@ -48,22 +48,24 @@ namespace Riddles.MarkovChains
 			}
 			var numPossibleStateTransitions = nextStates.Count();
 			var stateTransitions = nextStates.Select(s =>
-				new HanoiStateTransition { State = s, Probability = 1.0 / (double)numPossibleStateTransitions });
+				new HanoiStateTransition { State = s, Probability = 1.0 / (double)numPossibleStateTransitions }).ToList();
 
-			return stateTransitions.GroupBy(s => s.State).Select(g => new HanoiStateTransition
+			var stateTransitionsGroupings = stateTransitions.GroupBy(s => s.State.GetStringRepresentation()).Select(g => new HanoiStateTransition
 			{
-				State = g.Key,
+				State = g.First().State,
 				Probability = g.Sum(x => x.Probability)
-			}).ToDictionary(d => d.State, d => d.Probability);
+			}).ToList();
+
+			return stateTransitionsGroupings.ToDictionary(d => d.State, d => d.Probability);
 		}
 
 		private HanoiState MoveElementBetweenTowers(IReadOnlyList<IReadOnlyList<int>> towers, int toIndex, int fromIndex)
 		{
-			var towersCopy = towers.Select(t => t.ToList()).ToList();
-			if (towers[fromIndex].Count() > 0 && towers[fromIndex][0] < towers[toIndex][0])
+			var towersCopy = new List<List<int>> { towers[0].ToList(), towers[1].ToList(), towers[2].ToList() };
+			if (towers[fromIndex].Count() > 0 && (towers[toIndex].Count() == 0 || towers[fromIndex][0] < towers[toIndex][0]))
 			{
 				towersCopy[toIndex].Insert(0, towersCopy[fromIndex][0]);
-				towersCopy.RemoveAt(0);
+				towersCopy[fromIndex].RemoveAt(0);
 				// in the towers of hanoi problem, final solution doesn't care if the rings are on tower 2 or tower 3
 				// so states that are the same if you flip tower 2 and tower 3 are actually the same states.
 				// therefore, we can swap tower 2 and tower 3 at any point.
@@ -98,18 +100,20 @@ namespace Riddles.MarkovChains
 					return false;
 				}
 				var otherObj = (HanoiState)obj;
-				return this.Tower1.SequenceEqual(otherObj.Tower1)
-					&& this.Tower2.SequenceEqual(otherObj.Tower2)
-					&& this.Tower3.SequenceEqual(otherObj.Tower3);
+				return this.GetStringRepresentation() == otherObj.GetStringRepresentation();
 			}
 
 			public override int GetHashCode()
 			{
-				int hash = 17;
-				hash = hash * 23 + Tower1.GetHashCode();
-				hash = hash * 23 + Tower2.GetHashCode();
-				hash = hash * 23 + Tower3.GetHashCode();
-				return hash;
+				return this.GetStringRepresentation().GetHashCode();
+			}
+
+			public string GetStringRepresentation()
+			{
+				var representation = $@"T1:{Tower1.Select(t => t).Aggregate("", (agg, r) => $"{agg}{r}")}," 
+					+ $@"T2:{Tower2.Select(t => t).Aggregate("", (agg, r) => $"{agg}{r}")},"
+					+ $@"T3:{Tower3.Select(t => t).Aggregate("", (agg, r) => $"{agg}{r}")}";
+				return representation;
 			}
 		}
 
