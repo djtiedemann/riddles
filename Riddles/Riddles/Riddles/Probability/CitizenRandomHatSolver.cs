@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Riddles.Probability.Domain;
-using Riddles.Probability.SetGeneration;
+using Riddles.Combinatorics.Domain;
+using Riddles.Combinatorics.SetGeneration;
 using System.Linq;
 
 namespace Riddles.Probability

@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using NUnit.Framework;
 using Riddles.Probability;
-using Riddles.Probability.SetGeneration;
+using Riddles.Combinatorics.SetGeneration;
 
 namespace Riddles.Tests.Probability
 {

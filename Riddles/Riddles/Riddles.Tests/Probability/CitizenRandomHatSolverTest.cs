@@ -4,7 +4,6 @@ using System.Text;
 using System.Linq;
 using NUnit.Framework;
 using Riddles.Probability;
-using Riddles.Probability.Domain;
 namespace Riddles.Tests.Probability
 {
 	public class CitizenRandomHatSolverTest

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Probability.SetGeneration;
+using Riddles.Combinatorics.SetGeneration;
 using System.Linq;
 
 namespace Riddles.Tests.Probability.SetGeneration
