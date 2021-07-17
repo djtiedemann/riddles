@@ -17,7 +17,7 @@ namespace Interviews.Tests
 				new PrerequisiteSolver.Prerequisite { CourseNum = 3, PrerequisiteNum = 2},
 			};
 			var prerequisiteSovler = new PrerequisiteSolver();
-			//var canTakeCourses = prerequisiteSovler.CanCreateCourseSchedule(prerequisites, 6);
+			var canTakeCourses = prerequisiteSovler.CanCreateCourseSchedule(prerequisites, 6);
 
 			prerequisites = new List<PrerequisiteSolver.Prerequisite> {
 				new PrerequisiteSolver.Prerequisite { CourseNum = 5, PrerequisiteNum = 4},
@@ -25,7 +25,7 @@ namespace Interviews.Tests
 				new PrerequisiteSolver.Prerequisite { CourseNum = 3, PrerequisiteNum = 2},
 				new PrerequisiteSolver.Prerequisite { CourseNum = 1, PrerequisiteNum = 3},
 			};
-			var canTakeCourses = prerequisiteSovler.CanCreateCourseSchedule(prerequisites, 6);
+			canTakeCourses = prerequisiteSovler.CanCreateCourseSchedule(prerequisites, 6);
 		}
 	}
 }

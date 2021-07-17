@@ -49,6 +49,23 @@ namespace Interviews.DataStructures
 			return traversal;
 		}
 
+		public T FindLeastCommonAncestor(T child1, T child2)
+		{
+			return this.FindLeastCommonAncestorInternal(child1, child2, this._root);
+		}
+
+		private T FindLeastCommonAncestorInternal(T child1, T child2, BinarySearchTreeNode<T> currentNode){
+			if (currentNode.Data.Equals(child1) || currentNode.Data.Equals(child2)) { return currentNode.Data; }
+			if (currentNode.Data.CompareTo(child1) < 0 && currentNode.Data.CompareTo(child2) < 0) {
+				return this.FindLeastCommonAncestorInternal(child1, child2, currentNode.RightChild);
+			}
+			if(currentNode.Data.CompareTo(child1) > 0 && currentNode.Data.CompareTo(child2) > 0)
+			{
+				return this.FindLeastCommonAncestorInternal(child1, child2, currentNode.LeftChild);
+			}
+			return currentNode.Data;
+		}
+
 		public void RebalanceTree()
 		{
 			var inOrderTraversal = this.InOrderTraveral();
