@@ -40,43 +40,15 @@ namespace Riddles.Graphs
 	public class ChessboardHopper
 	{
 		private Chessboard _chessboard;
+		private BreadthFirstSearch _breadthFirstSearchSolver;
 		public ChessboardHopper(Chessboard chessboard) {
 			this._chessboard = chessboard;
+			this._breadthFirstSearchSolver = new BreadthFirstSearch();
 		}
 
 		public List<Tuple<int, int>> FindPathToOpposingKings(Tuple<int, int> startingLocation)
 		{
-			var previousLocations = new Dictionary<Tuple<int, int>, Tuple<int, int>>();
-			previousLocations[startingLocation] = null;
-			var locationsToProcess = new List<Tuple<int, int>> { startingLocation };
-			Tuple<int, int> currentLocation = null;
-			Tuple<int, int> finalLocation = null;
-			while(locationsToProcess.Count > 0)
-			{
-				currentLocation = locationsToProcess[0];
-				if (this.IsFinalLocation(currentLocation))
-				{
-					finalLocation = currentLocation;
-					break;
-				}
-				locationsToProcess.RemoveAt(0);
-				var nextLocations = this.GetPossibleMoves(currentLocation);
-				nextLocations = nextLocations.Where(l => !previousLocations.ContainsKey(l)).ToList();
-
-				foreach (var nextLocation in nextLocations) {
-					previousLocations[nextLocation] = currentLocation;
-					locationsToProcess.Add(nextLocation);
-				}
-			}
-			currentLocation = finalLocation;
-			var path = new List<Tuple<int, int>>();
-			while(currentLocation != null)
-			{
-				path.Add(currentLocation);
-				currentLocation = previousLocations[currentLocation];
-			}
-			path.Reverse();
-			return path;
+			return this._breadthFirstSearchSolver.PerformBreadthFirstSearch(startingLocation, this.GetPossibleMoves, this.IsFinalLocation);
 		}
 
 		private bool IsFinalLocation(Tuple<int, int> location)
