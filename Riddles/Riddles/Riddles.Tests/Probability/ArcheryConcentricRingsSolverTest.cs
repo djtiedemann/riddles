@@ -25,25 +25,5 @@ namespace Riddles.Tests.Probability
 			var actualExpectedValue = archeryConcentricRingSolver.CalculateExpectedValueOfPointsForNRings(numRings);
 			Assert.LessOrEqual(Math.Abs(expectedExpectedValue - actualExpectedValue), epsilon);
 		}
-
-		//[TestCase()]
-		public void GetExpectedAnswer()
-		{
-			var x = ((1.0 / 16.0) 
-					+ (3.0 / 16.0) * (15.0 / 16.0) 
-					+ (5.0 / 16.0) * (12.0 / 16.0) 
-					+ (7.0 / 16.0) * (7.0 / 16.0))*2.0
-				+ ((3.0 / 16.0) * (1.0 / 16.0) 
-					+ (5.0 / 16.0) * (1.0 / 16.0) 
-					+ (7.0 / 16.0) * (1.0 / 16.0) 
-					+ (5.0 / 16.0) * (3.0 / 16.0) * (15.0 / 16.0)
-					+ (7.0 / 16.0) * (3.0 / 16.0) * (15.0 / 16.0) 
-					+ (7.0 / 16.0) * (5.0 / 16.0) * (12 / 16.0))*3.0
-				+ ((5.0 / 16.0) * (3.0 / 16.0) * (1.0 / 16.0) 
-					+ (7.0 / 16.0) * (3.0 / 16.0) * (1.0 / 16.0) 
-					+ (7.0 / 16.0) * (5.0 / 16.0) * (1.0 / 16.0)
-					+ (7.0 / 16.0) * (5.0 / 16.0) * (3.0 / 16.0) * (15.0 / 16.0))*4.0
-				+ ((7.0 / 16.0) * (5.0 / 16.0) * (3.0 / 16.0) * (1.0 / 16.0))*5.0;
-		}
 	}
 }

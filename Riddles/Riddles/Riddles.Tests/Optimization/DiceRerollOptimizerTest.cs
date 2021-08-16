@@ -11,9 +11,13 @@ namespace Riddles.Tests.Optimization
 	{
 		double epsilon = 0.000001;
 
-		[TestCase(1, 6, 3.5)]
 		[TestCase(1, 8, 4.5)]
+		[TestCase(1, 6, 3.5)]
 		[TestCase(2, 6, 4.11805556)]
+		[TestCase(3, 6, 4.4749657064471906)]
+		[TestCase(4, 6, 4.700422001219243)]
+		[TestCase(5, 6, 4.8496710045584317)]
+		[TestCase(6, 6, 4.9538701332341306)]
 		public void TestGetExpectedValueOfRerollingDice(int numDice, int numSides, double expectedExpectedValue) {
 			var diceRerollOptimizer = new DiceRerollOptimizer();
 			var actualExpectedValue = diceRerollOptimizer.GetExpectedValueOfRerollingDice(numDice, numSides) / numDice;
