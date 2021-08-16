@@ -9,15 +9,15 @@ namespace Riddles.Probability
 {
 	public class CitizenRandomHatSolver
 	{
-		private PasscodeGenerator _passcodeGenerator;
+		private OutcomeGenerator _outcomeGenerator;
 		public CitizenRandomHatSolver()
 		{
-			this._passcodeGenerator = new PasscodeGenerator();
+			this._outcomeGenerator = new OutcomeGenerator();
 		}
 
 		public List<HatAssignment> GenerateAllPossibleHatAssignments(int numCitizens, int numHatColors, int firstCitizenId)
 		{
-			var assignments = this._passcodeGenerator.GenerateAllPasscodes(numCitizens, numHatColors, '1');
+			var assignments = this._outcomeGenerator.GenerateAllOutcomes(numCitizens, numHatColors, '1');
 
 			return assignments.Select(p =>
 			{

@@ -10,17 +10,17 @@ namespace Riddles.Optimization
 	{
 		private const char FirstCharacterToProcess = '0';
 
-		private PasscodeGenerator _passcodeGenerator;
+		private OutcomeGenerator _outcomeGenerator;
 		// problem: https://fivethirtyeight.com/features/what-are-the-odds-world-cup-teams-play-each-other-twice/
 		// answer: https://fivethirtyeight.com/features/how-fast-can-you-deliver-pbjs-how-many-meerkats-can-survive/
 		public ContinuousLockSolver()
 		{
-			this._passcodeGenerator = new PasscodeGenerator();
+			this._outcomeGenerator = new OutcomeGenerator();
 		}
 
 		public string FindShortestStringContainingAllPossiblePasscodes(int lengthOfPasscode, int numDigitsOnPadlock)
 		{
-			var allPossiblePasscodes = this._passcodeGenerator.GenerateAllPasscodes(lengthOfPasscode, numDigitsOnPadlock, FirstCharacterToProcess);
+			var allPossiblePasscodes = this._outcomeGenerator.GenerateAllOutcomes(lengthOfPasscode, numDigitsOnPadlock, FirstCharacterToProcess);
 			var digitsOnPadlock = Enumerable.Range(0, numDigitsOnPadlock).Select(digit => (char)(FirstCharacterToProcess + digit)).ToArray();
 			Dictionary<char, char?> nextDigitToProcess = new Dictionary<char, char?>();
 			for(int i=0; i<numDigitsOnPadlock; i++)
