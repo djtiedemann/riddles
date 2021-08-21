@@ -78,7 +78,6 @@ namespace Riddles.Optimization
 			}
 
 			// if it's not possible to continue with the current state, go back until we find a state where can continue
-			bool canContinueWithCurrentState = false;
 			var updatedPasscodeStringForNextState = currentState.CurrentString;
 			var updatedRemainingPasscodes = currentState.RemainingPasscodes;
 			var updatedNumPasscodesRemaining = currentState.NumPasscodesRemaining;

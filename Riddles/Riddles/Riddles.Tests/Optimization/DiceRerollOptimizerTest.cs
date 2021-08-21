@@ -15,9 +15,9 @@ namespace Riddles.Tests.Optimization
 		[TestCase(1, 6, 3.5)]
 		[TestCase(2, 6, 4.11805556)]
 		[TestCase(3, 6, 4.4749657064471906)]
-		[TestCase(4, 6, 4.700422001219243)]
-		[TestCase(5, 6, 4.8496710045584317)]
-		[TestCase(6, 6, 4.9538701332341306)]
+		[TestCase(4, 6, 4.7109101127876194)]
+		[TestCase(5, 6, 4.8872109700908082)]
+		[TestCase(6, 6, 5.0253294521257441)]
 		public void TestGetExpectedValueOfRerollingDice(int numDice, int numSides, double expectedExpectedValue) {
 			var diceRerollOptimizer = new DiceRerollOptimizer();
 			var actualExpectedValue = diceRerollOptimizer.GetExpectedValueOfRerollingDice(numDice, numSides) / numDice;
@@ -47,7 +47,7 @@ namespace Riddles.Tests.Optimization
 		public void TestCalculateExpectedValueOfCurrentDiceRoll(int[] diceRoll, double expectedExpectedValue)
 		{
 			var diceRerollOptimizer = new DiceRerollOptimizer();
-			var memo = new Dictionary<int, double> { { 1, 3.5 }, { 2, 4.11805556 } };
+			var memo = new Dictionary<int, double> { { 0, 0}, { 1, 3.5 }, { 2, 4.11805556 } };
 			var actualExpectedValue = diceRerollOptimizer.CalculateExpectedValueOfCurrentDiceRoll(diceRoll.ToList(), diceRoll.Length, memo);
 			Assert.LessOrEqual(Math.Abs(actualExpectedValue - expectedExpectedValue), epsilon);
 		}

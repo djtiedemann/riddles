@@ -25,6 +25,7 @@ namespace Riddles.Optimization
 			}
 
 			Dictionary<int, double> numDiceToExpectedValuePerDieDictionary = new Dictionary<int, double>();
+			numDiceToExpectedValuePerDieDictionary[0] = 0;
 			for (int i = 1; i <= numDice; i++) {
 				var outcomes = this._outcomeGenerator.GenerateAllOutcomes(i, numSides, '1');
 				var diceRolls = this.TransformOutcomesToDiceRolls(outcomes);
@@ -47,21 +48,14 @@ namespace Riddles.Optimization
 		public double CalculateExpectedValueOfCurrentDiceRoll(List<int> diceRoll, int numDice, Dictionary<int, double> memo)
 		{
 			var orderedDiceRoll = diceRoll.OrderByDescending(d => d).ToList();
-			double expectedValue = orderedDiceRoll[0];
+			double bestOutcome = orderedDiceRoll[0] +  memo[numDice - 1]*(numDice - 1);
 			for (int i = 1; i < orderedDiceRoll.Count; i++)
 			{
-				int numDiceRemaining = orderedDiceRoll.Count - i;
-				if (orderedDiceRoll[i] > memo[numDiceRemaining])
-				{
-					expectedValue += orderedDiceRoll[i];
-				}
-				else
-				{
-					expectedValue += memo[numDiceRemaining] * numDiceRemaining;
-					break;
-				}
+				int numDiceRemaining = numDice - i - 1;
+				double outcome = orderedDiceRoll.Where((d, idx) => idx <= i).Sum() + memo[numDiceRemaining] * numDiceRemaining;
+				if (outcome >= bestOutcome) { bestOutcome = outcome; }
 			}
-			return expectedValue;
+			return bestOutcome;
 		}
 
 		private List<List<int>> TransformOutcomesToDiceRolls(List<string> outcomes) {
