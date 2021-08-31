@@ -90,7 +90,7 @@ namespace Riddles.Optimization
 			}
 		}
 
-		private IEnumerable<DiceWeighterVariance> CalculateFitness(IEnumerable<double[]> population)
+		public IEnumerable<DiceWeighterVariance> CalculateFitness(IEnumerable<double[]> population)
 		{
 			foreach (var individual in population)
 			{
