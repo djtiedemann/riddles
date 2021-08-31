@@ -21,7 +21,7 @@ namespace Riddles.Tests.Optimization
 			Console.WriteLine($"Most Fit Individual: {mostFitIndividual.Variance}");
 		}
 
-		[TestCase(0.244, 0.137, 0.119, 0.001339372)]
+		[TestCase(0.244, 0.137, 0.119, 0.001217611)]
 		public void TestCalculateFitness(double p1, double p2, double p3, double expectedVariance)
 		{
 			var diceWeighter = new DiceWeighter();

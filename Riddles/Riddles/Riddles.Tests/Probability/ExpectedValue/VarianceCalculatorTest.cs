@@ -10,11 +10,11 @@ namespace Riddles.Tests.Probability.ExpectedValue
 	{
 		const double Epsilon = 0.000001;
 
-		[TestCase(new double[] { 0.1, 0.2, 0.3, 0.4 }, 0.01666666667)]
+		[TestCase(new double[] { 0.1, 0.2, 0.3, 0.4 }, 0.0125)]
 		[TestCase(new double[] { 0.25, 0.25, 0.25, 0.25 }, 0)]
-		[TestCase(new double[] { 1.0, 0.0, 0.0, 0.0 }, 0.25)]
-		[TestCase(new double[] { 0.0, 0.0, 0.0, 1.0 }, 0.25)]
-		[TestCase(new double[] { 1.0 }, null)]
+		[TestCase(new double[] { 1.0, 0.0, 0.0, 0.0 }, 0.1875)]
+		[TestCase(new double[] { 0.0, 0.0, 0.0, 1.0 }, 0.1875)]
+		[TestCase(new double[] { 1.0 }, 0)]
 		[TestCase(new double[] { }, null)]
 		public void TestCalculateVarianceOfProbabilityDistribution(double[] probabilityDistribution, double? expectedVariance)
 		{
