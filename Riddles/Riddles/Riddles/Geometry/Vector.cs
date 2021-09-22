@@ -1,12 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Riddles.Geometry
 {
     public class Vector
     {
-        public double I { get; set; }
-        public double J { get; set; }
+        private double? _magnitude;
+        public Vector(double[] vector) {
+            this.Components = vector;
+        }
+    
+        public double[] Components { get; }
+
+        public double Magnitude
+		{
+            get
+			{                
+				if (!this._magnitude.HasValue) {
+                    this._magnitude = Math.Sqrt(
+                        this.Components.Select(c => c*c).Sum()
+                    );
+                }
+                return this._magnitude.Value;
+			}
+		}
+
+        public Vector ToUnitVector()
+		{
+            return new Vector(this.Components.Select(c => c / this.Magnitude).ToArray());
+		}
     }
 }
