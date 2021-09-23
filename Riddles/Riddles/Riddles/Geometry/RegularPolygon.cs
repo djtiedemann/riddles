@@ -32,7 +32,7 @@ namespace Riddles.Geometry
 			{
 				if(this._internalAngle == null)
 				{
-					this._internalAngle = new Angle { Radians = Math.PI - (2 * Math.PI / this.NumSides) };
+					this._internalAngle = new Angle(Math.PI - (2 * Math.PI / this.NumSides), MeasurementType.Radians);
 				}
 				return this._internalAngle;
 			}
@@ -44,7 +44,7 @@ namespace Riddles.Geometry
 			{
 				if (this._externalAngle == null)
 				{
-					this._externalAngle = new Angle { Radians = 2*Math.PI / NumSides };
+					this._externalAngle = new Angle(2 * Math.PI / NumSides, MeasurementType.Radians);
 				}
 				return this._externalAngle;
 			}

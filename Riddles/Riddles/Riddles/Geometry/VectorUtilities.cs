@@ -24,10 +24,7 @@ namespace Riddles.Geometry
 				throw new InvalidOperationException("vectors must have non-zero magnitude");
 			}
 			var angleRadians = Math.Acos(dotProduct / (v1.Magnitude * v2.Magnitude));
-			return new Angle
-			{
-				Radians = angleRadians
-			};
+			return new Angle(angleRadians, MeasurementType.Radians);
 		}
 	}
 }

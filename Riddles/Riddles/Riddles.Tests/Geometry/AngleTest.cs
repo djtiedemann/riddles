@@ -18,7 +18,7 @@ namespace Riddles.Tests.Geometry
 		[TestCase(Math.PI/6, 30)]
 		public void TestRadians(double radians, double expectedDegrees)
 		{
-			var angle = new Angle { Radians = radians };
+			var angle = new Angle(radians, MeasurementType.Radians);
 			Assert.LessOrEqual(Math.Abs(expectedDegrees - angle.Degrees), Epsilon);
 		}
 
@@ -30,7 +30,7 @@ namespace Riddles.Tests.Geometry
 		[TestCase(Math.PI / 6, 30)]
 		public void TestDegrees(double expectedRadians, double degrees)
 		{
-			var angle = new Angle { Degrees = degrees };
+			var angle = new Angle(degrees, MeasurementType.Degrees);
 			Assert.LessOrEqual(Math.Abs(expectedRadians - angle.Radians), Epsilon);
 		}
 	}
