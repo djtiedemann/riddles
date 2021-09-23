@@ -42,9 +42,7 @@ namespace Riddles.Geometry
                 sumX += point.CartesianCoordinate.X;
                 sumY += point.CartesianCoordinate.Y;
 			}
-            return new Point(
-                new CartesianCoordinate2D(x: sumX / (double)numPoints, y: sumY / (double)numPoints)
-            );
+            return new Point(x: sumX / (double)numPoints, y: sumY / (double)numPoints);
 		}
 
     }

@@ -8,13 +8,13 @@ namespace Riddles.Geometry
     {
         private CartesianCoordinate2D _cartesianCoordinate;
         private PolarCoordinate _polarCoordinate;
-        public Point(CartesianCoordinate2D cartesianCoordinate) {
-            this._cartesianCoordinate = cartesianCoordinate;
+        public Point(double x, double y) {
+            this._cartesianCoordinate = new CartesianCoordinate2D(x, y);
         }
 
-        public Point(PolarCoordinate polarCoordinate)
+        public Point(double r, Angle theta)
 		{
-            this._polarCoordinate = polarCoordinate;
+            this._polarCoordinate = new PolarCoordinate(r, theta);
 		}
         
         public CartesianCoordinate2D CartesianCoordinate
@@ -56,27 +56,27 @@ namespace Riddles.Geometry
 		{
             if(this.X == 0 && this.Y == 0)
 			{
-                return new PolarCoordinate(r: 0, theta: 0);
+                return new PolarCoordinate(r: 0, theta: new Angle { Radians = 0 });
 			}
             var r = Math.Sqrt(this.X * this.X + this.Y * this.Y);
-            var theta = ((this.Y < 0) ? Math.PI : 0) + Math.Acos(this.X / r);
+            var theta = new Angle { Radians = ((this.Y < 0) ? Math.PI : 0) + Math.Acos(this.X / r) };
             return new PolarCoordinate(r: r, theta: theta);
 		}
     }
 
     public class PolarCoordinate {
-        public PolarCoordinate(double r, double theta)
+        public PolarCoordinate(double r, Angle theta)
 		{
             this.R = r;
             this.Theta = theta;
 		}
 
         public double R { get; }
-        public double Theta { get; }
+        public Angle Theta { get; }
 
         public CartesianCoordinate2D ToCartesianCoordinate2D()
 		{
-            return new CartesianCoordinate2D(x: R * Math.Cos(this.Theta), y: R * Math.Sin(this.Theta));
+            return new CartesianCoordinate2D(x: R * Math.Cos(this.Theta.Radians), y: R * Math.Sin(this.Theta.Radians));
 		}
     }
 }

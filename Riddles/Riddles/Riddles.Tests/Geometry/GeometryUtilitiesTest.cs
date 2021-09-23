@@ -12,25 +12,25 @@ namespace Riddles.Tests
 
         public Dictionary<int, List<Point>> PointsForCenterOfMassDictionary = new Dictionary<int, List<Point>>
         {
-            {1, new List<Point>{ new Point(new CartesianCoordinate2D(3, 0)) } },
+            {1, new List<Point>{ new Point(3, 0) } },
             {2, new List<Point>{ 
-                new Point(new CartesianCoordinate2D(3, 0)), 
-                new Point(new CartesianCoordinate2D(-1, 2)), 
-                new Point(new CartesianCoordinate2D(-1, -3)) } 
+                new Point(3, 0), 
+                new Point(-1, 2), 
+                new Point(-1, -3) } 
             },
             {3, new List<Point> {
-                new Point(new CartesianCoordinate2D(1, 0)), 
-                new Point(new CartesianCoordinate2D(0.86602, 0.5)), 
-                new Point(new CartesianCoordinate2D(0.5, 0.86602)),
-                new Point(new CartesianCoordinate2D(0, 1)),
-                new Point(new CartesianCoordinate2D(-0.5, 0.86602)),
-                new Point(new CartesianCoordinate2D(-0.86602, 0.5)),
-                new Point(new CartesianCoordinate2D(-1, 0)),
-                new Point(new CartesianCoordinate2D(-0.86602, -0.5)),
-                new Point(new CartesianCoordinate2D(-0.5, -0.86602)),
-                new Point(new CartesianCoordinate2D(0, -1)),
-                new Point(new CartesianCoordinate2D(0.5, -0.86602)),
-                new Point(new CartesianCoordinate2D(0.86602, -0.5))} 
+                new Point(1, 0), 
+                new Point(0.86602, 0.5), 
+                new Point(0.5, 0.86602),
+                new Point(0, 1),
+                new Point(-0.5, 0.86602),
+                new Point(-0.86602, 0.5),
+                new Point(-1, 0),
+                new Point(-0.86602, -0.5),
+                new Point(-0.5, -0.86602),
+                new Point(0, -1),
+                new Point(0.5, -0.86602),
+                new Point(0.86602, -0.5)} 
             }
         };
 

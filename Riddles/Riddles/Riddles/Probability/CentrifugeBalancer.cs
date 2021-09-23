@@ -22,7 +22,7 @@ namespace Riddles.Probability
 			{
 				return new List<List<Point>> { new List<Point>() };
 			}
-			var circle = new Circle { Center = new Point(new CartesianCoordinate2D(0, 0)), Radius = 1 };
+			var circle = new Circle { Center = new Point(0, 0), Radius = 1 };
 			var positionsAroundCircle = circle.GenerateNPointsEvenlyAroundCircle(numSlots, 0).ToArray();
 			var successfulPositions = new List<List<Point>>();
 
