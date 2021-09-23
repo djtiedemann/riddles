@@ -71,8 +71,8 @@ namespace Riddles.Tests
 		{
             GeometryUtilities utilities = new GeometryUtilities();
             var actualCenterOfMass = utilities.CalculateCenterOfMass(PointsForCenterOfMassDictionary[testCaseNum]);
-            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassX - actualCenterOfMass.CartesianCoordinate.X), Epsilon);
-            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassY - actualCenterOfMass.CartesianCoordinate.Y), Epsilon);
+            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassX - actualCenterOfMass.X), Epsilon);
+            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassY - actualCenterOfMass.Y), Epsilon);
 
         }
     }

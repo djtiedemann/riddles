@@ -50,8 +50,8 @@ namespace Riddles.Tests.Geometry
 			Assert.AreEqual(expectedPoints.Length, points.Length);
 			for(int i=0; i<numPoints; i++)
 			{
-				Assert.LessOrEqual(Math.Abs(points[i].CartesianCoordinate.X - expectedPoints[i].CartesianCoordinate.X), epsilon);
-				Assert.LessOrEqual(Math.Abs(points[i].CartesianCoordinate.Y - expectedPoints[i].CartesianCoordinate.Y), epsilon);
+				Assert.LessOrEqual(Math.Abs(points[i].X - expectedPoints[i].X), epsilon);
+				Assert.LessOrEqual(Math.Abs(points[i].Y - expectedPoints[i].Y), epsilon);
 			}
 		}
 	}

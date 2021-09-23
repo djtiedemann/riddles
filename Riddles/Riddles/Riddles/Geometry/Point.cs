@@ -17,19 +17,31 @@ namespace Riddles.Geometry
             this._polarCoordinate = new PolarCoordinate(r, theta);
 		}
         
-        public CartesianCoordinate2D CartesianCoordinate
+        public double X
 		{
             get
-			{
-                if(this._cartesianCoordinate == null)
-				{
+            {
+                if (this._cartesianCoordinate == null)
+                {
                     this._cartesianCoordinate = this._polarCoordinate.ToCartesianCoordinate2D();
-				}
-                return this._cartesianCoordinate;
-			}
-		}
+                }
+                return this._cartesianCoordinate.X;
+            }
+        }
 
-        public PolarCoordinate PolarCoordinate
+        public double Y
+		{
+            get
+            {
+                if (this._cartesianCoordinate == null)
+                {
+                    this._cartesianCoordinate = this._polarCoordinate.ToCartesianCoordinate2D();
+                }
+                return this._cartesianCoordinate.Y;
+            }
+        }
+
+        public double R
 		{
 			get
 			{
@@ -37,9 +49,21 @@ namespace Riddles.Geometry
 				{
                     this._polarCoordinate = this._cartesianCoordinate.ToPolarCoordinate();
 				}
-                return this._polarCoordinate;
+                return this._polarCoordinate.R;
 			}
 		}
+
+        public Angle Theta
+        {
+            get
+            {
+                if (this._polarCoordinate == null)
+                {
+                    this._polarCoordinate = this._cartesianCoordinate.ToPolarCoordinate();
+                }
+                return this._polarCoordinate.Theta;
+            }
+        }
     }
 
     public class CartesianCoordinate2D

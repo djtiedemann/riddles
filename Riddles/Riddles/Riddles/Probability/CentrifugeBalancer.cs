@@ -34,7 +34,7 @@ namespace Riddles.Probability
 			{
 				var filledPositionsInCentrifuge = positionsAroundCircle.Where((point, i) => configuration[i] == 1).ToList();
 				var centroid = geometryUtilities.CalculateCenterOfMass(filledPositionsInCentrifuge);
-				if(Math.Abs(centroid.CartesianCoordinate.X) < this.Epsilon && Math.Abs(centroid.CartesianCoordinate.Y) < this.Epsilon)
+				if(Math.Abs(centroid.X) < this.Epsilon && Math.Abs(centroid.Y) < this.Epsilon)
 				{
 					successfulPositions.Add(filledPositionsInCentrifuge);
 				}

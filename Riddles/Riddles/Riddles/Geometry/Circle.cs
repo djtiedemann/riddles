@@ -15,8 +15,8 @@ namespace Riddles.Geometry
             var increment = Math.PI * 2 / n;
             var angles = Enumerable.Range(0, n).Select(i => initialAngle + i * increment);
             return angles.Select(a => new Point(
-                x: this.Center.CartesianCoordinate.X + Math.Cos(a) * this.Radius, 
-                y: this.Center.CartesianCoordinate.Y + Math.Sin(a) * this.Radius
+                x: this.Center.X + Math.Cos(a) * this.Radius, 
+                y: this.Center.Y + Math.Sin(a) * this.Radius
             )
             ).ToList();
 		}
