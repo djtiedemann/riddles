@@ -39,10 +39,12 @@ namespace Riddles.Geometry
             var sumY = 0.0;
             foreach(var point in points)
 			{
-                sumX += point.X;
-                sumY += point.Y;
+                sumX += point.CartesianCoordinate.X;
+                sumY += point.CartesianCoordinate.Y;
 			}
-            return new Point { X = sumX / (double)numPoints, Y = sumY / (double)numPoints };
+            return new Point(
+                new CartesianCoordinate2D(x: sumX / (double)numPoints, y: sumY / (double)numPoints)
+            );
 		}
 
     }

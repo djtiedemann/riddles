@@ -12,13 +12,26 @@ namespace Riddles.Tests
 
         public Dictionary<int, List<Point>> PointsForCenterOfMassDictionary = new Dictionary<int, List<Point>>
         {
-            {1, new List<Point>{ new Point { X = 3, Y = 0 } } },
-            {2, new List<Point>{ new Point { X = 3, Y = 0 }, new Point { X = -1, Y = 2 }, new Point { X = -1, Y = -3 } } },
+            {1, new List<Point>{ new Point(new CartesianCoordinate2D(3, 0)) } },
+            {2, new List<Point>{ 
+                new Point(new CartesianCoordinate2D(3, 0)), 
+                new Point(new CartesianCoordinate2D(-1, 2)), 
+                new Point(new CartesianCoordinate2D(-1, -3)) } 
+            },
             {3, new List<Point> {
-                new Point { X = 1, Y = 0 } , new Point { X = 0.86602, Y = 0.5 }, new Point { X = 0.5, Y = 0.86602 },
-                new Point { X = 0, Y = 1 } , new Point { X = -0.5, Y = 0.86602 }, new Point { X = -0.86602, Y = 0.5 },
-                new Point { X = -1, Y = 0 } , new Point { X = -0.86602, Y = -0.5 }, new Point { X = -0.5, Y = -0.86602 },
-                new Point { X = 0, Y = -1 } ,  new Point { X = 0.5, Y = -0.86602 }, new Point { X = 0.86602, Y = -0.5 }} }
+                new Point(new CartesianCoordinate2D(1, 0)), 
+                new Point(new CartesianCoordinate2D(0.86602, 0.5)), 
+                new Point(new CartesianCoordinate2D(0.5, 0.86602)),
+                new Point(new CartesianCoordinate2D(0, 1)),
+                new Point(new CartesianCoordinate2D(-0.5, 0.86602)),
+                new Point(new CartesianCoordinate2D(-0.86602, 0.5)),
+                new Point(new CartesianCoordinate2D(-1, 0)),
+                new Point(new CartesianCoordinate2D(-0.86602, -0.5)),
+                new Point(new CartesianCoordinate2D(-0.5, -0.86602)),
+                new Point(new CartesianCoordinate2D(0, -1)),
+                new Point(new CartesianCoordinate2D(0.5, -0.86602)),
+                new Point(new CartesianCoordinate2D(0.86602, -0.5))} 
+            }
         };
 
         [SetUp]
@@ -58,8 +71,8 @@ namespace Riddles.Tests
 		{
             GeometryUtilities utilities = new GeometryUtilities();
             var actualCenterOfMass = utilities.CalculateCenterOfMass(PointsForCenterOfMassDictionary[testCaseNum]);
-            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassX - actualCenterOfMass.X), Epsilon);
-            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassY - actualCenterOfMass.Y), Epsilon);
+            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassX - actualCenterOfMass.CartesianCoordinate.X), Epsilon);
+            Assert.LessOrEqual(Math.Abs(expectedCenterOfMassY - actualCenterOfMass.CartesianCoordinate.Y), Epsilon);
 
         }
     }

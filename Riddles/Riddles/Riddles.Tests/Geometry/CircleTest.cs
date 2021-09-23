@@ -11,15 +11,24 @@ namespace Riddles.Tests.Geometry
 		double epsilon = 0.0001;
 		public Dictionary<int, List<Point>> expectedPointsDictionary = new Dictionary<int, List<Point>>
 		{
-			{1, new List<Point>{ new Point { X = 1, Y = 0 } } },
-			{2, new List<Point>{ new Point { X = 2, Y = 0 }, new Point { X = -2, Y = 0} } },
-			{3, new List<Point>{ new Point { X = 3, Y = 1 }, new Point { X = -1, Y = 1} } },
-			{4, new List<Point>{ new Point { X = 0, Y = 3 }, new Point { X = -3, Y = 0}, new Point { X = 0, Y = -3}, new Point { X = 3, Y = 0} } },
-			{5, new List<Point> { 
-				new Point { X = 1, Y = 0 } , new Point { X = 0.86602, Y = 0.5 }, new Point { X = 0.5, Y = 0.86602 }, 
-				new Point { X = 0, Y = 1 } , new Point { X = -0.5, Y = 0.86602 }, new Point { X = -0.86602, Y = 0.5 },
-				new Point { X = -1, Y = 0 } , new Point { X = -0.86602, Y = -0.5 }, new Point { X = -0.5, Y = -0.86602 }, 
-				new Point { X = 0, Y = -1 } ,  new Point { X = 0.5, Y = -0.86602 }, new Point { X = 0.86602, Y = -0.5 }} }
+			{1, new List<Point>{ new Point(new CartesianCoordinate2D(1, 0)) } },
+			{2, new List<Point>{ new Point(new CartesianCoordinate2D(2, 0)) , new Point(new CartesianCoordinate2D(-2, 0)) } },
+			{3, new List<Point>{ new Point(new CartesianCoordinate2D(3, 1)), new Point(new CartesianCoordinate2D(-1, 1)) } },
+			{4, new List<Point>{ new Point(new CartesianCoordinate2D(0, 3)), new Point(new CartesianCoordinate2D(-3, 0)),
+				new Point(new CartesianCoordinate2D(0, -3)), new Point(new CartesianCoordinate2D(3, 0)) } },
+			{5, new List<Point> {
+				new Point(new CartesianCoordinate2D(1, 0)),
+				new Point(new CartesianCoordinate2D(0.86602, 0.5)),
+				new Point(new CartesianCoordinate2D(0.5, 0.86602)),
+				new Point(new CartesianCoordinate2D(0, 1)),
+				new Point(new CartesianCoordinate2D(-0.5, 0.86602)),
+				new Point(new CartesianCoordinate2D(-0.86602, 0.5)),
+				new Point(new CartesianCoordinate2D(-1, 0)),
+				new Point(new CartesianCoordinate2D(-0.86602, -0.5)),
+				new Point(new CartesianCoordinate2D(-0.5, -0.86602)),
+				new Point(new CartesianCoordinate2D(0, -1)),
+				new Point(new CartesianCoordinate2D(0.5, -0.86602)),
+				new Point(new CartesianCoordinate2D(0.86602, -0.5)), }}
 		};
 		
 		[OneTimeSetUp]
@@ -35,14 +44,14 @@ namespace Riddles.Tests.Geometry
 		[TestCase(5, 1, 0, 0, 12, 0, Description = "Twelve points, equal distance around unit cicle")]
 		public void TestGenerateNPointsEvenlyAroundCircle(int testCaseId, int radius, double initialX, double initialY, int numPoints, double initialAngle)
 		{
-			var circle = new Circle { Center = new Point { X = initialX, Y = initialY }, Radius = radius };
+			var circle = new Circle { Center = new Point(new CartesianCoordinate2D(initialX, initialY)), Radius = radius };
 			var points = circle.GenerateNPointsEvenlyAroundCircle(numPoints, initialAngle).ToArray();
 			var expectedPoints = expectedPointsDictionary[testCaseId].ToArray();
 			Assert.AreEqual(expectedPoints.Length, points.Length);
 			for(int i=0; i<numPoints; i++)
 			{
-				Assert.LessOrEqual(Math.Abs(points[i].X - expectedPoints[i].X), epsilon);
-				Assert.LessOrEqual(Math.Abs(points[i].Y - expectedPoints[i].Y), epsilon);
+				Assert.LessOrEqual(Math.Abs(points[i].CartesianCoordinate.X - expectedPoints[i].CartesianCoordinate.X), epsilon);
+				Assert.LessOrEqual(Math.Abs(points[i].CartesianCoordinate.Y - expectedPoints[i].CartesianCoordinate.Y), epsilon);
 			}
 		}
 	}
