@@ -83,9 +83,14 @@ namespace Riddles.Geometry
                 return new PolarCoordinate(r: 0, theta: new Angle(0, MeasurementType.Radians));
 			}
             var r = Math.Sqrt(this.X * this.X + this.Y * this.Y);
-            var theta = new Angle(((this.Y < 0) ? Math.PI : 0) + Math.Acos(this.X / r), MeasurementType.Radians);
-            return new PolarCoordinate(r: r, theta: theta);
-		}
+            return new PolarCoordinate(
+                r: r,
+                theta: new Angle(
+                    this.Y >= 0 ? Math.Acos(this.X / r) : 2*Math.PI - Math.Acos(this.X / r), 
+                    MeasurementType.Radians
+                )
+            );
+        }
     }
 
     public class PolarCoordinate {
