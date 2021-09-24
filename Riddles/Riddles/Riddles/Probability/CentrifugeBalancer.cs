@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Riddles.Geometry;
+using Riddles.Geometry.Core;
 using System.Linq;
 
 namespace Riddles.Probability

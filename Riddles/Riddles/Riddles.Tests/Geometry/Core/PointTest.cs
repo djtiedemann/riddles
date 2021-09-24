@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Geometry; 
+using Riddles.Geometry.Core; 
 
-namespace Riddles.Tests.Geometry
+namespace Riddles.Tests.Geometry.Core
 {
 	public class PointTest
 	{

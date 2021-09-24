@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Riddles.Geometry;
+using Riddles.Geometry.Core;
 using NUnit.Framework;
 
-namespace Riddles.Tests.Geometry
+namespace Riddles.Tests.Geometry.Core
 {
 	public class CircleTest
 	{

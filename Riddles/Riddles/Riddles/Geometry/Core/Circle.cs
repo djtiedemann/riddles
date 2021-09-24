@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace Riddles.Geometry
+namespace Riddles.Geometry.Core
 {
     public class Circle
     {

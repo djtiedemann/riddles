@@ -1,10 +1,10 @@
 using NUnit.Framework;
-using Riddles.Geometry;
+using Riddles.Geometry.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Riddles.Tests
+namespace Riddles.Tests.Core
 {
     public class GeometryUtilitiesTest
     {

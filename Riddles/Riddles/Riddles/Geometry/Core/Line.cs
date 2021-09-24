@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Riddles.Geometry
+namespace Riddles.Geometry.Core
 {
     /// <summary>
     /// Ax + By + C = 0
