@@ -22,8 +22,9 @@ namespace Riddles.Probability
 			{
 				return new List<List<Point>> { new List<Point>() };
 			}
-			var circle = new Circle { Center = new Point(0, 0), Radius = 1 };
-			var positionsAroundCircle = circle.GenerateNPointsEvenlyAroundCircle(numSlots, 0).ToArray();
+			var circle = new Circle(new Point(0, 0), 1);
+			var positionsAroundCircle = circle.GenerateNPointsEvenlyAroundCircle(
+				numSlots, new Angle(0, MeasurementType.Radians)).ToArray();
 			var successfulPositions = new List<List<Point>>();
 
 			var numConfigurations = Math.Pow(2, numSlots);

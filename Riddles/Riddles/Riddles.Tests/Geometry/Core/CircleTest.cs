@@ -44,8 +44,10 @@ namespace Riddles.Tests.Geometry.Core
 		[TestCase(5, 1, 0, 0, 12, 0, Description = "Twelve points, equal distance around unit cicle")]
 		public void TestGenerateNPointsEvenlyAroundCircle(int testCaseId, int radius, double initialX, double initialY, int numPoints, double initialAngle)
 		{
-			var circle = new Circle { Center = new Point(initialX, initialY), Radius = radius };
-			var points = circle.GenerateNPointsEvenlyAroundCircle(numPoints, initialAngle).ToArray();
+			var circle = new Circle(new Point(initialX, initialY), radius);
+			var points = circle.GenerateNPointsEvenlyAroundCircle(
+				numPoints, new Angle(initialAngle, MeasurementType.Radians)
+			).ToArray();
 			var expectedPoints = expectedPointsDictionary[testCaseId].ToArray();
 			Assert.AreEqual(expectedPoints.Length, points.Length);
 			for(int i=0; i<numPoints; i++)
