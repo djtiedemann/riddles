@@ -75,5 +75,19 @@ namespace Riddles.Tests
             Assert.LessOrEqual(Math.Abs(expectedCenterOfMassY - actualCenterOfMass.Y), Epsilon);
 
         }
+
+        [TestCase(4, 7, 1, 3, 5)]
+        [TestCase(-7, 6, -19, 1, 13)]
+        [TestCase(-7, 3, 5, -2, 13)]
+        [TestCase(0, 4, 0, 4, 0)]
+        [TestCase(2, 0, 0, 0, 2)]
+        public void TestCalculateCartesianDistance(double x1, double y1, double x2, double y2, double expectedDistance)
+		{
+            var point1 = new Point(x1, y1);
+            var point2 = new Point(x2, y2);
+            var geometryUtilities = new GeometryUtilities();
+            var distance = geometryUtilities.CalculateCartesianDistance(point1, point2);
+            Assert.LessOrEqual(Math.Abs(distance - expectedDistance), Epsilon);
+		}
     }
 }

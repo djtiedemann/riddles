@@ -45,5 +45,9 @@ namespace Riddles.Geometry
             return new Point(x: sumX / (double)numPoints, y: sumY / (double)numPoints);
 		}
 
+        public double CalculateCartesianDistance(Point point1, Point point2) {
+            return Math.Sqrt(Math.Pow((point2.X - point1.X), 2) + Math.Pow((point2.Y - point1.Y), 2));
+        }
+
     }
 }
