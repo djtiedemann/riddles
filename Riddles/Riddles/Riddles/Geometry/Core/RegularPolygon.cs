@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Riddles.Geometry.Core
 {
@@ -8,7 +9,8 @@ namespace Riddles.Geometry.Core
 	{
 		private Angle _internalAngle;
 		private Angle _externalAngle;
-		public RegularPolygon(int numSides, int sideLength)
+		private List<Point> _points;
+		public RegularPolygon(int numSides, double sideLength, Point centroid, Angle rotation)
 		{
 			if(numSides < 3)
 			{
@@ -16,6 +18,8 @@ namespace Riddles.Geometry.Core
 			}
 			this.NumSides = numSides;
 			this.SideLength = sideLength;
+			this.Centroid = centroid;
+			this.Rotation = rotation;
 		}
 
 		public RegularPolygon(int numSides)
@@ -25,6 +29,9 @@ namespace Riddles.Geometry.Core
 				throw new InvalidOperationException("Polygons must have at least 3 sides");
 			}
 			this.NumSides = numSides;
+			this.SideLength = 1;
+			this.Centroid = new Point(0, 0);
+			this.Rotation = new Angle(0, MeasurementType.Radians);
 		}
 
 		public Angle InternalAngle { 
@@ -50,7 +57,21 @@ namespace Riddles.Geometry.Core
 			}
 		}
 
+		public List<Point> Vertices { 
+			get	{
+				if(this._points == null)
+				{
+					var radius = (double)this.SideLength / (2.0 * Math.Sin(Math.PI / (double)this.NumSides));
+					var circle = new Circle(new Point(this.Centroid.X, this.Centroid.Y), radius);
+					this._points = circle.GenerateNPointsEvenlyAroundCircle(this.NumSides, new Angle(0, MeasurementType.Radians));
+				}
+				return this._points;
+			} 
+		}
+
 		public int NumSides { get; }
-		public int SideLength { get; }
+		public double SideLength { get; }
+		public Point Centroid { get; }
+		public Angle Rotation { get; }
 	}
 }

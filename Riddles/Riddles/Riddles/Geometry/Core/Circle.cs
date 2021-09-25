@@ -22,8 +22,7 @@ namespace Riddles.Geometry.Core
             return angles.Select(a => new Point(
                 x: this.Center.X + Math.Cos(a) * this.Radius, 
                 y: this.Center.Y + Math.Sin(a) * this.Radius
-            )
-            ).ToList();
+            )).ToList();
 		}
     }
 }
