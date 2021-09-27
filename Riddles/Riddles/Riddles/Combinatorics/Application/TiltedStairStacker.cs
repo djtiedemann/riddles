@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace Riddles.Combinatorics
+namespace Riddles.Combinatorics.Application
 {
 	// https://fivethirtyeight.com/features/how-many-ways-can-you-build-a-staircase/
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Riddles.Combinatorics.SetGeneration;
+using Riddles.Combinatorics.Core.SetGeneration;
 using System.Linq;
 
 namespace Riddles.Optimization

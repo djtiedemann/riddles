@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace Riddles.Graphs
+namespace Riddles.Graphs.Core
 {
 	public class BreadthFirstSearch
 	{

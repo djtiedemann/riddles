@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Combinatorics;
+using Riddles.Combinatorics.Application;
 
-namespace Riddles.Tests.Combinatorics
+namespace Riddles.Tests.Combinatorics.Application
 {
 	public class TiltedStairStackerTest
 	{

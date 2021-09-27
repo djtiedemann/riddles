@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Graphs;
+using Riddles.Graphs.Core;
+using Riddles.Graphs.Application;
 using System.Linq;
 
 namespace Riddles.Tests.Graphs

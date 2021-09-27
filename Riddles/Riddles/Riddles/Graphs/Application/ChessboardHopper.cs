@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Riddles.Graphs.Core;
 
-namespace Riddles.Graphs
+namespace Riddles.Graphs.Application
 {
 	public enum Piece
 	{

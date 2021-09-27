@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using Riddles.Combinatorics.Domain;
+using Riddles.Combinatorics.Core.Domain;
 
-namespace Riddles.Combinatorics.SetGeneration
+namespace Riddles.Combinatorics.Core.SetGeneration
 {
 	public class PermutationGenerator
 	{
