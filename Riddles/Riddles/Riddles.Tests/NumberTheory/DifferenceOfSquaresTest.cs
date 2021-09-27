@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.NumberTheory;
+using Riddles.NumberTheory.Application;
 using System.Linq;
 
 namespace Riddles.Tests.NumberTheory

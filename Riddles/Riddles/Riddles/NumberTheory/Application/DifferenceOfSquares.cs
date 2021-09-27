@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Riddles.NumberTheory.Core;
 
-namespace Riddles.NumberTheory
+namespace Riddles.NumberTheory.Application
 {
 	public class DifferenceOfSquares
 	{

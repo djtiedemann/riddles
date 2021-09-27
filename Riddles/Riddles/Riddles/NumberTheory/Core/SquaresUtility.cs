@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Riddles.NumberTheory
+namespace Riddles.NumberTheory.Core
 {
 	public class SquaresUtility
 	{
