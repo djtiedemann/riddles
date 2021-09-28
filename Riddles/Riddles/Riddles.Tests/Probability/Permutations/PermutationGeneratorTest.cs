@@ -48,6 +48,7 @@ namespace Riddles.Tests.Probability.Permutations
 				permutationSet.Add(permutationString);
 			}
 			Assert.AreEqual(factorial, permutationSet.Count);
+			var randomPermutation = permutationGenerator.GenerateRandomPermutation(numObjects);
 		}
 	}
 }

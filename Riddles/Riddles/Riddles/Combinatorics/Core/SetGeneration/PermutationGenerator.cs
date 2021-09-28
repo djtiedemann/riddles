@@ -10,9 +10,11 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 	public class PermutationGenerator
 	{
 		private FactorialCalculator _factorialCalculator;
+		private Random _random;
 		public PermutationGenerator()
 		{
 			this._factorialCalculator = new FactorialCalculator();
+			this._random = new Random();
 		}
 
 		public List<Permutation> GeneratePermutationsOfNObjects(int n)
@@ -31,6 +33,13 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 				}				
 			}
 			return permutations;
+		}
+
+		public Permutation GenerateRandomPermutation(int n)
+		{
+			var nFactorial = this._factorialCalculator.Factorial(n);
+			var randKey = this._random.Next(0, nFactorial);
+			return this.GeneratePermutationFromKey(randKey, n);
 		}
 
 		public Permutation GeneratePermutationFromKey(int key, int n)
