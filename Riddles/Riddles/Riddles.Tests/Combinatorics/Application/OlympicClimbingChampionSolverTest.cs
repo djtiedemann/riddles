@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Riddles.Combinatorics.Core.Domain;
 using Riddles.Combinatorics.Application;
@@ -9,29 +10,72 @@ namespace Riddles.Tests.Combinatorics.Application
 {
 	public class OlympicClimbingChampionSolverTest
 	{
-		private Dictionary<int, Permutation[]> permutationTestCaseDictionary = new Dictionary<int, Permutation[]>
+		[TestCase]
+		public void TestCanAthleteWinWithResult()
 		{
-			{ 1, new Permutation[]{
-				new Permutation(new int[]{ 3, 4, 1, 2 }),
-				new Permutation(new int[]{ 4, 1, 2, 3 }),
-				new Permutation(new int[]{ 1, 2, 3, 4 }),
+			var olympicClimbingChampionSolver = new OlympicClimbingChampionSolver();
+			var outcome = new int[] { 2, 5 };
+			//var canWin = olympicClimbingChampionSolver.CanAthleteWinWithOutcome(2, 8, outcome);
+		}
+
+		[TestCase]
+		public void TestGenerateNextOutcome()
+		{
+
+		}
+
+		private Dictionary<int, List<int[]>> permutationTestCaseDictionary = new Dictionary<int, List<int[]>>
+		{
+			{ 1, new List<int[]>{
+				new int[]{ 3, 4, 1, 2 },
+				new int[]{ 4, 1, 2, 3 },
+				new int[]{ 1, 2, 3, 4 },
 			} },
-			{ 2, new Permutation[]{
-				new Permutation(new int[]{ 4, 3, 2, 1 }),
-				new Permutation(new int[]{ 1, 4, 3, 2 }),
-				new Permutation(new int[]{ 4, 2, 1, 3 }),
+			{ 2, new List<int[]>{
+				new int[]{ 4, 3, 2, 1 },
+				new int[]{ 1, 4, 3, 2 },
+				new int[]{ 4, 2, 1, 3 },
 			} },
-			{ 3, new Permutation[]{
-				new Permutation(new int[]{ 2, 1, 4, 3 }),
-				new Permutation(new int[]{ 3, 2, 1, 4 }),
-				new Permutation(new int[]{ 1, 3, 4, 2 }),
+			{ 3, new List<int[]>{
+				new int[]{ 2, 1, 4, 3 },
+				new int[]{ 3, 2, 1, 4 },
+				new int[]{ 1, 3, 4, 2 },
 			} },
-			{ 4, new Permutation[]{
-				new Permutation(new int[]{ 2, 1, 4, 3 }),
-				new Permutation(new int[]{ 3, 1, 2, 4 }),
-				new Permutation(new int[]{ 1, 3, 4, 2 }),
+			{ 4, new List<int[]>{
+				new int[]{ 2, 1, 4, 3 },
+				new int[]{ 3, 1, 2, 4 },
+				new int[]{ 1, 3, 4, 2 },
 			} }
 		};
+
+		private Dictionary<int, List<OlympicClimbingChampionSolver.PlayerScore>> winningScoresDictionary =
+			new Dictionary<int, List<OlympicClimbingChampionSolver.PlayerScore>>
+			{
+				{1, new List<OlympicClimbingChampionSolver.PlayerScore> { 
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 0, score: 12),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 1, score: 8),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 2, score: 6),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 3, score: 24),
+				} },
+				{2, new List<OlympicClimbingChampionSolver.PlayerScore> {
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 0, score: 16),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 1, score: 24),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 2, score: 6),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 3, score: 6),
+				} },
+				{3, new List<OlympicClimbingChampionSolver.PlayerScore> {
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 0, score: 6),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 1, score: 6),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 2, score: 16),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 3, score: 24),
+				} },
+				{4, new List<OlympicClimbingChampionSolver.PlayerScore> {
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 0, score: 6),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 1, score: 3),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 2, score: 32),
+					new OlympicClimbingChampionSolver.PlayerScore(playerId: 3, score: 24),
+				} },
+			};
 
 		[TestCase(1, new int[] { 2 }, 6)]
 		[TestCase(2, new int[] { 2, 3 }, 6)]
@@ -40,16 +84,15 @@ namespace Riddles.Tests.Combinatorics.Application
 		public void TestFindWinningScore(int testCaseId, int[] expectedWinningPlayers, int expectedWinningScore)
 		{
 			var olympicClimbingChampionSolver = new OlympicClimbingChampionSolver();
-			var winningScore = olympicClimbingChampionSolver.FindWinningScoreForSpecificContest(
+			var scores = olympicClimbingChampionSolver.FindScoresForContest(
 				permutationTestCaseDictionary[testCaseId]
-			);
-			var winningPlayers = winningScore.WinningPlayerIds.ToArray();
-			Assert.AreEqual(expectedWinningScore, winningScore.Score);
-			Assert.AreEqual(expectedWinningPlayers.Length, winningPlayers.Length);
-
-			for(int i=0; i<expectedWinningPlayers.Length; i++)
+			).OrderBy(s => s.PlayerId).ToList();
+			var expectedScores = this.winningScoresDictionary[testCaseId];
+			Assert.AreEqual(expectedScores.Count, scores.Count);
+			for(int i=0; i<scores.Count; i++)
 			{
-				Assert.AreEqual(expectedWinningPlayers[i], winningPlayers[i]);
+				Assert.AreEqual(expectedScores[i].PlayerId, scores[i].PlayerId);
+				Assert.AreEqual(expectedScores[i].Score, scores[i].Score);
 			}
 		}
 

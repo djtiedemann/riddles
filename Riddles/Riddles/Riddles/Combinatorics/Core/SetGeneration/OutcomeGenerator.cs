@@ -61,5 +61,28 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			var nextOutcome = currentOutcomeAsCharArray.Aggregate("", (agg, c) => $@"{agg}{c}");
 			return nextOutcome;
 		}
+
+		public int[] GenerateNextOutcome(int[] currentOutcome, int firstOutcome, int lastOutcome)
+		{
+			var nextOutcome = currentOutcome.ToArray();
+			if (nextOutcome.All(c => c == lastOutcome))
+			{
+				return null;
+			}
+
+			for (int i = nextOutcome.Length - 1; i >= 0; i--)
+			{
+				if (nextOutcome[i] != lastOutcome)
+				{
+					nextOutcome[i]++;
+					for (int j = i + 1; j < nextOutcome.Length; j++)
+					{
+						nextOutcome[j] = firstOutcome;
+					}
+					break;
+				}
+			}
+			return nextOutcome;
+		}
 	}
 }
