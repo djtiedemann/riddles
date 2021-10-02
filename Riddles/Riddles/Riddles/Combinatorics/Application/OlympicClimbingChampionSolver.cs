@@ -23,10 +23,6 @@ namespace Riddles.Combinatorics.Application
 			foreach(var outcome in scoresForSingleAthlete)
 			{
 				var score = outcome.Aggregate(1, (agg, v) => agg * v);
-				if (score > maximumAttemptedScore && maximumAttemptedScore > maximumSuccessfulScore) {
-					return maximumSuccessfulScore;
-				}
-				if (score == maximumSuccessfulScore) { continue; }
 				var canWin = this.CanAthleteWinWithOutcome(numContests, numAthletes, outcome);
 				if (canWin)
 				{
@@ -34,7 +30,7 @@ namespace Riddles.Combinatorics.Application
 				}
 				maximumAttemptedScore = score;
 			}
-			return scoresForSingleAthlete.Select(s => s.Aggregate(1, (agg, v) => agg * v)).Max();
+			return maximumSuccessfulScore;
 		}
 
 		public bool CanAthleteWinWithOutcome(int numContests, int numAthletes, int[] outcome)
@@ -76,12 +72,12 @@ namespace Riddles.Combinatorics.Application
 			while (true)
 			{
 				var availableValuesToSwap = 
-					currentResult[rowToIncrease].Where((val, i) => i > colToIncrease && val >= targetVal);
+					currentResult[rowToIncrease].Where((val, i) => i > colToIncrease && val >= targetVal).ToList();
 				if (availableValuesToSwap.Any()) {
 					targetVal = availableValuesToSwap.Min();
 					break;
 				}
-				if (colToIncrease > 0) { colToIncrease--; }
+				if (colToIncrease > 1) { colToIncrease--; }
 				else { 
 					rowToIncrease--; 
 					colToIncrease = numAthletes - 1;
@@ -92,30 +88,18 @@ namespace Riddles.Combinatorics.Application
 				targetVal = currentResult[rowToIncrease][colToIncrease] + 1;
 			}
 
-			// now, we need to increase the index to the appropriate value, set the challengers to what it should be 
-			// and fill everything else in
+			// now, we need to increase the index to the appropriate value, and fill everything else in
 			var nextResult = Enumerable.Range(0, numContests).Select(i => new int[numAthletes]).ToList();
 			for (int i = 0; i < numContests; i++) {
-				var indexInPossibleResultsForRow = 0;
 				for(int j=0; j<numAthletes; j++)
 				{
-					if(i < rowToIncrease || (i == rowToIncrease && j < colToIncrease) || j == 0)
+					if (i < rowToIncrease || (i == rowToIncrease && j < colToIncrease) || j == 0)
 					{
 						nextResult[i][j] = currentResult[i][j];
 					}
-					else if(i == rowToIncrease && j == colToIncrease)
+					else if (i == rowToIncrease && j == colToIncrease)
 					{
 						nextResult[i][j] = targetVal;
-					}
-					else if(j == playerToIncrease)
-					{
-						if (i != rowToIncrease || targetVal != targetChallengerScores[i]) {
-							nextResult[i][j] = targetChallengerScores[i];
-						} else
-						{
-							nextResult[i][j] = currentResult[i][j];
-						}
-						
 					}
 				}
 				var numbersToFill = Enumerable.Range(1, numAthletes).Except(nextResult[i].Distinct()).OrderBy(i => i).ToList();
@@ -137,7 +121,6 @@ namespace Riddles.Combinatorics.Application
 		)
 		{
 			var currentOutcome = challengerScores;
-			var canTerminate = false;
 			while (true)
 			{
 				var nextOutcome = this._outcomeGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes);
@@ -145,10 +128,7 @@ namespace Riddles.Combinatorics.Application
 				var challengerScore = nextOutcome.Aggregate(1, (agg, o) => agg * o);
 				var comesInSamePositionAsPlayer =
 					Enumerable.Range(1, numContests-1).Where(i => firstPlayerScores[i] == nextOutcome[i]).Any();
-				var canIncreaseScoreToTarget = currentResult
-					.Where((c, i) => c.Where((v, j) => v >= nextOutcome[i] && j >= challengerId).Any())
-					.Count() == numContests;
-				if(challengerScore >= targetScore && !comesInSamePositionAsPlayer && canIncreaseScoreToTarget) { 
+				if(challengerScore >= targetScore && !comesInSamePositionAsPlayer) { 
 					return nextOutcome; 
 				}
 				currentOutcome = nextOutcome;
@@ -160,7 +140,7 @@ namespace Riddles.Combinatorics.Application
 		{
 			var outcomes = this._outcomeGenerator
 				.GenerateAllOutcomes(numContests, numAthletes, '1')
-				.Select(o => new String(o.ToCharArray().OrderBy(e => e).ToArray()))
+				.Select(o => new string(o.ToCharArray().OrderBy(e => e).ToArray()))
 				.Distinct()
 				.Select(o => o.ToCharArray().Select(c => c - '1' + 1).ToArray())
 				.OrderBy(o => o.Aggregate(1, (agg, p) => agg*p))
