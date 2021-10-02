@@ -66,7 +66,7 @@ namespace Riddles.Combinatorics.Application
 			var playerToIncrease = scores.Where(s => s.Score < targetScore).Min(s => s.PlayerId);
 			var challengerScores = currentResult.Select(r => r[playerToIncrease]).ToArray();
 			var targetChallengerScores = this.FindStartingPointForNextResult(
-				numContests, numAthletes, firstPlayerScores, challengerScores, targetScore
+				numContests, numAthletes, firstPlayerScores, challengerScores, targetScore, playerToIncrease, currentResult
 			);
 			if (targetChallengerScores == null) { return null; }
 			int rowToIncrease = Enumerable.Range(1, numContests - 1)
@@ -96,15 +96,12 @@ namespace Riddles.Combinatorics.Application
 			// and fill everything else in
 			var nextResult = Enumerable.Range(0, numContests).Select(i => new int[numAthletes]).ToList();
 			for (int i = 0; i < numContests; i++) {
-				var possibleResultsForRow = Enumerable.Range(1, numAthletes)
-					.Where(v => v != nextResult[i][0] && v != nextResult[i][playerToIncrease]
-						&& (i != rowToIncrease || v != nextResult[i][colToIncrease])).OrderBy(i => i).ToList();
 				var indexInPossibleResultsForRow = 0;
 				for(int j=0; j<numAthletes; j++)
 				{
 					if(i < rowToIncrease || (i == rowToIncrease && j < colToIncrease) || j == 0)
 					{
-						nextResult[i][j] = targetVal;
+						nextResult[i][j] = currentResult[i][j];
 					}
 					else if(i == rowToIncrease && j == colToIncrease)
 					{
@@ -112,12 +109,22 @@ namespace Riddles.Combinatorics.Application
 					}
 					else if(j == playerToIncrease)
 					{
-						nextResult[i][j] = targetChallengerScores[i - 1];
+						if (i != rowToIncrease || targetVal != targetChallengerScores[i]) {
+							nextResult[i][j] = targetChallengerScores[i];
+						} else
+						{
+							nextResult[i][j] = currentResult[i][j];
+						}
+						
 					}
-					else
+				}
+				var numbersToFill = Enumerable.Range(1, numAthletes).Except(nextResult[i].Distinct()).OrderBy(i => i).ToList();
+				var numbersToFillIndex = 0;
+				for(int j=0; j<numAthletes; j++)
+				{
+					if (nextResult[i][j] == 0)
 					{
-						nextResult[i][j] = possibleResultsForRow[indexInPossibleResultsForRow];
-						indexInPossibleResultsForRow++;
+						nextResult[i][j] = numbersToFill[numbersToFillIndex++];
 					}
 				}
 			}
@@ -125,19 +132,25 @@ namespace Riddles.Combinatorics.Application
 		}
 
 		private int[] FindStartingPointForNextResult(
-			int numContests, int numAthletes, int[] firstPlayerScores, int[] challengerScores, int targetScore
+			int numContests, int numAthletes, int[] firstPlayerScores, int[] challengerScores, int targetScore, int challengerId,
+			List<int[]> currentResult
 		)
 		{
 			var currentOutcome = challengerScores;
 			var canTerminate = false;
 			while (true)
 			{
-				var nextOutcome = this._outcomeGenerator.GenerateNextOutcome(challengerScores, 0, numAthletes - 1);
+				var nextOutcome = this._outcomeGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes);
 				if (nextOutcome == null || nextOutcome[0] != challengerScores[0]){ return null; }
 				var challengerScore = nextOutcome.Aggregate(1, (agg, o) => agg * o);
 				var comesInSamePositionAsPlayer =
 					Enumerable.Range(1, numContests-1).Where(i => firstPlayerScores[i] == nextOutcome[i]).Any();
-				if(challengerScore >= targetScore && !comesInSamePositionAsPlayer) { return nextOutcome; }
+				var canIncreaseScoreToTarget = currentResult
+					.Where((c, i) => c.Where((v, j) => v >= nextOutcome[i] && j >= challengerId).Any())
+					.Count() == numContests;
+				if(challengerScore >= targetScore && !comesInSamePositionAsPlayer && canIncreaseScoreToTarget) { 
+					return nextOutcome; 
+				}
 				currentOutcome = nextOutcome;
 
 			}

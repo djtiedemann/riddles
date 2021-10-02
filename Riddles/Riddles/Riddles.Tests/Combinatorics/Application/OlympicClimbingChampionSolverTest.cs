@@ -10,18 +10,12 @@ namespace Riddles.Tests.Combinatorics.Application
 {
 	public class OlympicClimbingChampionSolverTest
 	{
-		[TestCase]
-		public void TestCanAthleteWinWithResult()
+		[TestCase(3, 8)]
+		public void TestFindMinimumWinningScore(int numContests, int numAthletes)
 		{
 			var olympicClimbingChampionSolver = new OlympicClimbingChampionSolver();
-			var outcome = new int[] { 2, 5 };
+			var minimumScore = olympicClimbingChampionSolver.FindMinimumWinningScore(numContests, numAthletes);
 			//var canWin = olympicClimbingChampionSolver.CanAthleteWinWithOutcome(2, 8, outcome);
-		}
-
-		[TestCase]
-		public void TestGenerateNextOutcome()
-		{
-
 		}
 
 		private Dictionary<int, List<int[]>> permutationTestCaseDictionary = new Dictionary<int, List<int[]>>
