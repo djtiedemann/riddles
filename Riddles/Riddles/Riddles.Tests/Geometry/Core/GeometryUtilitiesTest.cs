@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Riddles.Geometry.Core;
+using Riddles.Simulations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,5 +90,55 @@ namespace Riddles.Tests.Geometry.Core
             var distance = geometryUtilities.CalculateCartesianDistance(point1, point2);
             Assert.LessOrEqual(Math.Abs(distance - expectedDistance), Epsilon);
 		}
+
+        [TestCase(2, 0, 2 * 1)]
+        [TestCase(2, Math.PI / 6, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, Math.PI / 4, 2 * 1.41421356237)] // Sqrt(2)
+        [TestCase(2, Math.PI / 3, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, Math.PI / 2, 2 * 1)]
+        [TestCase(2, 2 * Math.PI / 3, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, 3 * Math.PI / 4, 2 * 1.41421356237)] // Sqrt(2)
+        [TestCase(2, 5 * Math.PI / 6, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, Math.PI, 2 * 1)]
+        [TestCase(2, 7 * Math.PI / 6, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, 5 * Math.PI / 4, 2 * 1.41421356237)] // Sqrt(2)
+        [TestCase(2, 4 * Math.PI / 3, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, 3 * Math.PI / 2, 2 * 1)]
+        [TestCase(2, 5 * Math.PI / 3, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, 7 * Math.PI / 4, 2 * 1.41421356237)] // Sqrt(2)
+        [TestCase(2, 11 * Math.PI / 6, 2 * 1.36602540378)] // Sqrt(3)/2 + 1/2
+        [TestCase(2, 2 * Math.PI, 2 * 1)]
+        public void TestGetDeliveryManhattanDistance(double r, double theta, double expectedDistance)
+        {
+            var geometryUtilities = new GeometryUtilities();
+            var actualDistance = geometryUtilities.CalculateManhattanDistance(r, theta);
+            var diff = Math.Abs(expectedDistance - actualDistance);
+            Assert.LessOrEqual(diff, Epsilon);
+        }
+
+        [TestCase(2, 0, 2 * 1)]
+        [TestCase(2, Math.PI / 6, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, Math.PI / 4, 2 * 1)]
+        [TestCase(2, Math.PI / 3, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, Math.PI / 2, 2 * 1)]
+        [TestCase(2, 2 * Math.PI / 3, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, 3 * Math.PI / 4, 2 * 1)]
+        [TestCase(2, 5 * Math.PI / 6, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, Math.PI, 2 * 1)]
+        [TestCase(2, 7 * Math.PI / 6, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, 5 * Math.PI / 4, 2 * 1)]
+        [TestCase(2, 4 * Math.PI / 3, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, 3 * Math.PI / 2, 2 * 1)]
+        [TestCase(2, 5 * Math.PI / 3, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, 7 * Math.PI / 4, 2 * 1)]
+        [TestCase(2, 11 * Math.PI / 6, 2 * 1.073132184970986)] // Sqrt(3)/2 + (Sqrt(2) - 1) * 1/2
+        [TestCase(2, 2 * Math.PI, 2 * 1)]
+        public void TestGetDeliveryDiagonalDistance(double r, double theta, double expectedDistance)
+        {
+            var geometryUtilities = new GeometryUtilities();
+            var actualDistance = geometryUtilities.CalculateManhattanDistanceWithDiagonals(r, theta);
+            var diff = Math.Abs(expectedDistance - actualDistance);
+            Assert.LessOrEqual(diff, Epsilon);
+        }
     }
 }

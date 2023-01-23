@@ -49,5 +49,23 @@ namespace Riddles.Geometry.Core
             return Math.Sqrt(Math.Pow((point2.X - point1.X), 2) + Math.Pow((point2.Y - point1.Y), 2));
         }
 
+        public double CalculateManhattanDistance(double r, double theta)
+        {
+            return r * (Math.Abs(Math.Cos(theta)) + Math.Abs(Math.Sin(theta)));
+        }
+
+        // in this case, there is a manhattan grid, with diagnoal paths connecting opposite corners
+        // see https://fivethirtyeight.com/features/can-you-make-a-speedy-delivery/
+        public double CalculateManhattanDistanceWithDiagonals(double r, double theta)
+        {
+            var verticalDistance = Math.Abs(Math.Sin(theta));
+            var horizontalDistance = Math.Abs(Math.Cos(theta));
+            if (horizontalDistance >= verticalDistance)
+            {
+                return r * (horizontalDistance + (Math.Sqrt(2) - 1) * verticalDistance);
+            }
+            return r * (verticalDistance + (Math.Sqrt(2) - 1) * horizontalDistance);
+        }
+
     }
 }
