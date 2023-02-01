@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using Riddles.Combinatorics.Core.SetGeneration;
 using Riddles.Combinatorics.Core;
+using Riddles.Combinatorics.Core.Domain;
 
 namespace Riddles.Tests.Probability.Permutations
 {
@@ -17,8 +18,8 @@ namespace Riddles.Tests.Probability.Permutations
 		[TestCase(5)]
 		public void TestGeneratePermutations(int n)
 		{
-			var permutationGenerator = new PermutationGenerator();
-			var permutations = permutationGenerator.GeneratePermutationsOfNObjects(n);
+			var permutationGenerator = new PermutationWithoutRepetitionGenerator();
+			var permutations = permutationGenerator.GenerateAllPermutations(n);
 			int nFactorial = Enumerable.Range(1, n).Aggregate(1, (p, item) => p * item);
 			Assert.AreEqual(nFactorial, permutations.Count);
 			var maxScore = 0;
@@ -38,7 +39,7 @@ namespace Riddles.Tests.Probability.Permutations
 		public void TestGeneratePermutationFromKey(int numObjects)
 		{
 			var factorial = new FactorialCalculator().Factorial(numObjects);
-			var permutationGenerator = new PermutationGenerator();
+			var permutationGenerator = new PermutationWithoutRepetitionGenerator();
 			var permutationSet = new HashSet<string>();
 			for(int i=0; i<factorial; i++)
 			{
@@ -48,6 +49,31 @@ namespace Riddles.Tests.Probability.Permutations
 				permutationSet.Add(permutationString);
 			}
 			Assert.AreEqual(factorial, permutationSet.Count);
+		}
+
+        [TestCase(new int[] { 0, 0, 0, 0, 1 }, 5)]
+        [TestCase(new int[] {0, 0, 0, 1, 1}, 10)]
+        [TestCase(new int[] { 0, 0, 1, 1, 1 }, 10)]
+        [TestCase(new int[] { 0, 1, 1, 1, 1 }, 5)]
+        public void TestGenerateNextPermutation(int[] permutationArray, int expectedNumPermutations)
+		{
+            var permutationGenerator = new PermutationWithoutRepetitionGenerator();
+			var permutation = new Permutation(permutationArray);
+			var hasNextPermutation = true;
+            int numPermutations = 1;
+            while (hasNextPermutation)
+			{
+                var nextPermutation = permutationGenerator.GenerateNextPermutation(permutation);
+				if(nextPermutation == null)
+				{
+					break;
+				}
+				numPermutations++;
+				permutation = nextPermutation;
+            }
+			Assert.AreEqual(expectedNumPermutations, numPermutations);
+			
+			
 		}
 	}
 }

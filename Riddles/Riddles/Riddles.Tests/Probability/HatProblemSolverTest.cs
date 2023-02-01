@@ -21,8 +21,8 @@ namespace Riddles.Tests.Probability
 			var hatProblemSolver = new HatProblemSolver();
 			var actualProbabilitySomeoneDrawsOwnHat = hatProblemSolver.CalculateProbabilityAtLeastOnePersonGetsTheirOwnHat(numHats);
 
-			var permutationGenerator = new PermutationGenerator();
-			var permutations = permutationGenerator.GeneratePermutationsOfNObjects(numHats);
+			var permutationGenerator = new PermutationWithoutRepetitionGenerator();
+			var permutations = permutationGenerator.GenerateAllPermutations(numHats);
 			var actualProbabilitySolvedThroughPermutations =
 				(double)permutations.Where(p => p.ContainsAtLeastOneFixedPoint()).Count() / (double)permutations.Count();
 
