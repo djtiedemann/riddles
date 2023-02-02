@@ -6,20 +6,21 @@ using NUnit.Framework;
 using Riddles.Combinatorics.Core.SetGeneration;
 using Riddles.Combinatorics.Core;
 using Riddles.Combinatorics.Core.Domain;
+using static Riddles.Combinatorics.Core.SetGeneration.PermutationWithoutRepetitionGenerator;
 
 namespace Riddles.Tests.Probability.Permutations
 {
 	public class PermutationGeneratorTest
 	{
-		[TestCase(1)]
-		[TestCase(2)]
-		[TestCase(3)]
-		[TestCase(4)]
-		[TestCase(5)]
-		public void TestGeneratePermutations(int n)
+		[TestCase(1, 1)]
+		[TestCase(2, 2)]
+		[TestCase(3, 3)]
+		[TestCase(4, 4)]
+		[TestCase(5, 5)]
+		public void TestGeneratePermutations(int n, int r)
 		{
 			var permutationGenerator = new PermutationWithoutRepetitionGenerator();
-			var permutations = permutationGenerator.GenerateAllPermutations(n);
+			var permutations = permutationGenerator.GenerateAllPermutations(n, r);
 			int nFactorial = Enumerable.Range(1, n).Aggregate(1, (p, item) => p * item);
 			Assert.AreEqual(nFactorial, permutations.Count);
 			var maxScore = 0;
@@ -51,6 +52,7 @@ namespace Riddles.Tests.Probability.Permutations
 			Assert.AreEqual(factorial, permutationSet.Count);
 		}
 
+		[TestCase(new int[] {1, 3, 5, 7, 9}, 120)]
         [TestCase(new int[] { 0, 0, 0, 0, 1 }, 5)]
         [TestCase(new int[] {0, 0, 0, 1, 1}, 10)]
         [TestCase(new int[] { 0, 0, 1, 1, 1 }, 10)]
@@ -58,22 +60,46 @@ namespace Riddles.Tests.Probability.Permutations
         public void TestGenerateNextPermutation(int[] permutationArray, int expectedNumPermutations)
 		{
             var permutationGenerator = new PermutationWithoutRepetitionGenerator();
-			var permutation = new Permutation(permutationArray);
+			var permutationState = new PermutationWithoutRepetitionGenerator.PermutationState(
+				null, null, permutationArray, permutationArray.Length
+
+            );
 			var hasNextPermutation = true;
-            int numPermutations = 1;
+            int numPermutations = 0;
             while (hasNextPermutation)
 			{
-                var nextPermutation = permutationGenerator.GenerateNextPermutation(permutation);
-				if(nextPermutation == null)
+                permutationState = permutationGenerator.GenerateNextPermutation(permutationState);
+				if(permutationState.CurrentPermutation == null)
 				{
 					break;
 				}
 				numPermutations++;
-				permutation = nextPermutation;
             }
 			Assert.AreEqual(expectedNumPermutations, numPermutations);
-			
-			
 		}
-	}
+        [TestCase(5, 3, 60)]
+        [TestCase(26, 3, 15600)]
+        //[TestCase(26, 5, 7893600)] - takes 2.3 seconds, so commented out
+        public void TestIncompletePermutation(int n, int r, int expectedNumPermutations)
+        {
+
+            var permutationGenerator = new PermutationWithoutRepetitionGenerator();
+            var permutationState = new PermutationWithoutRepetitionGenerator.PermutationState(
+                null, null, Enumerable.Range(1, n).ToArray(), r
+
+            );
+            var hasNextPermutation = true;
+            int numPermutations = 0;
+            while (hasNextPermutation)
+            {
+                permutationState = permutationGenerator.GenerateNextPermutation(permutationState);
+                if (permutationState.CurrentPermutation == null)
+                {
+                    break;
+                }
+                numPermutations++;
+            }
+            Assert.AreEqual(expectedNumPermutations, numPermutations);
+        }
+    }
 }

@@ -17,31 +17,46 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			this._random = new Random();
 		}
 
-		public List<Permutation> GenerateAllPermutations(int n)
+		public List<Permutation> GenerateAllPermutations(int n, int r)
 		{
-			var initialPermutation = Enumerable.Range(1, n).ToArray();
-			var nextPermutation = new Permutation(initialPermutation);
-			var permutations = new List<Permutation> { nextPermutation };
+            var permutations = new List<Permutation>();
+            if(r > n || r <= 0 || n <= 0)
+            {
+                return permutations;
+            }
+			
 			bool hasNextPermutation = true;
+            var state = new PermutationState(null, null, Enumerable.Range(1, n).ToArray(), r);
 			while (hasNextPermutation)
 			{
-				nextPermutation = this.GenerateNextPermutation(nextPermutation);
-				hasNextPermutation = nextPermutation != null;
+				state = this.GenerateNextPermutation(state);
+				hasNextPermutation = state.CurrentPermutation != null;
 				if (hasNextPermutation)
 				{
-					permutations.Add(nextPermutation);
+					permutations.Add(state.CurrentPermutation);
 				}				
 			}
 			return permutations;
 		}
 
-        public Permutation GenerateNextPermutation(Permutation currentPermutation)
+        public PermutationState GenerateNextPermutation(PermutationState permutationState)
         {
-            var innerPermutation = currentPermutation.GetPermutation();
+            if(permutationState.IndicatorPermutation == null)
+            {
+                var n = permutationState.CharacterSet.Length;
+                var indicatorPermutation = new Permutation(Enumerable.Range(1, n - permutationState.PermutationSize).Select(r => 0)
+                .Concat(Enumerable.Range(1, permutationState.PermutationSize).Select(r => 1)).ToArray());
+                var indicatorCharSet =
+                    permutationState.CharacterSet.Where((x, i) => indicatorPermutation.GetPermutation()[i] == 1)
+                    .OrderBy(x => x).ToArray();
+                var nextPermutation = new Permutation(indicatorCharSet);
+                return new PermutationState(nextPermutation, indicatorPermutation, permutationState.CharacterSet, permutationState.PermutationSize);
+            }
+            var innerPermutation = permutationState.CurrentPermutation.GetPermutation();
             // if there's only 1 element in the permutation, there isn't a next permutation
             if (innerPermutation.Length <= 1)
             {
-                return null;
+                return new PermutationState(null, null, permutationState.CharacterSet, permutationState.PermutationSize);
             }
             var newPermutation = new int[innerPermutation.Length];
             for (int i = 0; i < innerPermutation.Length; i++)
@@ -82,10 +97,35 @@ namespace Riddles.Combinatorics.Core.SetGeneration
                     {
                         newPermutation[j] = sortedDigits[j - i];
                     }
-                    return new Permutation(newPermutation);
+                    return new PermutationState(new Permutation(newPermutation), permutationState.IndicatorPermutation, permutationState.CharacterSet, permutationState.PermutationSize);
                 }
             }
-            return null;
+            // attempt to rotate Indicator Permutation, if successful, generate the next value with the new indicator permutation
+            if (permutationState.IndicatorPermutation.GetPermutation().Any(x => x != 1))
+            {
+                var indicatorPermutationState = new PermutationState(
+                    permutationState.IndicatorPermutation,
+                    new Permutation(permutationState.IndicatorPermutation.GetPermutation().Select(i => 1).ToArray()),
+                    new int[] { 0, 1 },
+                    permutationState.IndicatorPermutation.GetPermutation().Length
+                );
+                var newIndicatorPermutation = this.GenerateNextPermutation(indicatorPermutationState).CurrentPermutation;
+                if(newIndicatorPermutation != null)
+                {
+                    var indicatorCharSet =
+                    permutationState.CharacterSet.Where((x, i) => newIndicatorPermutation.GetPermutation()[i] == 1)
+                    .OrderBy(x => x).ToArray();
+                    var nextPermutation = new Permutation(indicatorCharSet);
+                    return 
+                        new PermutationState(
+                            nextPermutation,
+                            newIndicatorPermutation,
+                            permutationState.CharacterSet,
+                            permutationState.PermutationSize
+                        );
+                }
+            }
+            return new PermutationState(null, null, permutationState.CharacterSet, permutationState.PermutationSize);
         }
 
         public Permutation GenerateRandomPermutation(int n)
@@ -108,5 +148,26 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			}
 			return new Permutation(permutation);
 		}
-	}
+
+        public class PermutationState
+        {
+            public PermutationState(Permutation currentPermutation, Permutation indicatorPermutation, int[] characterSet, int permutationSize)
+            {
+                CurrentPermutation = currentPermutation;
+                IndicatorPermutation = indicatorPermutation;
+                CharacterSet = characterSet;
+                PermutationSize = permutationSize;
+            }
+
+            public Permutation CurrentPermutation { get; }
+            /* 
+             * This is used to generate permutations that contain some, but not all of the values in the initial set (r < n) in the n P r formula
+             * The indicator permutation is used to indicate which elements of the set are included in this round of permutations. 
+             * We loop through all possible indicator permutations, as well as all possible permutations of those elements
+             */
+            public Permutation IndicatorPermutation { get; }
+            public int[] CharacterSet { get; }
+            public int PermutationSize { get; }
+        }
+    }
 }

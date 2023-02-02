@@ -22,7 +22,7 @@ namespace Riddles.Tests.Probability
 			var actualProbabilitySomeoneDrawsOwnHat = hatProblemSolver.CalculateProbabilityAtLeastOnePersonGetsTheirOwnHat(numHats);
 
 			var permutationGenerator = new PermutationWithoutRepetitionGenerator();
-			var permutations = permutationGenerator.GenerateAllPermutations(numHats);
+			var permutations = permutationGenerator.GenerateAllPermutations(numHats, numHats);
 			var actualProbabilitySolvedThroughPermutations =
 				(double)permutations.Where(p => p.ContainsAtLeastOneFixedPoint()).Count() / (double)permutations.Count();
 
