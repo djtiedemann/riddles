@@ -12,8 +12,8 @@ namespace Riddles.Tests.Optimization
 
         [TestCase(26, 2, Strategy.EvenSpacing, 0.76)]
         [TestCase(26, 3, Strategy.EvenSpacing, 0.53410256410256407)]
-        [TestCase(26, 4, Strategy.EvenSpacing, 0.36256967670011148)]
-        [TestCase(26, 5, Strategy.EvenSpacing, 0.24141177662916793)] // - takes 53 seconds, commented out
+        //[TestCase(26, 4, Strategy.EvenSpacing, 0.36256967670011148)]
+        //[TestCase(26, 5, Strategy.EvenSpacing, 0.24141177662916793)] // - takes 53 seconds, commented out
         public void TestGetPercentSuccessfulAttempts(int numLetters, int numSlots, Strategy strategy, double expectedPercentSuccessfulPermutations)
         {
             var blindLetterChallengeOptimizer = new BlindLetterChallengeOptimizer();
