@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Riddles.Tests.Combinatorics
+namespace Riddles.Combinatorics
 {
     public class BaseSetInfo : SetInfo
     {
-        public BaseSetInfo(int numElements, int numDesired, string? label = null) { 
+        public BaseSetInfo(int numElements, int numDesired, string label = null) { 
             this.NumElements = numElements;
             this.NumDesired = numDesired;
             this.Label = label;
@@ -16,7 +16,7 @@ namespace Riddles.Tests.Combinatorics
 
         public int NumElements { get; }
         public int NumDesired { get; } 
-        public string? Label { get; }
+        public string Label { get; }
     }
     public interface SetInfo
     {

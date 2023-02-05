@@ -1,13 +1,12 @@
 ﻿using NUnit.Framework;
+using Riddles.Combinatorics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Riddles.Combinatorics;
 
-namespace Riddles.Tests.Combinatorics.Core
+namespace Riddles.Tests.Probability
 {
-    public class CombinatoricsUtilTest
+    public class ProbabilityUtilTest
     {
         private Dictionary<int, List<BaseSetInfo>> testCaseDictionary = new Dictionary<int, List<BaseSetInfo>>
         {
@@ -34,15 +33,17 @@ namespace Riddles.Tests.Combinatorics.Core
             } }
         };
 
-        [TestCase(1, 80)]
+        [TestCase(1, 80.0 / 210)]
         [TestCase(2, 0)]
         [TestCase(3, 0)]
-        [TestCase(4, 19205386200)]
-        public void TestCalculateNumWaysToSelectIndistinctItemsFromSet(int testCaseId, long expected)
+        [TestCase(4, 19205386200.0 / 353697121050)]
+        public void TestCalculateOddsOfDrawingIndistinctObjectsWithoutReplacement
+            (int testCaseId, double expected)
         {
             var testCase = testCaseDictionary[testCaseId];
-            var combinatoricsUtil = new CombinatoricsUtil();
-            var actual = combinatoricsUtil.CalculateNumWaysToSelectIndistinctItemsFromSet(testCase);
+            var probabilityUtil = new ProbabilityUtil();
+            var actual = probabilityUtil
+                .CalculateOddsOfDrawingIndistinctObjectsWithoutReplacement(testCase);
             Assert.AreEqual(expected, actual);
         }
     }
