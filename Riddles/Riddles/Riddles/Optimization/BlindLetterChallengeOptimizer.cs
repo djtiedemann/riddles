@@ -38,10 +38,6 @@ namespace Riddles.Optimization
 
         private double GetPercentSuccessfulAttemptsOptimalStrategy(int numLetters, int numSlots)
         {
-            if(numLetters < 0 || numSlots < 0)
-            {
-                var ohno = 1;
-            }
             if (this._cache.ContainsKey((numLetters, numSlots)))
             {
                 return this._cache[(numLetters, numSlots)];
