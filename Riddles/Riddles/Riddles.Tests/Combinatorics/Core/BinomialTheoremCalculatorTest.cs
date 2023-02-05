@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Riddles.Combinatorics.Core;
 
-namespace Riddles.Tests.Combinatorics
+namespace Riddles.Tests.Combinatorics.Core
 {
     public class BinomialTheoremCalculatorTest
     {

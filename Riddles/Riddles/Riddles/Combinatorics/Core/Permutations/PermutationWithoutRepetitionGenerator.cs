@@ -131,7 +131,7 @@ namespace Riddles.Combinatorics.Core.SetGeneration
         public Permutation GenerateRandomPermutation(int n)
 		{
 			var nFactorial = this._factorialCalculator.Factorial(n);
-			var randKey = this._random.Next(0, nFactorial);
+			var randKey = this._random.Next(0, (int)nFactorial);
 			return this.GeneratePermutationFromKey(randKey, n);
 		}
 
@@ -140,11 +140,11 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			var permutation = Enumerable.Range(1, n).ToArray();
 			for(int i=n-1; i>0; i--) {
 				var iFactorial = this._factorialCalculator.Factorial(i);
-				var indexToSwap = key / iFactorial;
+				var indexToSwap = key / (int)iFactorial;
 				var temp = permutation[indexToSwap];
 				permutation[indexToSwap] = permutation[i];
 				permutation[i] = temp;
-				key = key % iFactorial;
+				key = key % (int)iFactorial;
 			}
 			return new Permutation(permutation);
 		}

@@ -7,17 +7,17 @@ namespace Riddles.Combinatorics.Core
     public class BinomialTheoremCalculator
     {
         private bool _useCache = true;
-        private Dictionary<(int, int), int> _cache;
+        private Dictionary<(int, int), double> _cache;
         private FactorialCalculator _factorialCalculator;
 
         public BinomialTheoremCalculator(bool useCache = true)
         {
             this._factorialCalculator = new FactorialCalculator();
             this._useCache = useCache;
-            this._cache = new Dictionary<(int, int), int>();
+            this._cache = new Dictionary<(int, int), double>();
         }
 
-        public int CalculateBinomialCoefficient(int n, int k)
+        public double CalculateBinomialCoefficient(int n, int k)
         {
             if(n <= 0 || k <0 || n < k)
             {
