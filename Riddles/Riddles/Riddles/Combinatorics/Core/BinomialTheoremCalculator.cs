@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Riddles.Combinatorics.Core
@@ -27,9 +28,14 @@ namespace Riddles.Combinatorics.Core
             {
                 return this._cache[(n, k)];
             }
-            var result = this._factorialCalculator.Factorial(n)
-                / (this._factorialCalculator.Factorial(k) * 
-                this._factorialCalculator.Factorial(n - k));
+            var result = n - k > k 
+                ?
+                    this._factorialCalculator.FactorialDivision(n, n - k)
+                    / this._factorialCalculator.Factorial(k)
+                : 
+                    this._factorialCalculator.FactorialDivision(n, k)
+                    / this._factorialCalculator.Factorial(n - k);
+
             if (this._useCache)
             {
                 this._cache[(n, k)] = result;
