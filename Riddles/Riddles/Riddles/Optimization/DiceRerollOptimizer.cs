@@ -9,9 +9,9 @@ namespace Riddles.Optimization
 	// https://fivethirtyeight.com/features/are-you-clever-enough/
 	public class DiceRerollOptimizer
 	{
-		private OutcomeGenerator _outcomeGenerator;
+		private PermutationWithRepetitionGenerator _permutationGenerator;
 		public DiceRerollOptimizer() {
-			_outcomeGenerator = new OutcomeGenerator();
+			_permutationGenerator = new PermutationWithRepetitionGenerator();
 		}
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace Riddles.Optimization
 			Dictionary<int, double> numDiceToExpectedValuePerDieDictionary = new Dictionary<int, double>();
 			numDiceToExpectedValuePerDieDictionary[0] = 0;
 			for (int i = 1; i <= numDice; i++) {
-				var outcomes = this._outcomeGenerator.GenerateAllOutcomes(i, numSides, '1');
+				var outcomes = this._permutationGenerator.GenerateAllOutcomes(i, numSides, '1');
 				var diceRolls = this.TransformOutcomesToDiceRolls(outcomes);
 				numDiceToExpectedValuePerDieDictionary[i] = this.GetExpectedValueInternal(diceRolls, i, numDiceToExpectedValuePerDieDictionary);
 			}

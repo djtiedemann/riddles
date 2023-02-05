@@ -5,7 +5,6 @@ using System.Linq;
 using NUnit.Framework;
 using Riddles.Combinatorics.Core.SetGeneration;
 using Riddles.Combinatorics.Core;
-using Riddles.Combinatorics.Core.Domain;
 using static Riddles.Combinatorics.Core.SetGeneration.PermutationWithoutRepetitionGenerator;
 
 namespace Riddles.Tests.Combinatorics.Core.Permutations

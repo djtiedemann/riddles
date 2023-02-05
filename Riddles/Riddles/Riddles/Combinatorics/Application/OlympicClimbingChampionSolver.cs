@@ -9,10 +9,10 @@ namespace Riddles.Combinatorics.Application
 {
 	public class OlympicClimbingChampionSolver
 	{
-		private OutcomeGenerator _outcomeGenerator;
+		private PermutationWithRepetitionGenerator _permutationGenerator;
 		public OlympicClimbingChampionSolver()
 		{
-			this._outcomeGenerator = new OutcomeGenerator();
+			this._permutationGenerator = new PermutationWithRepetitionGenerator();
 		}
 
 		public int FindMinimumWinningScore(int numContests, int numAthletes)
@@ -123,7 +123,7 @@ namespace Riddles.Combinatorics.Application
 			var currentOutcome = challengerScores;
 			while (true)
 			{
-				var nextOutcome = this._outcomeGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes);
+				var nextOutcome = this._permutationGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes);
 				if (nextOutcome == null || nextOutcome[0] != challengerScores[0]){ return null; }
 				var challengerScore = nextOutcome.Aggregate(1, (agg, o) => agg * o);
 				var comesInSamePositionAsPlayer =
@@ -138,7 +138,7 @@ namespace Riddles.Combinatorics.Application
 
 		public List<int[]> GenerateDistinctPossiblePlacementsForSingleAthlete(int numContests, int numAthletes)
 		{
-			var outcomes = this._outcomeGenerator
+			var outcomes = this._permutationGenerator
 				.GenerateAllOutcomes(numContests, numAthletes, '1')
 				.Select(o => new string(o.ToCharArray().OrderBy(e => e).ToArray()))
 				.Distinct()

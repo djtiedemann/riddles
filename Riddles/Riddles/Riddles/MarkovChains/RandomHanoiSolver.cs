@@ -25,10 +25,10 @@ namespace Riddles.MarkovChains
 				Tower2 = new List<int> { },
 				Tower3 = new List<int> { }
 			};
-			return this._markovChainSolver.GetExpectedValueOfNumTurnsToReachTerminalState(initialState, GetStateTransitionDictionary);
+			return this._markovChainSolver.GetExpectedValueOfNumTurnsToReachTerminalState(initialState, GetStateTransitionDictionary, (object)null);
 		}
 
-		public Dictionary<HanoiState, double> GetStateTransitionDictionary(HanoiState state)
+		public Dictionary<HanoiState, double> GetStateTransitionDictionary(HanoiState state, object additionalArguments)
 		{
 			var nextStates = new List<HanoiState>();
 			for (int i = 0; i < 3; i++)

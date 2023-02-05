@@ -37,14 +37,14 @@ namespace Riddles.MarkovChains
 			var initialStateBallDistribution = new Dictionary<int, int> { { 1, numBalls } };
 			var initialState = new RandomBallPainterState(initialStateBallDistribution, numBalls);
 
-			return this._markovChainSolver.GetExpectedValueOfNumTurnsToReachTerminalState(initialState, GetStateTransitions);			
+			return this._markovChainSolver.GetExpectedValueOfNumTurnsToReachTerminalState(initialState, GetStateTransitions, (object)null);			
 		}
 
 		/// <summary>
 		/// returns a tuple of (state, probability transition to this state)
 		/// </summary>
 		/// <returns></returns>
-		public Dictionary<RandomBallPainterState, double> GetStateTransitions(RandomBallPainterState state)
+		public Dictionary<RandomBallPainterState, double> GetStateTransitions(RandomBallPainterState state, object additionalArgs)
 		{
 			Dictionary<RandomBallPainterState, double> stateProbabilityTransition = new Dictionary<RandomBallPainterState, double>();
 			foreach (var key1 in state.BallDistributionForState.Keys)

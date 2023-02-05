@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Riddles.Combinatorics.Core.SetGeneration
 {
-	public class OutcomeGenerator
+	public class PermutationWithRepetitionGenerator
 	{
-		public OutcomeGenerator()
+		public PermutationWithRepetitionGenerator()
 		{
 
 		}

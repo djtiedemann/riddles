@@ -13,6 +13,7 @@ namespace Riddles.Optimization
         Optimal = 0,
         EvenSpacing = 1,
     }
+    // Answer: https://fivethirtyeight.com/features/can-you-take-down-all-the-bottles-of-beer/
     public class BlindLetterChallengeOptimizer
     {
         private PermutationWithoutRepetitionGenerator _permutationGenerator;

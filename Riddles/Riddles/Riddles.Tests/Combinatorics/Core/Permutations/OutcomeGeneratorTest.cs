@@ -15,8 +15,8 @@ namespace Riddles.Tests.Combinatorics.Core.SetGeneration
         [TestCase(5, 3)]
         public void TestGenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembers(int numOutcomes, int numTrials)
         {
-            var outcomeGenerator = new OutcomeGenerator();
-            var outcomes = outcomeGenerator.GenerateAllOutcomes(numTrials, numOutcomes, '1');
+            var permutationGenerator = new PermutationWithRepetitionGenerator();
+            var outcomes = permutationGenerator.GenerateAllOutcomes(numTrials, numOutcomes, '1');
             Assert.AreEqual(outcomes.Count, Math.Pow(numOutcomes, numTrials));
             var maxScore = 0;
             // note, this only works for n < 10

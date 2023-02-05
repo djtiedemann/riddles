@@ -19,8 +19,9 @@ namespace Riddles.MarkovChains
 			this._matrixUtilities = new MatrixUtilities();
 		}
 
-		public double GetExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState>(TMarkovChainState initialState, 
-			Func<TMarkovChainState, Dictionary<TMarkovChainState, double>> getStateTransitions)
+		public double GetExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalArgs>(TMarkovChainState initialState, 
+			Func<TMarkovChainState, TAdditionalArgs, Dictionary<TMarkovChainState, double>> getStateTransitions,
+			TAdditionalArgs additionalArgs = default(TAdditionalArgs))
 			where TMarkovChainState : IMarkovChainState
 		{
 			var statesToProcess = new List<TMarkovChainState>();
@@ -32,7 +33,7 @@ namespace Riddles.MarkovChains
 			while (statesToProcess.Any())
 			{
 				var stateToProcess = statesToProcess.First();
-				var stateTransitions = getStateTransitions(stateToProcess);
+				var stateTransitions = getStateTransitions(stateToProcess, additionalArgs);
 				stateTransitionDictionary.Add(stateToProcess, stateTransitions);
 				statesToProcess.Remove(stateToProcess);
 
