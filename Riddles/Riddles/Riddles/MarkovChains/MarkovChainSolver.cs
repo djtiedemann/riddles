@@ -65,13 +65,14 @@ namespace Riddles.MarkovChains
 				// basically a state transition means that 1 turn after the current state we will be in a set of states probabilistically
 				// this means that the expected value to finish is 1 turn more than the equation formed by each of the states
 				// so we can construct the linear equation:
-				// vi = 1 + va*pa + vb*pb + ... +
-				// where vi is the state we're looking at and va, vb, ..., are the variables in the state transition
-				// if the state is a terminal state, then we know the number of turns left to complete the game is zero, so we can hard-code that equation
+				// v_i = 1 + v_a*p_a + v_b*p_b + ... +
+				// where v_i is the state we're looking at and v_a, v_b, ..., are the variables in the state transition
+				// if the state is a terminal state, then we know the number of turns left to complete the game is zero,
+				// so we can hard-code that equation
 				// 
 				// if we bring all the variables to the left hand side and the constant to the right hand side we get
-				// 1) the coefficient for vi = 1 - pi (the probability we transition to the same state)
-				// 2) the coefficient for any variable va that's in the state transition dictionary is -pa
+				// 1) the coefficient for v_i = 1 - p_i (the probability we transition to the same state)
+				// 2) the coefficient for any variable v_a that's in the state transition dictionary is -p_a
 				// 3) the constant coefficient is always 1, expect for the terminal state where it is 0
 				if (state.IsStateTerminalState())
 				{
