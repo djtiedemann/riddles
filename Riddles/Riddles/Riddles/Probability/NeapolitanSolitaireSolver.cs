@@ -6,10 +6,10 @@ using Riddles.Caching;
 
 namespace Riddles.Probability
 {
-    public class SolitaireSolver
+    public class NeapolitanSolitaireSolver
     {
 
-        public SolitaireSolver() { 
+        public NeapolitanSolitaireSolver() { 
             
         }
         public double CalculateOddsOfSuccess()
