@@ -18,7 +18,10 @@ namespace Riddles.Tests.Combinatorics.Application
             {6, (new List<int> { 4, 1 }, 5) },
             {7, (new List<int> { 4, 4 }, 70) },
             {8, (new List<int> { 1, 1, 1, 1, 1 }, 120) },
-            {9, (new List<int> {2, 2, 2}, 90) }
+            {9, (new List<int> {2, 2, 2}, 90) },
+            {10, (new List<int> {8, 4}, 495 )  },
+            {11, (new List<int> {12, 2}, 91 )  },
+            {12, (new List<int> {14, 1}, 15) }
         };
 
         [TestCase(1)] // one list
@@ -30,6 +33,9 @@ namespace Riddles.Tests.Combinatorics.Application
         [TestCase(7)] // two non-trivial lists
         [TestCase(8)] // five lists of size 1
         [TestCase(9)] // three lists of size 2
+        [TestCase(10)]
+        [TestCase(11)]
+        [TestCase(12)]
         public void TestCountNumberOfWaysToInterleaveLists(int testCaseId)
         {
             var listInterleaver = new ListInterleaver();
