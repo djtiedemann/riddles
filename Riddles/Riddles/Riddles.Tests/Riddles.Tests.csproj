@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Riddles\Riddles.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Poker\" />
+  </ItemGroup>
+
 </Project>
