@@ -17,6 +17,7 @@ namespace Riddles.Tests.Combinatorics.Core
         [TestCase(4, 3, 4)]
         [TestCase(4, 4, 1)]
         [TestCase(0, 0, 1)]
+        [TestCase(52, 5, 2598960)]
         public void TestCalculateBinomialCoefficient(int n, int k, int expected)
         {
             var binomialCalculator = new BinomialTheoremCalculator();
