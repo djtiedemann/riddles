@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Riddles.Poker.Core
 {
-    public class PokerHandProbabilityCalculator
+    public class FiveCardStudPokerHandProbabilityCalculator
     {
         private int _numSuits = 4;
         private int _numDistinctValues = 13;
         private int _numCards;
         private BinomialTheoremCalculator _binomialTheoremCalculator;
-        public PokerHandProbabilityCalculator() { 
+        public FiveCardStudPokerHandProbabilityCalculator() { 
             this._binomialTheoremCalculator = new BinomialTheoremCalculator();
             this._numCards = this._numSuits * this._numDistinctValues;
         }

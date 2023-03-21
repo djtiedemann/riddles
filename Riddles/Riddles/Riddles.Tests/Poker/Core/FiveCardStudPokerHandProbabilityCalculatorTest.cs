@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Riddles.Tests.Poker.Core
 {
-    public class PokerHandProbabilityCalculatorTest
+    public class FiveCardStudPokerHandProbabilityCalculatorTest
     {
         private double Epsilon = 0.00000001;
         private static double NumHands = 2_598_960;
@@ -98,7 +98,7 @@ namespace Riddles.Tests.Poker.Core
         public void TestCalculateOddsOfHand(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
-            var pokerHandProbabilityCalculator = new PokerHandProbabilityCalculator();
+            var pokerHandProbabilityCalculator = new FiveCardStudPokerHandProbabilityCalculator();
             var actualProbability = pokerHandProbabilityCalculator.CalculateOddsOfHand(
                 testCase.HandType,
                 testCase.NumCardsDrawn
