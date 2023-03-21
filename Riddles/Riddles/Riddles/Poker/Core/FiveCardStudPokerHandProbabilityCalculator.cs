@@ -11,6 +11,7 @@ namespace Riddles.Poker.Core
         private int _numSuits = 4;
         private int _numDistinctValues = 13;
         private int _numCards;
+        private int _numCardsDrawn = 5;
         private BinomialTheoremCalculator _binomialTheoremCalculator;
         public FiveCardStudPokerHandProbabilityCalculator() { 
             this._binomialTheoremCalculator = new BinomialTheoremCalculator();
@@ -18,19 +19,17 @@ namespace Riddles.Poker.Core
         }
 
         public double CalculateOddsOfHand(
-            HandType handType, 
-            int numCardsDrawn
+            HandType handType
         )
         {
             var numTotalHands 
                 = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, 5);
-            var frequency = this.CalculateFrequency(handType, numCardsDrawn);
+            var frequency = this.CalculateFrequency(handType);
             return frequency / numTotalHands;
         }
 
-        public double CalculateFrequency(
-            HandType handType,
-            int numCardsDrawn
+        private double CalculateFrequency(
+            HandType handType
         )
         {
             switch (handType)
@@ -39,16 +38,16 @@ namespace Riddles.Poker.Core
                     return
                         // pick any 5 cards
                         this._binomialTheoremCalculator
-                            .CalculateBinomialCoefficient(this._numCards, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.Pair, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.TwoPair, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.ThreeOfAKind, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.Straight, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.Flush, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.FullHouse, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.FourOfAKind, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.StraightFlush, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.RoyalFlush, numCardsDrawn);
+                            .CalculateBinomialCoefficient(this._numCards, this._numCardsDrawn)
+                        - this.CalculateFrequency(HandType.Pair)
+                        - this.CalculateFrequency(HandType.TwoPair)
+                        - this.CalculateFrequency(HandType.ThreeOfAKind)
+                        - this.CalculateFrequency(HandType.Straight)
+                        - this.CalculateFrequency(HandType.Flush)
+                        - this.CalculateFrequency(HandType.FullHouse)
+                        - this.CalculateFrequency(HandType.FourOfAKind)
+                        - this.CalculateFrequency(HandType.StraightFlush)
+                        - this.CalculateFrequency(HandType.RoyalFlush);
                         // subtract the odds of all other hand types
                 case HandType.Pair:
                     return
@@ -105,8 +104,8 @@ namespace Riddles.Poker.Core
                         Math.Pow(this._binomialTheoremCalculator
                             .CalculateBinomialCoefficient(this._numSuits, 1), 5)
                         // subtract the odds of a straight flush or royal flush
-                        - this.CalculateFrequency(HandType.StraightFlush, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.RoyalFlush, numCardsDrawn);    
+                        - this.CalculateFrequency(HandType.StraightFlush)
+                        - this.CalculateFrequency(HandType.RoyalFlush);    
                 case HandType.Flush:
                     return
                         // pick the suit of the flush
@@ -115,8 +114,8 @@ namespace Riddles.Poker.Core
                         this._binomialTheoremCalculator
                             .CalculateBinomialCoefficient(this._numDistinctValues, 5)
                         // subtract the odds of a straight flush or royal flush
-                        - this.CalculateFrequency(HandType.StraightFlush, numCardsDrawn)
-                        - this.CalculateFrequency(HandType.RoyalFlush, numCardsDrawn);
+                        - this.CalculateFrequency(HandType.StraightFlush)
+                        - this.CalculateFrequency(HandType.RoyalFlush);
                 case HandType.FullHouse:
                     return
                         // pick the value of the card we will have 3 of
