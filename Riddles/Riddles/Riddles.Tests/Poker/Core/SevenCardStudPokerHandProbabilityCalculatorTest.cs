@@ -1,4 +1,6 @@
-﻿using Riddles.Poker.Domain;
+﻿using NUnit.Framework;
+using Riddles.Poker.Core;
+using Riddles.Poker.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -75,9 +77,27 @@ namespace Riddles.Tests.Poker.Core
                 } },
             };
 
+        [TestCase(1, Description = "Royal Flush, standard deck")]
+        ////[TestCase(2, Description = "Straight Flush, standard deck")]
+        [TestCase(3, Description = "Four of a Kind, standard deck")]
+        ////[TestCase(4, Description = "Full House, standard deck")]
+        ////[TestCase(5, Description = "Flush, standard deck")]
+        ////[TestCase(6, Description = "Straight, standard deck")]
+        ////[TestCase(7, Description = "Three of a Kind, standard deck")]
+        ////[TestCase(8, Description = "Two Pair, standard deck")]
+        ////[TestCase(9, Description = "One Pair, standard deck")]
+        ////[TestCase(10, Description = "High Card, standard deck")]
         public void TestCalculateOddsOfHand(int testCaseId)
         {
-
+            var testCase = this._testCaseDictionary[testCaseId];
+            var pokerHandProbabilityCalculator = new SevenCardStudPokerHandProbabilityCalculator();
+            var actualProbability = pokerHandProbabilityCalculator.CalculateOddsOfHand(
+                testCase.HandType
+            );
+            Assert.LessOrEqual(
+                Math.Abs(actualProbability - testCase.ExpectedProbability),
+                Epsilon
+            );
         }
 
         private class PokerHandProbabilityCalculatorTestTestCase

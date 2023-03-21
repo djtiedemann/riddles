@@ -25,7 +25,7 @@ namespace Riddles.Poker.Core
         )
         {
             var numTotalHands
-                = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, 5);
+                = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, 7);
             var frequency = this.CalculateFrequency(handType);
             return frequency / numTotalHands;
         }
@@ -51,11 +51,25 @@ namespace Riddles.Poker.Core
                 case HandType.FullHouse: 
                     return 0;
                 case HandType.FourOfAKind:
-                    return 0;
+                    // pick the number that we're getting 4 of a kind from
+                    return this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues, 1) *
+                    // pick 4 cards of that number
+                    this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 4) *
+                    // pick any remaining 3 cards
+                    this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numCards - 4, 3);
                 case HandType.StraightFlush:
                     return 0;
-                case HandType.RoyalFlush: 
-                    return 0;
+                case HandType.RoyalFlush:
+                    // pick the suit. once the suit is picked the 5 cards in the royal flush
+                    // are deterministic
+                    return this._binomialTheoremCalculator.
+                        CalculateBinomialCoefficient(this._numSuits, 1) *
+                    // pick any 2 other cards
+                    this._binomialTheoremCalculator.
+                        CalculateBinomialCoefficient(this._numCards - 5, 2);
             }
             throw new NotImplementedException();
         }
