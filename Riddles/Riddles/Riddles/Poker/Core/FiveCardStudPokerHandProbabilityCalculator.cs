@@ -23,7 +23,7 @@ namespace Riddles.Poker.Core
         )
         {
             var numTotalHands 
-                = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, 5);
+                = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, this._numCardsDrawn);
             var frequency = this.CalculateFrequency(handType);
             return frequency / numTotalHands;
         }
@@ -154,9 +154,8 @@ namespace Riddles.Poker.Core
                     // pick the suit. once the suit is picked the cards are deterministic
                     return this._binomialTheoremCalculator.
                         CalculateBinomialCoefficient(this._numSuits, 1);
-                default:
-                    return 0;
             }
+            throw new NotImplementedException();
         }
     }
 }
