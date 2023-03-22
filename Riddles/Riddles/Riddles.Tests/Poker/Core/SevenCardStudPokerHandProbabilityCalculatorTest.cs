@@ -81,7 +81,7 @@ namespace Riddles.Tests.Poker.Core
         [TestCase(2, Description = "Straight Flush, standard deck")]
         [TestCase(3, Description = "Four of a Kind, standard deck")]
         [TestCase(4, Description = "Full House, standard deck")]
-        ////[TestCase(5, Description = "Flush, standard deck")]
+        [TestCase(5, Description = "Flush, standard deck")]
         ////[TestCase(6, Description = "Straight, standard deck")]
         ////[TestCase(7, Description = "Three of a Kind, standard deck")]
         ////[TestCase(8, Description = "Two Pair, standard deck")]

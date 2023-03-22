@@ -46,8 +46,68 @@ namespace Riddles.Poker.Core
                     return 0;
                 case HandType.Straight:
                     return 0;
-                case HandType.Flush: 
-                    return 0;
+                case HandType.Flush:
+                    // flush can either have 5, 6, or 7 cards of the same suit
+                    // consider these separately
+                    //
+                    // 7 cards of the same suit
+                    // first pick the suit
+                    return this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 1) *
+                        // choose any 7 cards of that suit
+                        (this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numDistinctValues, 7)
+                          // subtract the flushes where the 7 cards are all perfectly ordered
+                          // the top 5 cards cannot start such a flush - the others can
+                          - (this._numDistinctValues - 5)
+                          // subtract the flushes that have exactly 6 ordered cards
+                          // and one unordered card
+                          // the top 4 cards cannot start such a flush
+                          - (2*(this._numDistinctValues - 7)
+                            +(this._numDistinctValues-6)*(this._numDistinctValues-8))
+                          // subtract the flushes where exactly 5 cards are ordered
+                          - (2*this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numDistinctValues - 6, 2) + 
+                            (this._numDistinctValues-5)*this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numDistinctValues - 7, 2))
+                        )
+                    // 6 cards of the same suit, 1 card of a different suit
+                    // first pick the suit
+                    + this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 1) *
+                        (
+                            // pick the 6 cards in the suit
+                            this._binomialTheoremCalculator
+                                .CalculateBinomialCoefficient(this._numDistinctValues, 6)
+                            // subtract instances where 6 cards are in a row
+                            // the top 4 cards can't form such a straight
+                            - (this._numDistinctValues - 4)
+                            // subtract instances where 5 cards are in a row
+                            - (2 * (this._numDistinctValues - 6) + 
+                            ((this._numDistinctValues - 5) * (this._numDistinctValues - 7)))
+
+                        ) *
+                        // pick the last card, ensure it is of a different suit
+                        this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numCards - this._numDistinctValues
+                            , 1)
+                    // 5 cards of the same suit, any 2 other cards
+                    +
+                    // first pick the suit
+                    +this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 1) *
+                        (
+                            // pick the 5 cards in the suit
+                            this._binomialTheoremCalculator
+                                .CalculateBinomialCoefficient(this._numDistinctValues, 5)
+                            // remove the cases where the 5 cards are in a row
+                            - (this._numDistinctValues - 3)
+                        ) *
+                        // the final 2 cards can be any card of a different suit
+                        this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient
+                                (this._numCards - this._numDistinctValues, 2);
+
                 case HandType.FullHouse:
                     // 3 ways to get a full house: AAAKKQJ, AAAKKQQ, AAAKKKQ
                     //
