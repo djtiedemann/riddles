@@ -45,7 +45,92 @@ namespace Riddles.Poker.Core
                 case HandType.ThreeOfAKind: 
                     return 0;
                 case HandType.Straight:
-                    return 0;
+                    // straight can have 5, 6, or 7 distinct cards
+                    // 1. 7 distinct cards
+                    // start with the full set of straights of 7 distinct values
+                    return this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSevenDistinctRanks()
+                        * (
+                            // start with all suit assignments, then remove the ones that are flushes
+                            Math.Pow(this._numSuits, 7)
+                            // for each suit, there is 1 way to pick all cards of the same suit
+                            - this._numSuits
+                            // if there are 6 cards of the same suit
+                            // there are 7 ways to pick the card of the different suit
+                            // there are numSuits ways to pick the suit of the 6, numSuits - 1 for the other
+                            - this._binomialTheoremCalculator.CalculateBinomialCoefficient(7, 6)
+                                * this._binomialTheoremCalculator
+                                .CalculateBinomialCoefficient(this._numSuits, 1)
+                                * this._binomialTheoremCalculator
+                                .CalculateBinomialCoefficient(this._numSuits - 1, 1)
+                            // if there are 5 cards of the same suit
+                            // there are (7 choose 5) ways to pick the cards of the same suit
+                            // there are numSuits ways to pick the suit of the 5, and numSuits 01 for the others
+                            - this._binomialTheoremCalculator.CalculateBinomialCoefficient(7, 5)
+                                * this._binomialTheoremCalculator
+                                .CalculateBinomialCoefficient(this._numSuits, 1)
+                                * Math.Pow(this._binomialTheoremCalculator
+                                .CalculateBinomialCoefficient(this._numSuits - 1, 1), 2)
+                        )
+                    // 2. 6 distinct cards
+                    // (6 choose 1) choices for the rank and (numSuits choose 2) choices for the suits of the pair
+                    // (numSuits)^4 ways to suit the others
+                    // then need to remove flushes
+                    + this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()*
+                    (this._binomialTheoremCalculator.CalculateBinomialCoefficient(6, 1) * 
+                        this._binomialTheoremCalculator.CalculateBinomialCoefficient(this._numSuits, 2) *
+                        (Math.Pow(this._numSuits, 5) 
+                        // numSuits ways to pick the 5 cards in the same suit
+                        - this._numSuits
+                        // (5 choose 1) to pick 4 cards (of the non-paired cards) of the same suit
+                        // 2 choices for that suit (each pair card)
+                        // (numSuits - 1) choices for the suit of the remaining card
+                        - this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 1) *
+                            2 * (this._numSuits - 1)
+                        ))
+                    // 3. 5 distinct cards
+                    // This must contain either a 3 of a kind or 2 pair
+                    // numDistinctValues - 3 ways to pick the straight
+                    // 3.1 Three of a Kind
+                    // 5 ways to pick the 3 of a kind
+                    // (numSuits choose 3) choices for the triple
+                    + (this._numDistinctValues - 3) 
+                        * this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 1)
+                        * this._binomialTheoremCalculator.CalculateBinomialCoefficient(this._numSuits, 3)
+                        // pick the suits of the remaining 4 cards
+                        // only a flush if they all match and match one of the suits of the triple
+                        * (Math.Pow(this._numSuits, 4) - this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(3, 1))
+                    // 3.2 Two Pair
+                    // (numDistinctValues - 3) ways to choose the cards in the straight
+                    // (5 choose 2) ways to pick the 2 pairs
+                    // There are (numSuits choose 2) to assign suits to each pair
+                    // There are (numSuits^3) ways to assign the suits of the 3 non-paired cards
+                    // Need to consider cases where the two pairs have 0, 1, or 2 overlapping suits
+                    // If they have 0 overlapping suits (numSuits - 2 choose 2) * (numSuits choose 2)
+                    // then all numSuits^3 are valid
+                    // If they have 1 overlapping suit (numSuits - 2) * 2 * (numSuits choose 2)
+                    // then 1 of the numSuits^3 is invalid (the one with all 3 matching the one suit)
+                    // If they have 2 overlapping suits 1 * (numSuits choose 2)
+                    // then 2 of the pairs are invalid (the ones that match the suits of the pairs)
+                    + (this._numDistinctValues - 3)
+                        * this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 2)
+                        // 0 overlapping suits in 2 pairs
+                        * (this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 2)
+                        * this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits - 2, 2)
+                        * Math.Pow(this._numSuits, 3)
+                        // 1 overlapping suits in 2 pairs
+                        + this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 2) * 2 * (this._numSuits - 2)
+                        * (Math.Pow(this._numSuits, 3) - 1)
+                        // 2 overlapping suits in 2 pairs
+                        + this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 2)
+                        * (Math.Pow(this._numSuits, 3) - 2)
+                        )
+                        
+                    ; 
                 case HandType.Flush:
                     // flush can either have 5, 6, or 7 cards of the same suit
                     // consider these separately
@@ -56,20 +141,9 @@ namespace Riddles.Poker.Core
                         .CalculateBinomialCoefficient(this._numSuits, 1) *
                         // choose any 7 cards of that suit
                         (this._binomialTheoremCalculator
-                            .CalculateBinomialCoefficient(this._numDistinctValues, 7)
-                          // subtract the flushes where the 7 cards are all perfectly ordered
-                          // the top 5 cards cannot start such a flush - the others can
-                          - (this._numDistinctValues - 5)
-                          // subtract the flushes that have exactly 6 ordered cards
-                          // and one unordered card
-                          // the top 4 cards cannot start such a flush
-                          - (2*(this._numDistinctValues - 7)
-                            +(this._numDistinctValues-6)*(this._numDistinctValues-8))
-                          // subtract the flushes where exactly 5 cards are ordered
-                          - (2*this._binomialTheoremCalculator
-                            .CalculateBinomialCoefficient(this._numDistinctValues - 6, 2) + 
-                            (this._numDistinctValues-5)*this._binomialTheoremCalculator
-                            .CalculateBinomialCoefficient(this._numDistinctValues - 7, 2))
+                            .CalculateBinomialCoefficient(this._numDistinctValues, 7) - 
+                            // subtract any flushes that contain at least 5 consecutive cards (straight flushes)
+                            this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSevenDistinctRanks() 
                         )
                     // 6 cards of the same suit, 1 card of a different suit
                     // first pick the suit
@@ -79,12 +153,7 @@ namespace Riddles.Poker.Core
                             // pick the 6 cards in the suit
                             this._binomialTheoremCalculator
                                 .CalculateBinomialCoefficient(this._numDistinctValues, 6)
-                            // subtract instances where 6 cards are in a row
-                            // the top 4 cards can't form such a straight
-                            - (this._numDistinctValues - 4)
-                            // subtract instances where 5 cards are in a row
-                            - (2 * (this._numDistinctValues - 6) + 
-                            ((this._numDistinctValues - 5) * (this._numDistinctValues - 7)))
+                            - this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()
 
                         ) *
                         // pick the last card, ensure it is of a different suit
@@ -193,6 +262,39 @@ namespace Riddles.Poker.Core
                         CalculateBinomialCoefficient(this._numCards - 5, 2);
             }
             throw new NotImplementedException();
+        }
+        public double CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSevenDistinctRanks()
+        {
+            return
+                // 1. Exactly 7 cards are consecutive
+                // any value except for the highest 5 cards can start a straight of 7 cards
+                (this._numDistinctValues - 5)
+                // 2. Exactly 6 cards are consecutive
+                // the highest 4 cards cannot start such a straight
+                // the lowest and highest remaining card can pair with (numDistinctValues - 7) cards
+                // the remaining cards can pair with (numDistinctValues - 8 cards)
+                + (2 * (this._numDistinctValues - 7)
+                + (this._numDistinctValues - 6) * (this._numDistinctValues - 8))
+                // 3. Exactly 5 cards are ordered
+                // the highest 3 cards cannot start such a straight
+                // the lowest and highest remaining cards can be any of (numDistinctValues - 6) cards
+                // the remaining cards can be any of (numDistinctValues - 7) cards
+                + (2 * this._binomialTheoremCalculator
+                    .CalculateBinomialCoefficient(this._numDistinctValues - 6, 2)
+                + (this._numDistinctValues - 5) * this._binomialTheoremCalculator
+                    .CalculateBinomialCoefficient(this._numDistinctValues - 7, 2));
+        }
+        public double CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()
+        {
+            // 1. Exactly 6 cards are all consecutive
+            // any value except for the highest 4 cards can start a straight of 6 cards
+            return (this._numDistinctValues - 4)
+            // 2. Exactly 5 cards are consecutive
+            // the highest 3 cards cannot start such a straight
+            // the lowest and highest remaining card can pair with (numDistinctValues - 6) cards
+            // the remaining cards can pair with (numDistinctValues - 7 cards)
+            + (2 * (this._numDistinctValues - 6) +
+            ((this._numDistinctValues - 5) * (this._numDistinctValues - 7)));
         }
     }
 }
