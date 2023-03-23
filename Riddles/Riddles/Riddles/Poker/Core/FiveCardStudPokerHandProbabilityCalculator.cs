@@ -36,18 +36,14 @@ namespace Riddles.Poker.Core
             {
                 case HandType.HighCard:
                     return
-                        // pick any 5 cards
-                        this._binomialTheoremCalculator
-                            .CalculateBinomialCoefficient(this._numCards, this._numCardsDrawn)
-                        - this.CalculateFrequency(HandType.Pair)
-                        - this.CalculateFrequency(HandType.TwoPair)
-                        - this.CalculateFrequency(HandType.ThreeOfAKind)
-                        - this.CalculateFrequency(HandType.Straight)
-                        - this.CalculateFrequency(HandType.Flush)
-                        - this.CalculateFrequency(HandType.FullHouse)
-                        - this.CalculateFrequency(HandType.FourOfAKind)
-                        - this.CalculateFrequency(HandType.StraightFlush)
-                        - this.CalculateFrequency(HandType.RoyalFlush);
+                        // pick 5 distinct ranks
+                        (this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numDistinctValues, 5)
+                        // subtract straights - the top 3 cards can't form straights
+                        - (this._numDistinctValues - 3))
+                        // assign suits to each of the cards
+                        // subtract the flushes: 1 per suit
+                        * (Math.Pow(this._numSuits, 5) - this._numSuits);
                         // subtract the odds of all other hand types
                 case HandType.Pair:
                     return
