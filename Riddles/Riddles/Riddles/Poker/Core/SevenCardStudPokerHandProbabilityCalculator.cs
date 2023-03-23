@@ -39,7 +39,30 @@ namespace Riddles.Poker.Core
                 case HandType.HighCard:
                     return 0;
                 case HandType.Pair:
-                    return 0;
+                    // there are six ranks. Pick the six ranks
+                    // remove straights
+                    return (this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues, 6)
+                        - this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()
+                    )
+                    // pick the one rank with the pair
+                    * this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(6, 1)
+                    // pick the suits for the pair
+                    * this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 2)
+                    // pick the suits for the remaining 5 cards avoiding flushes
+                    * (Math.Pow(this._numSuits, 5)
+                        // there are numSuits ways to get a flush from the non-pairs alone
+                        - this._numSuits
+                        // there are 2 suits that can match a pair
+                        // and (5 choose 4) ways to pick the cards with the matched suit
+                        // the last card can have any other suit
+                        - 2 * this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(5, 4)
+                            * this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numSuits - 1, 1)
+                    );  
                 case HandType.TwoPair: 
                     // two pairs can either include 3 pairs and 1 single
                     // or 2 pairs and 3 singles
