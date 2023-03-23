@@ -100,8 +100,7 @@ namespace Riddles.Poker.Core
                         Math.Pow(this._binomialTheoremCalculator
                             .CalculateBinomialCoefficient(this._numSuits, 1), 5)
                         // subtract the odds of a straight flush or royal flush
-                        - this.CalculateFrequency(HandType.StraightFlush)
-                        - this.CalculateFrequency(HandType.RoyalFlush);    
+                        - (this._numDistinctValues - 3) * this._numSuits;    
                 case HandType.Flush:
                     return
                         // pick the suit of the flush
