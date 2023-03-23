@@ -109,8 +109,10 @@ namespace Riddles.Poker.Core
                         this._binomialTheoremCalculator
                             .CalculateBinomialCoefficient(this._numDistinctValues, 5)
                         // subtract the odds of a straight flush or royal flush
-                        - this.CalculateFrequency(HandType.StraightFlush)
-                        - this.CalculateFrequency(HandType.RoyalFlush);
+                        - this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numDistinctValues - 3, 1)
+                        * this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numSuits, 1);
                 case HandType.FullHouse:
                     return
                         // pick the value of the card we will have 3 of
