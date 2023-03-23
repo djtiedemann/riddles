@@ -37,7 +37,30 @@ namespace Riddles.Poker.Core
             switch (handType)
             {
                 case HandType.HighCard:
-                    return 0;
+                    // there are seven ranks. Pick the seven ranks removing straights
+                    return (this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues, 7)
+                    // remove the straights
+                    - this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSevenDistinctRanks())
+                    // select the suits, removing flushes
+                    * (Math.Pow(this._numSuits, 7) 
+                    // numSuits ways to give all 7 cards the same suit
+                    - this._numSuits
+                    // (7 choose 6) ways to pick 6 cards of the same suit
+                    // numSuits ways to pick a suit for the 6 cards
+                    // numSuits - 1 ways to pick a suit for the remaining card
+                    - this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(7, 6)
+                    * this._numSuits
+                    * (this._numSuits - 1)
+                    // (7 choose 5) ways to pick 5 cards of the same suits
+                    // numSuits ways to pick a suit for the 5
+                    // numSuits - 1 ways to pick a suit for each of the remaining 2
+                    - this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(7, 5)
+                    * this._numSuits
+                    * Math.Pow(this._numSuits - 1, 2)
+                    );
                 case HandType.Pair:
                     // there are six ranks. Pick the six ranks
                     // remove straights
