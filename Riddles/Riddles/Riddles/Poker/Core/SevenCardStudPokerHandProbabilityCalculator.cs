@@ -43,7 +43,20 @@ namespace Riddles.Poker.Core
                 case HandType.TwoPair: 
                     return 0;
                 case HandType.ThreeOfAKind: 
-                    return 0;
+                    // three of a kind hands contain 5 ranks: pick them, excluding straights
+                    return (this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues, 5) 
+                        - this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues - 3, 1))
+                        // pick the rank of the 3 of a kind
+                        * this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 1)
+                        // pick the suits of the 3 of a kind
+                        * this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(this._numSuits, 3)
+                        // pick the suits of the remaining cards
+                        // there are only 3 options for a flush
+                        // - when all the suits match a suit of the 3 of a kind
+                        * (Math.Pow(this._numSuits, 4) - 3);
                 case HandType.Straight:
                     // straight can have 5, 6, or 7 distinct cards
                     // 1. 7 distinct cards
