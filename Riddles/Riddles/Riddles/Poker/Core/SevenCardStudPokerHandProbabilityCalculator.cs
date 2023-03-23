@@ -41,7 +41,31 @@ namespace Riddles.Poker.Core
                 case HandType.Pair:
                     return 0;
                 case HandType.TwoPair: 
-                    return 0;
+                    // two pairs can either include 3 pairs and 1 single
+                    // or 2 pairs and 3 singles
+                    //
+                    // 1. 2 pairs and 3 singles
+                    // pick the 5 ranks of the cards, avoiding the straights
+                    // the top 3 cards cannot form straights
+                    return (this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues, 5) - 
+                        this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues - 3, 1))
+                        * this.CalculateNumberOfTwoPairHandsAvoidingFlushesGivenFiveRanks()
+                    // 2. 3 pairs and 1 single
+                    // pick the 4 ranks. Straights and flushes are impossible
+                    + this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numDistinctValues, 4)
+                    // pick the 3 ranks that will contain the pairs
+                    * this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(4, 3)
+                    // assign suits to the 3 pairs
+                    * Math.Pow(this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 2), 3)
+                    // assign suits to the single
+                    * this._binomialTheoremCalculator
+                        .CalculateBinomialCoefficient(this._numSuits, 1)
+                    ;
                 case HandType.ThreeOfAKind: 
                     // three of a kind hands contain 5 ranks: pick them, excluding straights
                     return (this._binomialTheoremCalculator
@@ -88,10 +112,10 @@ namespace Riddles.Poker.Core
                     // (6 choose 1) choices for the rank and (numSuits choose 2) choices for the suits of the pair
                     // (numSuits)^4 ways to suit the others
                     // then need to remove flushes
-                    + this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()*
-                    (this._binomialTheoremCalculator.CalculateBinomialCoefficient(6, 1) * 
+                    + this.CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks() *
+                    (this._binomialTheoremCalculator.CalculateBinomialCoefficient(6, 1) *
                         this._binomialTheoremCalculator.CalculateBinomialCoefficient(this._numSuits, 2) *
-                        (Math.Pow(this._numSuits, 5) 
+                        (Math.Pow(this._numSuits, 5)
                         // numSuits ways to pick the 5 cards in the same suit
                         - this._numSuits
                         // (5 choose 1) to pick 4 cards (of the non-paired cards) of the same suit
@@ -106,7 +130,7 @@ namespace Riddles.Poker.Core
                     // 3.1 Three of a Kind
                     // 5 ways to pick the 3 of a kind
                     // (numSuits choose 3) choices for the triple
-                    + (this._numDistinctValues - 3) 
+                    + (this._numDistinctValues - 3)
                         * this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 1)
                         * this._binomialTheoremCalculator.CalculateBinomialCoefficient(this._numSuits, 3)
                         // pick the suits of the remaining 4 cards
@@ -115,34 +139,9 @@ namespace Riddles.Poker.Core
                             .CalculateBinomialCoefficient(3, 1))
                     // 3.2 Two Pair
                     // (numDistinctValues - 3) ways to choose the cards in the straight
-                    // (5 choose 2) ways to pick the 2 pairs
-                    // There are (numSuits choose 2) to assign suits to each pair
-                    // There are (numSuits^3) ways to assign the suits of the 3 non-paired cards
-                    // Need to consider cases where the two pairs have 0, 1, or 2 overlapping suits
-                    // If they have 0 overlapping suits (numSuits - 2 choose 2) * (numSuits choose 2)
-                    // then all numSuits^3 are valid
-                    // If they have 1 overlapping suit (numSuits - 2) * 2 * (numSuits choose 2)
-                    // then 1 of the numSuits^3 is invalid (the one with all 3 matching the one suit)
-                    // If they have 2 overlapping suits 1 * (numSuits choose 2)
-                    // then 2 of the pairs are invalid (the ones that match the suits of the pairs)
+                    // then count the suits, avoiding flushes
                     + (this._numDistinctValues - 3)
-                        * this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 2)
-                        // 0 overlapping suits in 2 pairs
-                        * (this._binomialTheoremCalculator
-                        .CalculateBinomialCoefficient(this._numSuits, 2)
-                        * this._binomialTheoremCalculator
-                        .CalculateBinomialCoefficient(this._numSuits - 2, 2)
-                        * Math.Pow(this._numSuits, 3)
-                        // 1 overlapping suits in 2 pairs
-                        + this._binomialTheoremCalculator
-                        .CalculateBinomialCoefficient(this._numSuits, 2) * 2 * (this._numSuits - 2)
-                        * (Math.Pow(this._numSuits, 3) - 1)
-                        // 2 overlapping suits in 2 pairs
-                        + this._binomialTheoremCalculator
-                        .CalculateBinomialCoefficient(this._numSuits, 2)
-                        * (Math.Pow(this._numSuits, 3) - 2)
-                        )
-                        
+                        * this.CalculateNumberOfTwoPairHandsAvoidingFlushesGivenFiveRanks();
                     ; 
                 case HandType.Flush:
                     // flush can either have 5, 6, or 7 cards of the same suit
@@ -276,7 +275,7 @@ namespace Riddles.Poker.Core
             }
             throw new NotImplementedException();
         }
-        public double CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSevenDistinctRanks()
+        private double CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSevenDistinctRanks()
         {
             return
                 // 1. Exactly 7 cards are consecutive
@@ -297,7 +296,7 @@ namespace Riddles.Poker.Core
                 + (this._numDistinctValues - 5) * this._binomialTheoremCalculator
                     .CalculateBinomialCoefficient(this._numDistinctValues - 7, 2));
         }
-        public double CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()
+        private double CalculateNumberOfWaysToGetAtLeastFiveConsecutiveRanksFromSixDistinctRanks()
         {
             // 1. Exactly 6 cards are all consecutive
             // any value except for the highest 4 cards can start a straight of 6 cards
@@ -308,6 +307,38 @@ namespace Riddles.Poker.Core
             // the remaining cards can pair with (numDistinctValues - 7 cards)
             + (2 * (this._numDistinctValues - 6) +
             ((this._numDistinctValues - 5) * (this._numDistinctValues - 7)));
+        }
+
+        // given 5 ranks (two of which will be paired)
+        // calculate the number of 2-pair combinations without flushes
+        private double CalculateNumberOfTwoPairHandsAvoidingFlushesGivenFiveRanks()
+        {
+            // (5 choose 2) ways to pick the 2 pairs
+            // There are (numSuits choose 2) to assign suits to each pair
+            // There are (numSuits^3) ways to assign the suits of the 3 non-paired cards
+            // Need to consider cases where the two pairs have 0, 1, or 2 overlapping suits
+            // If they have 0 overlapping suits (numSuits - 2 choose 2) * (numSuits choose 2)
+            // then all numSuits^3 are valid
+            // If they have 1 overlapping suit (numSuits - 2) * 2 * (numSuits choose 2)
+            // then 1 of the numSuits^3 is invalid (the one with all 3 matching the one suit)
+            // If they have 2 overlapping suits 1 * (numSuits choose 2)
+            // then 2 of the pairs are invalid (the ones that match the suits of the pairs)
+            return this._binomialTheoremCalculator.CalculateBinomialCoefficient(5, 2)
+                // 0 overlapping suits in 2 pairs
+                * (this._binomialTheoremCalculator
+                .CalculateBinomialCoefficient(this._numSuits, 2)
+                * this._binomialTheoremCalculator
+                .CalculateBinomialCoefficient(this._numSuits - 2, 2)
+                * Math.Pow(this._numSuits, 3)
+                // 1 overlapping suits in 2 pairs
+                + this._binomialTheoremCalculator
+                .CalculateBinomialCoefficient(this._numSuits, 2) * 2 * (this._numSuits - 2)
+                * (Math.Pow(this._numSuits, 3) - 1)
+                // 2 overlapping suits in 2 pairs
+                + this._binomialTheoremCalculator
+                .CalculateBinomialCoefficient(this._numSuits, 2)
+                * (Math.Pow(this._numSuits, 3) - 2)
+                );
         }
     }
 }

@@ -84,7 +84,7 @@ namespace Riddles.Tests.Poker.Core
         [TestCase(5, Description = "Flush, standard deck")]
         [TestCase(6, Description = "Straight, standard deck")]
         [TestCase(7, Description = "Three of a Kind, standard deck")]
-        ////[TestCase(8, Description = "Two Pair, standard deck")]
+        [TestCase(8, Description = "Two Pair, standard deck")]
         ////[TestCase(9, Description = "One Pair, standard deck")]
         ////[TestCase(10, Description = "High Card, standard deck")]
         public void TestCalculateOddsOfHand(int testCaseId)
