@@ -11,8 +11,8 @@ namespace Riddles.Tests.Poker.Application
     {
         private double Epsilon = 0.00000001;
 
-        [TestCase(16, 4.0336134453781511, 4.0345368916797488)]
-        [TestCase(17, 5.5510204081632653, 5.4631083202511777)]
+        [TestCase(16, 0.0033914872458882758, 0.0033922636852760707)]
+        [TestCase(17, 0.0034369907924132852, 0.0033825588115379618)]
         public void TestNumSuitsRequiredForFullHouseToBeMoreCommonThanStraightFiveCardStud(
             int numSuits,
             double expectedFullHouseOdds,
@@ -37,8 +37,8 @@ namespace Riddles.Tests.Poker.Application
             Assert.LessOrEqual(Math.Abs(expectedStraightOdds - straightOdds), this.Epsilon);
         }
 
-        [TestCase(7, 2.4637318387114329, 2.590349663668214)]
-        [TestCase(8, 6.87833705174947, 6.6875965358035341)]
+        [TestCase(7, 0.040722717999736049, 0.04281556832477456)]
+        [TestCase(8, 0.043317821216730466, 0.042116591398190031)]
         public void TestNumSuitsRequiredForFullHouseToBeMoreCommonThanStraightSevenCardStud(
             int numSuits,
             double expectedFullHouseOdds,

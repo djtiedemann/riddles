@@ -8,7 +8,6 @@ namespace Riddles.Poker.Core
 {
     public class FiveCardStudPokerHandProbabilityCalculator
     {
-        private int _numCardsDrawn = 5;
         private BinomialTheoremCalculator _binomialTheoremCalculator;
         public FiveCardStudPokerHandProbabilityCalculator() { 
             this._binomialTheoremCalculator = new BinomialTheoremCalculator();
@@ -21,7 +20,8 @@ namespace Riddles.Poker.Core
         )
         {
             var numTotalHands 
-                = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, this._numCardsDrawn);
+                = this._binomialTheoremCalculator
+                    .CalculateBinomialCoefficient(numSuits * numRanks, 5);
             var frequency = this.CalculateFrequency(handType, numSuits, numRanks);
             return frequency / numTotalHands;
         }
