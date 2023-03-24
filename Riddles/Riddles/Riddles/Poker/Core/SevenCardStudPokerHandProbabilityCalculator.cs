@@ -24,9 +24,9 @@ namespace Riddles.Poker.Core
             var numTotalHands
                 = this._binomialTheoremCalculator.CalculateBinomialCoefficient(52, 7);
             var frequency = this.CalculateFrequency(
-                handType=handType, 
-                numSuits=numSuits, 
-                numRanks=numRanks
+                handType, 
+                numSuits, 
+                numRanks
             );
             return frequency / numTotalHands;
         }
