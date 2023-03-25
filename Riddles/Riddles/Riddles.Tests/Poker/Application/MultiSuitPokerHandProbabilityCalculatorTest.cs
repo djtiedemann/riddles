@@ -40,10 +40,10 @@ namespace Riddles.Tests.Poker.Application
         }
 
         [TestCase(4)]
-        //[TestCase(5)]
-        //[TestCase(6)]
-        //[TestCase(16)]
-        //[TestCase(17)]
+        [TestCase(5)]
+        [TestCase(6)]
+        [TestCase(16)]
+        [TestCase(17)]
         public void AssertCumulativeProbabilityIsOneFiveCardStud(int numSuits)
         {
             var fiveCardStudProbabilityCalculator

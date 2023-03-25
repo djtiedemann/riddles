@@ -129,15 +129,22 @@ namespace Riddles.Poker.Core
                             .CalculateBinomialCoefficient(numSuits, 2);
                 case HandType.FourOfAKind:
                     return
-                        // pick the number that we're getting 4 of a kind from
+                        // if there are more than 4 suits consider chances of getting
+                        // 5 of a kind
                         this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(numRanks, 1) *
+                        this._binomialTheoremCalculator
+                            .CalculateBinomialCoefficient(numSuits, 5)
+
+                        // pick the number that we're getting 4 of a kind from
+                        + this._binomialTheoremCalculator
                             .CalculateBinomialCoefficient(numRanks, 1) *
                         // pick 4 cards of that number
                         this._binomialTheoremCalculator
                             .CalculateBinomialCoefficient(numSuits, 4) *
                         // pick any remaining card
                         this._binomialTheoremCalculator
-                            .CalculateBinomialCoefficient(numSuits * numRanks - 4, 1);
+                            .CalculateBinomialCoefficient(numSuits * numRanks - numSuits, 1);
                 case HandType.StraightFlush:
                     // pick the suit
                     return this._binomialTheoremCalculator.
