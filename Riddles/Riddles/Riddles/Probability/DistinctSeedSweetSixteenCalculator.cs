@@ -7,6 +7,11 @@ using System.Text;
 
 namespace Riddles.Probability
 {
+    // https://fivethirtyeight.com/features/the-riddler-meets-jeopardy/
+    // Calculate the odds that the sweet 16 is comprised of 16 distinct seeds.
+    // Use 2 probability models:
+    // The first assumes each team is equally likely to win
+    // The second weights the likelihood of winning by the odds of the seed winning.
     public class DistinctSeedSweetSixteenCalculator
     {
         public enum WinningLikelihoodModel
