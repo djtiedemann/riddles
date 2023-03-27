@@ -6,6 +6,12 @@ using System.Text;
 
 namespace Riddles.Poker.Core
 {
+    // much of this is taken from http://people.math.sfu.ca/~alspach/comp20/
+    // generalized to the case of n suits
+    // 
+    // currently there is a bug where cumulative probabilities don't sum to 1
+    // with more than 4 suits. It's likely due to undercounting in cases 
+    // that don't consider 5 of a kind a possibility
     public class SevenCardStudPokerHandProbabilityCalculator
     {
         private BinomialTheoremCalculator _binomialTheoremCalculator;
