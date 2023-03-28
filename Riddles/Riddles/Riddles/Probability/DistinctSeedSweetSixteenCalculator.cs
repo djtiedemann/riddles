@@ -41,6 +41,10 @@ namespace Riddles.Probability
             return totalProbabilityOfAllDistinctSeeds;
         }
 
+        /* To generalize this past 2 teams, have the underscore separated
+         * Seed list be the key and the bracket odds be the value.
+         * Then determine who plays in what rounds with mods and division
+         */
         public double[] CalculateOddsOfTeamEachAdvancing(
            int[] seeds,
            WinningLikelihoodModel likelihoodModel)
