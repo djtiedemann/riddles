@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using Riddles.Tournaments;
 
-namespace Riddles.Probability
+namespace Riddles.Tournaments
 {
     // https://fivethirtyeight.com/features/the-riddler-meets-jeopardy/
     // Calculate the odds that the sweet 16 is comprised of 16 distinct seeds.
@@ -20,8 +19,8 @@ namespace Riddles.Probability
 
         public DistinctSeedSweetSixteenCalculator()
         {
-            this._factorialCalculator = new FactorialCalculator();
-            this._singleEliminationNoReseedBrackerSurvivalOddsCalculator = new SingleEliminationNoReseedBrackerSurvivalOddsCalculator();
+            _factorialCalculator = new FactorialCalculator();
+            _singleEliminationNoReseedBrackerSurvivalOddsCalculator = new SingleEliminationNoReseedBrackerSurvivalOddsCalculator();
         }
 
         public double CalculateOddsOfDistinctSeedsSurvivingBracket(
@@ -29,16 +28,16 @@ namespace Riddles.Probability
             SingleEliminationNoReseedBrackerSurvivalOddsCalculator.WinningLikelihoodModel likelihoodModel)
         {
             var totalProbabilityOfAllDistinctSeeds = 1.0;
-            foreach(var seeds in brackets)
+            foreach (var seeds in brackets)
             {
-                var oddsOfEachTeamAdvancing = this._singleEliminationNoReseedBrackerSurvivalOddsCalculator.CalculateOddsOfTeamEachAdvancing(seeds.ToList(), likelihoodModel);
+                var oddsOfEachTeamAdvancing = _singleEliminationNoReseedBrackerSurvivalOddsCalculator.CalculateOddsOfTeamEachAdvancing(seeds.ToList(), likelihoodModel);
                 var probabilityOfUniqueSeedsSurvivingThisBracket
-                    = oddsOfEachTeamAdvancing.Aggregate(1.0, (agg, v) => agg * v.Value) * this._factorialCalculator.Factorial(seeds.Length);
+                    = oddsOfEachTeamAdvancing.Aggregate(1.0, (agg, v) => agg * v.Value) * _factorialCalculator.Factorial(seeds.Length);
                 totalProbabilityOfAllDistinctSeeds *= probabilityOfUniqueSeedsSurvivingThisBracket;
             }
             return totalProbabilityOfAllDistinctSeeds;
         }
 
-        
+
     }
 }

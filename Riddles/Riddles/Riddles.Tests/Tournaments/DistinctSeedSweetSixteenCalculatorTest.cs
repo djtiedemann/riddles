@@ -5,13 +5,13 @@ using NUnit.Framework;
 using Riddles.Probability;
 using Riddles.Tournaments;
 
-namespace Riddles.Tests.Probability
+namespace Riddles.Tests.Tournaments
 {
     public class DistinctSeedSweetSixteenCalculatorTest
     {
         private double TinyEpsilon = 0.1E-15;
 
-        [TestCase(SingleEliminationNoReseedBrackerSurvivalOddsCalculator.WinningLikelihoodModel.EqualOdds, (double)81/1_048_576)]
+        [TestCase(SingleEliminationNoReseedBrackerSurvivalOddsCalculator.WinningLikelihoodModel.EqualOdds, (double)81 / 1_048_576)]
 
         [TestCase(SingleEliminationNoReseedBrackerSurvivalOddsCalculator.WinningLikelihoodModel.WeightedOdds, 8.529753572810109E-10)]
         public void TestCalculateOddsOfDistinctSeedsSurvivingBracket(
@@ -32,8 +32,8 @@ namespace Riddles.Tests.Probability
                     brackets,
                     likelihoodModel
             );
-            Assert.LessOrEqual(Math.Abs(actualProbabilityOfDistinctSeedsSurviving - expectedOddsOfDistinctSeedsSurviving), 
-                this.TinyEpsilon);
+            Assert.LessOrEqual(Math.Abs(actualProbabilityOfDistinctSeedsSurviving - expectedOddsOfDistinctSeedsSurviving),
+                TinyEpsilon);
         }
     }
 }
