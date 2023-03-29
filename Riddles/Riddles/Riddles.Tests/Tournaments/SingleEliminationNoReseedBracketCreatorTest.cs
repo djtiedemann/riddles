@@ -6,7 +6,7 @@ using Riddles.Tournaments;
 
 namespace Riddles.Tests.Tournaments
 {
-    public class BracketCreatorTest
+    public class SingleEliminationNoReseedBracketCreatorTest
     {
         private Dictionary<int, (List<int>, List<int?>)> TestCaseDictionary =
         new Dictionary<int, (List<int>, List<int?>)>
@@ -65,7 +65,7 @@ namespace Riddles.Tests.Tournaments
         public void TestCreateBracket(int testCaseId)
         {
             var testCase = this.TestCaseDictionary[testCaseId];
-            var bracketCalculator = new BracketCreator();
+            var bracketCalculator = new SingleEliminationNoReseedBracketCreator();
             var actualBracket = bracketCalculator
                 .CreateBracket(testCase.Item1);
             var expectedBracket = testCase.Item2.ToArray();

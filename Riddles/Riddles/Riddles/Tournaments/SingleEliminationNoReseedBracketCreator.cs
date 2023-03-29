@@ -6,10 +6,10 @@ using Riddles.NumberTheory.Core;
 
 namespace Riddles.Tournaments
 {
-    public class BracketCreator
+    public class SingleEliminationNoReseedBracketCreator
     {
         private PowerOfTwoCalculator _powerOfTwoCalculator;
-        public BracketCreator() {
+        public SingleEliminationNoReseedBracketCreator() {
             this._powerOfTwoCalculator = new PowerOfTwoCalculator();
         }
         // Return a march madness style bracket where the best teams play the worst teams
