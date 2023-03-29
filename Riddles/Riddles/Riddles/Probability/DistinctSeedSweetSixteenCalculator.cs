@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Riddles.Tournaments;
 
 namespace Riddles.Probability
 {
@@ -14,91 +15,30 @@ namespace Riddles.Probability
     // The second weights the likelihood of winning by the odds of the seed winning.
     public class DistinctSeedSweetSixteenCalculator
     {
-        public enum WinningLikelihoodModel
-        {
-            EqualOdds = 1,
-            WeightedOdds = 2
-        }
         private FactorialCalculator _factorialCalculator;
+        private SingleEliminationNoReseedBrackerSurvivalOddsCalculator _singleEliminationNoReseedBrackerSurvivalOddsCalculator;
 
         public DistinctSeedSweetSixteenCalculator()
         {
             this._factorialCalculator = new FactorialCalculator();
+            this._singleEliminationNoReseedBrackerSurvivalOddsCalculator = new SingleEliminationNoReseedBrackerSurvivalOddsCalculator();
         }
 
         public double CalculateOddsOfDistinctSeedsSurvivingBracket(
-            List<int[]> brackets, 
-            WinningLikelihoodModel likelihoodModel)
+            List<int[]> brackets,
+            SingleEliminationNoReseedBrackerSurvivalOddsCalculator.WinningLikelihoodModel likelihoodModel)
         {
             var totalProbabilityOfAllDistinctSeeds = 1.0;
             foreach(var seeds in brackets)
             {
-                var oddsOfEachTeamAdvancing = this.CalculateOddsOfTeamEachAdvancing(seeds, likelihoodModel);
+                var oddsOfEachTeamAdvancing = this._singleEliminationNoReseedBrackerSurvivalOddsCalculator.CalculateOddsOfTeamEachAdvancing(seeds.ToList(), likelihoodModel);
                 var probabilityOfUniqueSeedsSurvivingThisBracket
-                    = oddsOfEachTeamAdvancing.Aggregate(1.0, (agg, v) => agg * v) * this._factorialCalculator.Factorial(seeds.Length);
+                    = oddsOfEachTeamAdvancing.Aggregate(1.0, (agg, v) => agg * v.Value) * this._factorialCalculator.Factorial(seeds.Length);
                 totalProbabilityOfAllDistinctSeeds *= probabilityOfUniqueSeedsSurvivingThisBracket;
             }
             return totalProbabilityOfAllDistinctSeeds;
         }
 
-        /* To generalize this past 2 teams, have the underscore separated
-         * Seed list be the key and the bracket odds be the value.
-         * Then determine who plays in what rounds with mods and division
-         */
-        public double[] CalculateOddsOfTeamEachAdvancing(
-           int[] seeds,
-           WinningLikelihoodModel likelihoodModel)
-        {
-            if(seeds.Length != 4)
-            {
-                throw new ArgumentException("Currently doesn't support a bracket of >4 teams");
-            }
-            var headToHeadProbabilityMatrix = this.CalculateHeadToHeadProbabilityMatrix(seeds, likelihoodModel);
-            var oddsToAdvance = new double[seeds.Length];
-            for(int i=0; i<seeds.Length; i++)
-            {
-                var firstOpponent = i % 2 == 1 ? i - 1 : i + 1;
-                var potentialSecondGameOpponentOne = i >= 2 ? i - 2 : i + 2;
-                var potentialSecondGameOpponentTwo = i >= 2 ? firstOpponent - 2 : firstOpponent + 2;
-                oddsToAdvance[i] = 
-                    // odds of winning first game
-                    headToHeadProbabilityMatrix[i, firstOpponent]
-                    // odds potential opponent 1 advances and team beats that opponent
-                    * (headToHeadProbabilityMatrix[potentialSecondGameOpponentOne, potentialSecondGameOpponentTwo] * headToHeadProbabilityMatrix[i, potentialSecondGameOpponentOne]
-                    + headToHeadProbabilityMatrix[potentialSecondGameOpponentTwo, potentialSecondGameOpponentOne] * headToHeadProbabilityMatrix[i, potentialSecondGameOpponentTwo]);
-            }
-            return oddsToAdvance;
-        }
-
-        /// <summary>
-        /// Calculates a matrix representing with [i, j] 
-        /// representing the odds team i would beat team j
-        /// </summary>
-        /// <param name="seeds"></param>
-        /// <param name="winningLikelihoodModel"></param>
-        /// <returns></returns>
-        private double[,] CalculateHeadToHeadProbabilityMatrix(
-            int[] seeds,
-            WinningLikelihoodModel winningLikelihoodModel)
-        {
-            var calculationMatrix = new double[seeds.Length, seeds.Length];
-            for (int i = 0; i < seeds.Length; i++)
-            {
-                for (int j = 0; j < seeds.Length; j++)
-                {
-                    switch (winningLikelihoodModel)
-                    {
-                        case WinningLikelihoodModel.EqualOdds:
-                            calculationMatrix[i, j] = 0.5;
-                            break;
-                        case WinningLikelihoodModel.WeightedOdds:
-                            calculationMatrix[i, j] = 0.5
-                            + 0.033 * (seeds[j] - seeds[i]);
-                            break;
-                    }
-                }
-            }
-            return calculationMatrix;
-        }
+        
     }
 }
