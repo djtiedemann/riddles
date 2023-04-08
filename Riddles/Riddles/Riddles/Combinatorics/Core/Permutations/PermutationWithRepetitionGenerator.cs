@@ -64,6 +64,10 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 
 		public int[] GenerateNextOutcome(int[] currentOutcome, int firstOutcome, int lastOutcome)
 		{
+			if(currentOutcome == null)
+			{
+				return null;
+			}
 			var nextOutcome = currentOutcome.ToArray();
 			if (nextOutcome.All(c => c == lastOutcome))
 			{
