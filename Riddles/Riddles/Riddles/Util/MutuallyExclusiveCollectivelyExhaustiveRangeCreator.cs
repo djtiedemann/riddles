@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Riddles.Util
 {
-    public class RangeConsolidator
+    public class MutuallyExclusiveCollectivelyExhaustiveRangeCreator
     {
-        // create a new list of range which consolidates all of the
+        // create a new list of MECE ranges which cover all
         // ranges within the input list
         // for instance ((0, 1), (2, 4), (8, 12)) and ((0, 5), (6, 11))
         // becomes ((0, 1, true), (1, 2, false), (2, 4, true), (4, 5, false),
@@ -17,41 +17,41 @@ namespace Riddles.Util
         // (5, 6, false), (6, 8, true), (8, 11, true), (11, 12, false))
         // the lists share the same ranges, and have indicator booleans to determine
         // which part of the ranges are within the lists
-        public List<List<(double, double, bool)>> ConsolidateRanges(
-            List<List<(double, double)>> lists
+        public List<List<(double, double, bool)>> CreateMeceRanges(
+            List<List<(double, double)>> inputRanges
         )
         {
-            var consolidatedList = lists
+            var boundaries = inputRanges
                 .Select(l => l.SelectMany(l => new List<double> { l.Item1, l.Item2 }))
                 .SelectMany(i => i)
                 .Distinct()
                 .OrderBy(x => x)
                 .ToList();
-            var ranges = new List<(double, double)>();
-            for (int i = 0; i < consolidatedList.Count() - 1; i++)
+            var meceRanges = new List<(double, double)>();
+            for (int i = 0; i < boundaries.Count() - 1; i++)
             {
-                ranges.Add((consolidatedList[i], consolidatedList[i + 1]));
+                meceRanges.Add((boundaries[i], boundaries[i + 1]));
             }
 
             List<List<(double, double, bool)>> distributions
                 = new List<List<(double, double, bool)>>();
-            foreach (var list in lists)
+            foreach (var inputRange in inputRanges)
             {
                 List<(double, double, bool)> distribution
                     = new List<(double, double, bool)>();
-                var coveredRangePtr = 0;
-                foreach(var consolidatedRange in ranges)
+                var inputRangePtr = 0;
+                foreach(var meceRange in meceRanges)
                 {
                     distribution.Add((
-                        consolidatedRange.Item1,
-                        consolidatedRange.Item2,
-                        coveredRangePtr < list.Count &&
-                            consolidatedRange.Item1 >= list[coveredRangePtr].Item1
+                        meceRange.Item1,
+                        meceRange.Item2,
+                        inputRangePtr < inputRange.Count &&
+                            meceRange.Item1 >= inputRange[inputRangePtr].Item1
                     ));
-                    if(coveredRangePtr < list.Count && 
-                        consolidatedRange.Item2 == list[coveredRangePtr].Item2)
+                    if(inputRangePtr < inputRange.Count && 
+                        meceRange.Item2 == inputRange[inputRangePtr].Item2)
                     {
-                        coveredRangePtr++;
+                        inputRangePtr++;
                     }
                 }
                 distributions.Add(distribution);

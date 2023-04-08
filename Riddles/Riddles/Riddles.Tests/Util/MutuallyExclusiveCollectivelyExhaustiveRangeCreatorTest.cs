@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Riddles.Tests.Util
 {
-    public class RangeConsolidatorTest
+    public class MutuallyExclusiveCollectivelyExhaustiveRangeCreatorTest
     {
         public Dictionary<int, (
             List<List<(double, double)>>,
@@ -107,30 +107,30 @@ namespace Riddles.Tests.Util
         [TestCase(2)] // single list
         [TestCase(3)] // two lists, one trivial
         [TestCase(4)] // three lists
-        public void TestConsolidateRanges(int testCaseId)
+        public void TestCreateMeceRanges(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
-            var rangeConsolidator = new RangeConsolidator();
-            var consolidatedRanges = rangeConsolidator.ConsolidateRanges(
+            var meceRangeCreator = new MutuallyExclusiveCollectivelyExhaustiveRangeCreator();
+            var meceRanges = meceRangeCreator.CreateMeceRanges(
                 testCase.Item1);
             var expected = testCase.Item2;
-            Assert.AreEqual(expected.Count, consolidatedRanges.Count);
+            Assert.AreEqual(expected.Count, meceRanges.Count);
             for(int i=0; i<expected.Count; i++)
             {
-                Assert.AreEqual(expected[i].Count, consolidatedRanges[i].Count);
+                Assert.AreEqual(expected[i].Count, meceRanges[i].Count);
                 for(int j=0; j < expected[i].Count; j++)
                 {
                     Assert.AreEqual(
                         expected[i][j].Item1,
-                        consolidatedRanges[i][j].Item1
+                        meceRanges[i][j].Item1
                     );
                     Assert.AreEqual(
                         expected[i][j].Item2,
-                        consolidatedRanges[i][j].Item2
+                        meceRanges[i][j].Item2
                     );
                     Assert.AreEqual(
                         expected[i][j].Item3,
-                        consolidatedRanges[i][j].Item3
+                        meceRanges[i][j].Item3
                     );
                 }
             }
