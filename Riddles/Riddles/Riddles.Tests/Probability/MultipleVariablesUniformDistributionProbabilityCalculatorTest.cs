@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Riddles.LinearAlgebra;
 using Riddles.Probability;
 using Riddles.Util;
 using System;
@@ -109,9 +110,9 @@ namespace Riddles.Tests.Probability
                         }
                     }, 
                     new double[]{ 
-                        1.0/3.0,
-                        1.0/3.0,
-                        1.0/3.0
+                        .3125,
+                        .4375,
+                        .25
                     }) 
                 }
             };
@@ -122,7 +123,7 @@ namespace Riddles.Tests.Probability
         [TestCase(4)] // three teams, equal probability
         [TestCase(5)] // two teams, skewed probability
         [TestCase(6)] // two teams, skewed probability
-        //[TestCase(7)]
+        [TestCase(7)]
         public void TestCalculateProbabilityTeamHasHighestValue(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
@@ -149,6 +150,35 @@ namespace Riddles.Tests.Probability
                     Math.Abs(expectedProbabilities[i] - actualProbabilities[i]),
                     this.Epsilon
                 );
+            }
+        }
+
+        //[TestCase(7, 10_000_000)]
+        public void SimulateRange(int testCaseId, int numSimulations)
+        {
+            var testCase = this._testCaseDictionary[testCaseId];
+            var distributions = testCase.Item1;
+            var transformationUtil = new TransformationUtil();
+            var random = new Random();
+            int[] numWinsPerDistribution = new int[distributions.Count];
+            for(int i=0; i<numSimulations; i++)
+            {
+                double maxValue = double.MinValue;
+                var maxIndex = -1;
+                for(int j=0; j<distributions.Count; j++)
+                {
+                    var value = transformationUtil
+                        .TransformFractionToUniformDistribution(
+                            random.NextDouble(),
+                            distributions[j]
+                        );
+                    if(value > maxValue)
+                    {
+                        maxValue = value;
+                        maxIndex = j;
+                    }
+                }
+                numWinsPerDistribution[maxIndex]++;
             }
         }
     }
