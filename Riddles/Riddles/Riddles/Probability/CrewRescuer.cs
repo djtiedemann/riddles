@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Riddles.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Riddles.Probability
     // https://fivethirtyeight.com/features/can-you-rescue-your-crew/
     public class CrewRescuer
     {
-        public class DecisionTree
+        private class DecisionTree
         {
             public DecisionTree() {
                 this.TrueRange = null;
@@ -38,17 +39,86 @@ namespace Riddles.Probability
 
         private MultipleVariablesUniformDistributionProbabilityCalculator
             _multipleVariablesUniformDistributionProbabilityCalculator;
+        private MutuallyExclusiveCollectivelyExhaustiveRangeCreator
+            _meceRangeCreator;
         public CrewRescuer() { 
             this._multipleVariablesUniformDistributionProbabilityCalculator =
                 new MultipleVariablesUniformDistributionProbabilityCalculator();
+            this._meceRangeCreator = new MutuallyExclusiveCollectivelyExhaustiveRangeCreator();
         }
 
-        public double CalculateProbabilityOfRescuingCrew(DecisionTree tree)
+        public double CalculateProbabilityOfRescuingCrew(
+            List<(double, double)> question1,
+            List<(double, double)> question2True,
+            List<(double, double)> question2False,
+            List<(double, double)> question3TrueTrue,
+            List<(double, double)> question3TrueFalse,
+            List<(double, double)> question3FalseTrue,
+            List<(double, double)> question3FalseFalse
+        )
         {
+            var tree = this.CreateDecisionTreeFromQuestions(
+                question1,
+                question2True,
+                question2False,
+                question3TrueTrue,
+                question3TrueFalse,
+                question3FalseTrue,
+                question3FalseFalse
+            );
             return this.CalculateProbabilityOfRescuingCrew(
                 tree,
                 new List<List<(double, double)>>(),
                 1.0
+            );
+        }
+
+        // this is hacky and terrible
+        private DecisionTree CreateDecisionTreeFromQuestions(
+            List<(double, double)> question1,
+            List<(double, double)> question2True,
+            List<(double, double)> question2False,
+            List<(double, double)> question3TrueTrue,
+            List<(double, double)> question3TrueFalse,
+            List<(double, double)> question3FalseTrue,
+            List<(double, double)> question3FalseFalse
+        )
+        {
+            return new DecisionTree(
+                question1,
+                this._meceRangeCreator.CreateComplementaryRanges((0, 1), question1),
+                new DecisionTree(
+                    question2True,
+                    this._meceRangeCreator.CreateComplementaryRanges((0, 1), question2True),
+                    new DecisionTree(
+                        question3TrueTrue,
+                        this._meceRangeCreator.CreateComplementaryRanges((0, 1), question3TrueTrue),
+                        new DecisionTree(),
+                        new DecisionTree()
+                    ),
+                    new DecisionTree(
+                        question3TrueFalse,
+                        this._meceRangeCreator.CreateComplementaryRanges((0, 1), question3TrueFalse),
+                        new DecisionTree(),
+                        new DecisionTree()
+                    )
+                ),
+                new DecisionTree(
+                    question2False,
+                    this._meceRangeCreator.CreateComplementaryRanges((0, 1), question2False),
+                    new DecisionTree(
+                        question3FalseTrue,
+                        this._meceRangeCreator.CreateComplementaryRanges((0, 1), question3FalseTrue),
+                        new DecisionTree(),
+                        new DecisionTree()
+                    ),
+                    new DecisionTree(
+                        question3FalseFalse,
+                        this._meceRangeCreator.CreateComplementaryRanges((0, 1), question3FalseFalse),
+                        new DecisionTree(),
+                        new DecisionTree()
+                    )
+                )
             );
         }
 
@@ -60,9 +130,11 @@ namespace Riddles.Probability
         {
             if(tree.TrueTree == null)
             {
-                return cumulativeProbabilityOfSeeingTree
-                    * this._multipleVariablesUniformDistributionProbabilityCalculator
+                var maxProbabilityWinning = this._multipleVariablesUniformDistributionProbabilityCalculator
                         .CalculateProbabilityTeamHasHighestValue(ranges).Max();
+                var rescueProbability = cumulativeProbabilityOfSeeingTree
+                    * maxProbabilityWinning;
+                return rescueProbability;
             }
             var trueTreeProbability =
                 tree.TrueRange.Sum(d => d.Item2 - d.Item1);
@@ -87,7 +159,8 @@ namespace Riddles.Probability
                     cumulativeProbabilityOfSeeingTree * falseTreeProbability
                 );
 
-            return probabilityOfRescuingCrewTrue + probabilityOfRescuingCrewFalse;
+            var rescureProbability =  probabilityOfRescuingCrewTrue + probabilityOfRescuingCrewFalse;
+            return rescureProbability;
         }
     }
 }
