@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Riddles.Util
 {
+    // note, ranges don't have the concept of inclusive and exclusive boundaries
+    // should create an actual concept of a range when handling inclusive and 
+    // exclusive boundaries
     public class MutuallyExclusiveCollectivelyExhaustiveRangeCreator
     {
         // create a new list of MECE ranges which cover all
@@ -57,6 +60,38 @@ namespace Riddles.Util
                 distributions.Add(distribution);
             }
             return distributions;
+        }
+
+        // creates a complementary range such that when
+        // combined with the input list, will cover the full range
+        // in a MECE way
+        public List<(double, double)> CreateComplementaryRanges(
+            (double, double) fullRange,
+            List<(double, double)> range
+        )
+        {
+            if(range.Count == 0)
+            {
+                return new List<(double, double)>
+                {
+                    (fullRange.Item1, fullRange.Item2)
+                };
+            }
+            var startingIndex = range[0].Item1 == fullRange.Item1
+                ? 1 : 0;
+            var complementaryRange = new List<(double, double)>();
+            for(int i=startingIndex; i<range.Count; i++)
+            {
+                complementaryRange.Add(
+                    ((i > 0 ? range[i - 1].Item2 : fullRange.Item1),
+                    range[i].Item1)
+                );
+            }
+            if(range.Last().Item2 != fullRange.Item2)
+            {
+                complementaryRange.Add((range.Last().Item2, fullRange.Item2));
+            }
+            return complementaryRange;
         }
     }
 }

@@ -2,12 +2,15 @@
 using Riddles.Util;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Riddles.Tests.Util
 {
     public class MutuallyExclusiveCollectivelyExhaustiveRangeCreatorTest
     {
+        private double Epsilon = 0.00000001;
+
         public Dictionary<int, (
             List<List<(double, double)>>,
             List<List<(double, double, bool)>>
@@ -36,7 +39,7 @@ namespace Riddles.Tests.Util
                         (5, 6, false), (6, 8, true), (8, 10, true),
                         (10, 11, false), (11, 12, true)
                     }
-                }) 
+                })
             },
             {2, (
                 new List<List<(double, double)>> {
@@ -46,7 +49,7 @@ namespace Riddles.Tests.Util
                 },
                 new List<List<(double, double, bool)>> {
                     new List<(double, double, bool)> {
-                        (0, 1, true), (1, 2, false), (2, 4, true), 
+                        (0, 1, true), (1, 2, false), (2, 4, true),
                         (4, 8, false), (8, 12, true)
                     }
                 })
@@ -55,7 +58,7 @@ namespace Riddles.Tests.Util
                 new List<List<(double, double)>> {
                     new List<(double, double)> {
                         (0, 1), (2, 4), (8, 12)
-                    }, 
+                    },
                     new List<(double, double)>
                     {
                         (0, 12)
@@ -103,6 +106,18 @@ namespace Riddles.Tests.Util
             },
         };
 
+        private Dictionary<int, ((double, double), List<(double, double)>, List<(double, double)>)>
+            _createComplementaryRangeTestCaseDictionary = new Dictionary<int, ((double, double), List<(double, double)>, List<(double, double)>)>
+            {
+                { 1, ((0, 1), new List<(double, double)> { (0.1, 0.2), (0.3, 0.4), (0.5, 0.6), (0.7, 0.8), (0.9, 1) }, new List<(double, double)> { (0, 0.1), (0.2, 0.3), (0.4, 0.5), (0.6, 0.7), (0.8, 0.9) }) },
+                { 2, ((0, 1), new List<(double, double)> { (0, 0.1), (0.2, 0.3), (0.4, 0.5), (0.6, 0.7), (0.8, 0.9) }, new List<(double, double)> { (0.1, 0.2), (0.3, 0.4), (0.5, 0.6), (0.7, 0.8), (0.9, 1) }) },
+                { 3, ((5, 9), new List<(double, double)> { (5, 5.25), (7.25, 8.3), (8.6, 9) }, new List<(double, double)> { (5.25, 7.25), (8.3, 8.6) }) },
+                { 4, ((5, 9), new List<(double, double)> { (5.25, 7.25), (8.3, 8.6) }, new List<(double, double)> { (5, 5.25), (7.25, 8.3), (8.6, 9) }) },
+                { 5, ((1, 10), new List<(double, double)> { }, new List<(double, double)> { (1, 10) }) },
+                { 6, ((0, 1), new List<(double, double)> { (0, 0.5) }, new List<(double, double)> { (0.5, 1) }) },
+                { 7, ((0, 1), new List<(double, double)> { (0.5, 1) }, new List<(double, double)> { (0, 0.5) }) }
+            };
+
         [TestCase(1)] // two non-trivial lists
         [TestCase(2)] // single list
         [TestCase(3)] // two lists, one trivial
@@ -134,6 +149,35 @@ namespace Riddles.Tests.Util
                     );
                 }
             }
+        }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(5)]
+        [TestCase(6)]
+        [TestCase(7)]
+        public void TestCreateComplementaryRanges(int testCaseId)
+        {
+            var meceRangeCalculator = new MutuallyExclusiveCollectivelyExhaustiveRangeCreator();
+            var testCase = this._createComplementaryRangeTestCaseDictionary[testCaseId];
+            var fullRange = testCase.Item1;
+            var range = testCase.Item2;
+            var expected = testCase.Item3;
+            var actual = meceRangeCalculator.CreateComplementaryRanges(fullRange, range);
+
+            Assert.LessOrEqual(Math.Abs((fullRange.Item2 - fullRange.Item1) -
+                (range.Sum(r => r.Item2 - r.Item1) + actual.Sum(r => r.Item2 - r.Item1))), this.Epsilon);
+
+            Assert.AreEqual(expected.Count, actual.Count);
+
+            for(int i=0; i<expected.Count; i++)
+            {
+                Assert.AreEqual(expected[i].Item1, actual[i].Item1);
+                Assert.AreEqual(expected[i].Item2, actual[i].Item2);
+            }
+
         }
     }
 }

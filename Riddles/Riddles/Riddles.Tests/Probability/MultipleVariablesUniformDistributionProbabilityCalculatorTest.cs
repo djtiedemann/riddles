@@ -123,7 +123,7 @@ namespace Riddles.Tests.Probability
         [TestCase(4)] // three teams, equal probability
         [TestCase(5)] // two teams, skewed probability
         [TestCase(6)] // two teams, skewed probability
-        [TestCase(7)]
+        [TestCase(7)] // three teams skewed probability
         public void TestCalculateProbabilityTeamHasHighestValue(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
