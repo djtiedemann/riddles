@@ -114,7 +114,33 @@ namespace Riddles.Tests.Probability
                         .4375,
                         .25
                     }) 
-                }
+                },
+                {8, (new List<List<(double, double)>>{
+                        new List<(double, double)> {
+                            (0.5, 1.0)
+                        },
+                        new List<(double, double)> {
+                            (0.75, 1.0)
+                        }
+                    },
+                    new double[]{
+                        1.0/4.0,
+                        3.0/4.0
+                    })
+                },
+                {9, (new List<List<(double, double)>>{
+                        new List<(double, double)> {
+                            (0.5, 1.0)
+                        },
+                        new List<(double, double)> {
+                            (0.0, 0.75)
+                        }
+                    },
+                    new double[]{
+                        11.0/12.0,
+                        1.0/12.0
+                    })
+                },
             };
 
         [TestCase(1)] // two teams, equal probability
@@ -124,6 +150,8 @@ namespace Riddles.Tests.Probability
         [TestCase(5)] // two teams, skewed probability
         [TestCase(6)] // two teams, skewed probability
         [TestCase(7)] // three teams skewed probability
+        [TestCase(8)] // two teams, skewed probability
+        [TestCase(9)] // two teams, skewed probability
         public void TestCalculateProbabilityTeamHasHighestValue(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
@@ -153,7 +181,7 @@ namespace Riddles.Tests.Probability
             }
         }
 
-        //[TestCase(7, 10_000_000)]
+        //[TestCase(9, 10_000_000)]
         public void SimulateRange(int testCaseId, int numSimulations)
         {
             var testCase = this._testCaseDictionary[testCaseId];
