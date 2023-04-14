@@ -73,6 +73,47 @@ namespace Riddles.Probability
             );
         }
 
+        public double CalculateProbabilityOfRescuingCrew(
+            List<(double, double)> question1,
+            List<(double, double)> question2True,
+            List<(double, double)> question2False
+        )
+        {
+            var tree = this.CreateDecisionTreeFromQuestions(
+                question1,
+                question2True,
+                question2False
+            );
+            return this.CalculateProbabilityOfRescuingCrew(
+                tree,
+                new List<List<(double, double)>>(),
+                1.0
+            );
+        }
+
+        private DecisionTree CreateDecisionTreeFromQuestions(
+            List<(double, double)> question1,
+            List<(double, double)> question2True,
+            List<(double, double)> question2False)
+        {
+            return new DecisionTree(
+                question1,
+                this._meceRangeCreator.CreateComplementaryRanges((0, 1), question1),
+                new DecisionTree(
+                    question2True,
+                    this._meceRangeCreator.CreateComplementaryRanges((0, 1), question2True),
+                    new DecisionTree(),
+                    new DecisionTree()
+                ),
+                new DecisionTree(
+                    question2False,
+                    this._meceRangeCreator.CreateComplementaryRanges((0, 1), question2False),
+                    new DecisionTree(),
+                    new DecisionTree()
+                )
+            );
+        }
+
         // this is hacky and terrible
         private DecisionTree CreateDecisionTreeFromQuestions(
             List<(double, double)> question1,
