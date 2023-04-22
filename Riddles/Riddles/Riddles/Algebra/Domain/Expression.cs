@@ -58,85 +58,88 @@ namespace Riddles.Algebra.Domain
     }
 
     /// <summary>
-    /// A Sum class contains a list of expressions that should be summed
-    /// and a list of expressions that should be subracted.
-    /// It orders the expressions and evaluates them
+    /// Used to build expressions for sums and products
     /// </summary>
-    public class Sum : Expression
+    public abstract class CommutativeAndAssociativeExpression : Expression
     {
-        private List<Expression> _addedExpressions;
-        private List<Expression> _subtractedExpressions;
+        protected List<Expression> _standardExpressions;
+        protected List<Expression> invertedExpressions;
         private string? _stringRepresentation;
-        public Sum(
-            List<Expression> addedExpressions, 
-            List<Expression> subtractedExpressions,
+        private string _standardExpressionDelimeter;
+        private string _invertedExpressionDelimeter;
+        public CommutativeAndAssociativeExpression(
+            List<Expression> standardExpressions, 
+            List<Expression> invertedExpressions,
+            string standardExpressionDelimeter,
+            string invertedExpressionDelimeter,
             bool simplifyExpression = true
         )
         {
+            this._standardExpressionDelimeter = standardExpressionDelimeter;
+            this._invertedExpressionDelimeter = invertedExpressionDelimeter;
             if (simplifyExpression)
             {
-                this._addedExpressions = new List<Expression>();
-                this._subtractedExpressions = new List<Expression>();
-                foreach(var expression in addedExpressions)
+                this._standardExpressions = new List<Expression>();
+                this.invertedExpressions = new List<Expression>();
+                foreach(var expression in standardExpressions)
                 {
-                    if(expression is Sum)
+                    if(this.ShouldApplyAssociativeProperty(expression))
                     {
-                        this._addedExpressions.AddRange(((Sum)expression).GetAddedExpressions());
-                        this._subtractedExpressions.AddRange(((Sum)expression).GetSubtractedExpressions());
+                        this._standardExpressions.AddRange(((CommutativeAndAssociativeExpression)expression)
+                            .GetStandardExpressions());
+                        this.invertedExpressions.AddRange(((CommutativeAndAssociativeExpression)expression)
+                            .GetInvertedExpressions());
                     }
                     else
                     {
-                        this._addedExpressions.Add(expression);
+                        this._standardExpressions.Add(expression);
                     }
                 }
-                foreach(var expression in subtractedExpressions)
+                foreach(var expression in invertedExpressions)
                 {
-                    if (expression is Sum)
+                    if (this.ShouldApplyAssociativeProperty(expression))
                     {
-                        this._subtractedExpressions.AddRange(((Sum)expression).GetAddedExpressions());
-                        this._addedExpressions.AddRange(((Sum)expression).GetSubtractedExpressions());
+                        this.invertedExpressions.AddRange(
+                            ((CommutativeAndAssociativeExpression)expression)
+                                .GetStandardExpressions());
+                        this._standardExpressions.AddRange(
+                            ((CommutativeAndAssociativeExpression)expression)
+                            .GetInvertedExpressions());
                     }
                     else
                     {
-                        this._subtractedExpressions.Add(expression);
+                        this.invertedExpressions.Add(expression);
                     }
                 }
             }
             else
             {
-                this._addedExpressions = addedExpressions;
-                this._subtractedExpressions = subtractedExpressions;
+                this._standardExpressions = standardExpressions;
+                this.invertedExpressions = invertedExpressions;
             }
             
             this._terms = 
-                addedExpressions.SelectMany(x => x.Terms).ToList().Concat(
-                    subtractedExpressions.SelectMany(x => x.Terms)
-                    ).ToList();
+                standardExpressions.SelectMany(x => x.Terms).ToList().Concat(
+                    invertedExpressions.SelectMany(x => x.Terms)
+                    ).Distinct().ToList();
         }
 
-        public override double Evaluate(Dictionary<string, int> termValues)
-        {
-            var addedExpressions = this._addedExpressions
-                .Sum(x => x.Evaluate(termValues));
-            var subtractedExpressions = this._subtractedExpressions
-                .Sum(x => x.Evaluate(termValues));
-            return addedExpressions - subtractedExpressions;
-        }
+        protected abstract bool ShouldApplyAssociativeProperty(Expression e);
 
         public override string GetStringRepresentation()
         {
             if(this._stringRepresentation == null)
             {
                 var addedStringRepresentations =
-                    this._addedExpressions.Select(s =>
+                    this._standardExpressions.Select(s =>
                         s.GetStringRepresentation()
                     ).OrderBy(x => x)
-                    .Aggregate("", (acc, exp) => acc == "" ? exp : $"{acc}+{exp}");
+                    .Aggregate("", (acc, exp) => acc == "" ? exp : $"{acc}{this._standardExpressionDelimeter}{exp}");
                 var subtractedStringRepresentations = 
-                    this._subtractedExpressions.Select(s =>
+                    this.invertedExpressions.Select(s =>
                         s.GetStringRepresentation()
                     ).OrderBy(x => x)
-                    .Aggregate("", (acc, exp) => acc == "" ? exp : $"{acc}+{exp}");
+                    .Aggregate("", (acc, exp) => acc == "" ? exp : $"{acc}{this._standardExpressionDelimeter}{exp}");
                 if (subtractedStringRepresentations == "")
                 {
                     this._stringRepresentation = $"({addedStringRepresentations})";
@@ -144,20 +147,79 @@ namespace Riddles.Algebra.Domain
                 else
                 {
                     this._stringRepresentation 
-                        = $"(({addedStringRepresentations})-({subtractedStringRepresentations}))";
-
+                        = $"(({addedStringRepresentations}){this._invertedExpressionDelimeter}({subtractedStringRepresentations}))";
                 }
             }
             return this._stringRepresentation;
         }
 
-        public List<Expression> GetAddedExpressions() { 
-            return this._addedExpressions.ToList(); 
+        public List<Expression> GetStandardExpressions() { 
+            return this._standardExpressions.ToList(); 
         }
 
-        public List<Expression> GetSubtractedExpressions()
+        public List<Expression> GetInvertedExpressions()
         {
-            return this._subtractedExpressions.ToList();
+            return this.invertedExpressions.ToList();
+        }
+    }
+
+    public class Sum : CommutativeAndAssociativeExpression
+    {
+        public Sum(List<Expression> standardExpressions,
+            List<Expression> invertedExpressions,
+            bool simplifyExpression = true) 
+            : base(
+                  standardExpressions,
+                  invertedExpressions,
+                  "+",
+                  "-",
+                  simplifyExpression
+                )
+        {
+
+        }
+
+        protected override bool ShouldApplyAssociativeProperty(Expression e)
+        {
+            return e is Sum;
+        }
+        public override double Evaluate(Dictionary<string, int> termValues)
+        {
+            var standardExpressions = this._standardExpressions
+                .Sum(x => x.Evaluate(termValues));
+            var invertedExpressions = this.invertedExpressions
+                .Sum(x => x.Evaluate(termValues));
+            return standardExpressions - invertedExpressions;
+        }
+    }
+
+    public class Product : CommutativeAndAssociativeExpression
+    {
+        public Product(List<Expression> standardExpressions,
+            List<Expression> invertedExpressions,
+            bool simplifyExpression = true)
+            : base(
+                  standardExpressions,
+                  invertedExpressions,
+                  "*",
+                  "/",
+                  simplifyExpression
+                )
+        {
+
+        }
+
+        protected override bool ShouldApplyAssociativeProperty(Expression e)
+        {
+            return e is Product;
+        }
+        public override double Evaluate(Dictionary<string, int> termValues)
+        {
+            var standardExpressions = this._standardExpressions
+                .Aggregate(1.0, (agg, x) => agg*x.Evaluate(termValues));
+            var invertedExpressions = this.invertedExpressions
+                .Sum(x => x.Evaluate(termValues));
+            return standardExpressions / invertedExpressions;
         }
     }
 }
