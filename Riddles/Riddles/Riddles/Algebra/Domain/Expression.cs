@@ -121,7 +121,7 @@ namespace Riddles.Algebra.Domain
             this._terms = 
                 standardExpressions.SelectMany(x => x.Terms).ToList().Concat(
                     invertedExpressions.SelectMany(x => x.Terms)
-                    ).Distinct().ToList();
+                    ).Distinct().OrderBy(x => x).ToList();
         }
 
         protected abstract bool ShouldApplyAssociativeProperty(Expression e);
@@ -216,9 +216,9 @@ namespace Riddles.Algebra.Domain
         public override double Evaluate(Dictionary<string, int> termValues)
         {
             var standardExpressions = this._standardExpressions
-                .Aggregate(1.0, (agg, x) => agg*x.Evaluate(termValues));
+                .Aggregate(1.0, (agg, x) => agg*(x.Evaluate(termValues)));
             var invertedExpressions = this.invertedExpressions
-                .Sum(x => x.Evaluate(termValues));
+                .Aggregate(1.0, (agg, x) => agg * (x.Evaluate(termValues)));
             return standardExpressions / invertedExpressions;
         }
     }
