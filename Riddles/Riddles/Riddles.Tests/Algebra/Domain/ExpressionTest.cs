@@ -15,28 +15,28 @@ namespace Riddles.Tests.Algebra.Domain
                 {1, (new Term("A"), "A", "A", 1) },
                 {2, (new Term("B"), "B", "B", 2) },
                 {3, (new Sum(
-                    new List<Expression> { new Term("A"), new Term("C") }, 
-                    new List<Expression> { new Term("D"), new Term("B")}, true), 
+                    new List<Expression> { new Term("A"), new Term("C") },
+                    new List<Expression> { new Term("D"), new Term("B")}, true),
                     "((A+C)-(B+D))", "ABCD", -2) },
                 {4, (new Sum(
                     new List<Expression> { new Term("A"), new Term("C"), new Term("B") },
                     new List<Expression> { new Term("D")}, true),
-                    "((A+B+C)-(D))", 
+                    "((A+B+C)-(D))",
                     "ABCD",
                     2) },
                 {5, (new Sum(
                     new List<Expression> { new Term("D"), new Term("C"), new Term("B") },
                     new List<Expression> { }, true),
-                    "(B+C+D)", 
+                    "(B+C+D)",
                     "BCD",
                     9) },
                 {6, (new Sum(
                     new List<Expression> {
                         new Sum(new List<Expression>{
                                 new Term("X"),
-                                new Term("A"), 
+                                new Term("A"),
                                 new Term("C"),
-                            }, 
+                            },
                             new List<Expression> {
                                 new Term("M"),
                                 new Term("R")
@@ -358,6 +358,118 @@ namespace Riddles.Tests.Algebra.Domain
                     "ACFGHLMOPQRTVXYZ",
                     8465089.28571
                     ) },
+                { 17, (new Product(
+                    new List<Expression>{
+                        new Term("F"),
+                        new Sum(
+                            new List<Expression>{ new Term("C"), new Term("B") },
+                            new List<Expression>{ },
+                            simplifyExpression: true
+                        ),
+                        new Term("G"),
+                        new Sum( 
+                            new List<Expression> { new Term("D") },
+                            new List<Expression> { new Term("A")},
+                            true
+                        ),
+                        new Term("E")
+                    },
+                    new List<Expression>{ 
+                        new Sum(
+                            new List<Expression>{ new Term("N") },
+                            new List<Expression>{ new Term("L")},
+                            simplifyExpression: true
+                        ) 
+                    },
+                    true
+                ), "((((D)-(A))*(B+C)*E*F*G)/(((N)-(L))))", 
+                    "ABCDEFGLN", 
+                    1575) },
+                { 18, (new Sum(
+                    new List<Expression>{
+                        new Term("F"),
+                        new Product(
+                            new List<Expression>{ new Term("C"), new Term("B") },
+                            new List<Expression>{ },
+                            simplifyExpression: true
+                        ),
+                        new Term("G"),
+                        new Product(
+                            new List<Expression> { new Term("D") },
+                            new List<Expression> { new Term("A")},
+                            true
+                        ),
+                        new Term("E")
+                    },
+                    new List<Expression>{
+                        new Product(
+                            new List<Expression>{ new Term("N") },
+                            new List<Expression>{ new Term("L")},
+                            simplifyExpression: true
+                        )
+                    },
+                    true
+                ), "((((D)/(A))+(B*C)+E+F+G)-(((N)/(L))))",
+                    "ABCDEFGLN",
+                    161.0/6.0) },
+                { 19, (
+                    new Sum(
+                        new List<Expression>{
+                            new Term("B"),
+                            new Term("A"),
+                            new Product(
+                                new List<Expression>{ 
+                                    new Term("E"),
+                                    new Sum(
+                                        new List<Expression>{
+                                            new Term("D"),
+                                            new Term("C")
+                                        },
+                                        new List<Expression>{ },
+                                        simplifyExpression: true
+                                    )},
+                                new List<Expression>{ 
+                                    
+                                },
+                                simplifyExpression: true
+                            )
+                        },
+                        new List<Expression>{ },
+                        simplifyExpression: true
+                    ),
+                    "(((C+D)*E)+A+B)",
+                    "ABCDE",
+                    38
+                    )},
+                { 20, (
+                    new Product(
+                        new List<Expression>{
+                            new Term("B"),
+                            new Term("A"),
+                            new Sum(
+                                new List<Expression>{
+                                    new Term("E"),
+                                    new Product(
+                                        new List<Expression>{
+                                            new Term("D"),
+                                            new Term("C")
+                                        },
+                                        new List<Expression>{ },
+                                        simplifyExpression: true
+                                    )},
+                                new List<Expression>{
+
+                                },
+                                simplifyExpression: true
+                            )
+                        },
+                        new List<Expression>{ },
+                        simplifyExpression: true
+                    ),
+                    "(((C*D)+E)*A*B)",
+                    "ABCDE",
+                    34
+                    )},
             };
 
         private double Epsilon = 0.00000001;
@@ -379,6 +491,10 @@ namespace Riddles.Tests.Algebra.Domain
         [TestCase(15)] // Multiplication and Division - associative and commutative, simplified
         [TestCase(16)] // Multiplication and Division - associative and commutative, simplified
         // TODO: Add test where the correct ordering is applied for nested sums
+        [TestCase(17)] // Combination of Addition, Subtraction, Multiplication, Division
+        [TestCase(18)] // Test Case 17 inverted
+        [TestCase(19)] // Nested addition within multiplication
+        [TestCase(20)] // Test case 19 inverted
         public void TestGetStringRepresentation(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
