@@ -40,7 +40,8 @@ namespace Riddles.Tests.Algebra.Domain
                             new List<Expression> {
                                 new Term("M"),
                                 new Term("R")
-                            }),
+                            },
+                            simplifyExpression: true),
                         new Sum(new List<Expression>{
                                 new Term("L"),
                             },
@@ -48,7 +49,8 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("T"),
                                 new Term("V"),
                                 new Term("Y"),
-                            }),
+                            },
+                            simplifyExpression: true),
                         new Sum(new List<Expression>{
                                 new Term("P"),
                             },
@@ -56,7 +58,8 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("Q"),
                                 new Term("Z"),
                                 new Term("O"),
-                            }),
+                            }, 
+                            simplifyExpression : true),
                     },
                     new List<Expression> { }, false),
                     "(((A+C+X)-(M+R))+((L)-(T+V+Y))+((P)-(O+Q+Z)))",
@@ -86,7 +89,7 @@ namespace Riddles.Tests.Algebra.Domain
                             new List<Expression> {
                                 new Term("M"),
                                 new Term("R")
-                            }),
+                            }, simplifyExpression : true),
                         new Sum(new List<Expression>{
                                 new Term("L"),
                             },
@@ -94,7 +97,7 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("T"),
                                 new Term("V"),
                                 new Term("Y"),
-                            }),
+                            }, simplifyExpression : true),
                         new Sum(new List<Expression>{
                                 new Term("P"),
                             },
@@ -102,7 +105,7 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("Q"),
                                 new Term("Z"),
                                 new Term("O"),
-                            }),
+                            }, simplifyExpression : true),
                     }, false),
                     "((((F+H)-(G)))-(((A+C+X)-(M+R))+((L)-(T+V+Y))+((P)-(O+Q+Z))))",
                     "ACFGHLMOPQRTVXYZ",
@@ -118,7 +121,7 @@ namespace Riddles.Tests.Algebra.Domain
                             new List<Expression> {
                                 new Term("M"),
                                 new Term("R")
-                            }),
+                            }, simplifyExpression : true),
                         new Sum(new List<Expression>{
                                 new Term("L"),
                             },
@@ -126,7 +129,7 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("T"),
                                 new Term("V"),
                                 new Term("Y"),
-                            }),
+                            }, simplifyExpression : true),
                         new Sum(new List<Expression>{
                                 new Term("P"),
                             },
@@ -134,7 +137,7 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("Q"),
                                 new Term("Z"),
                                 new Term("O"),
-                            }),
+                            }, simplifyExpression : true),
                     },
                     new List<Expression> { }, true),
                     "((A+C+L+P+X)-(M+O+Q+R+T+V+Y+Z))",
@@ -164,7 +167,7 @@ namespace Riddles.Tests.Algebra.Domain
                             new List<Expression> {
                                 new Term("M"),
                                 new Term("R")
-                            }),
+                            }, simplifyExpression : true),
                         new Sum(new List<Expression>{
                                 new Term("L"),
                             },
@@ -172,7 +175,7 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("T"),
                                 new Term("V"),
                                 new Term("Y"),
-                            }),
+                            }, simplifyExpression : true),
                         new Sum(new List<Expression>{
                                 new Term("P"),
                             },
@@ -180,7 +183,7 @@ namespace Riddles.Tests.Algebra.Domain
                                 new Term("Q"),
                                 new Term("Z"),
                                 new Term("O"),
-                            }),
+                            }, simplifyExpression : true),
                     }, true),
                     "((F+H+M+O+Q+R+T+V+Y+Z)-(A+C+G+L+P+X))",
                     "ACFGHLMOPQRTVXYZ",

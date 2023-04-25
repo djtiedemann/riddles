@@ -167,7 +167,7 @@ namespace Riddles.Algebra.Domain
     {
         public Sum(List<Expression> standardExpressions,
             List<Expression> invertedExpressions,
-            bool simplifyExpression = true) 
+            bool simplifyExpression) 
             : base(
                   standardExpressions,
                   invertedExpressions,
