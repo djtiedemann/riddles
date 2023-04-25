@@ -29,12 +29,18 @@ namespace Riddles.Tests.Combinatorics.Application
                 // 50:((A+B)/C) 51:((A-B)/C) 58:((B-A)/C) 52:((A*B)-C) 53:((A/B)-C) 59:((B/A)-C)
                 // 54:((A+C)/B) 55:((A-C)/B) 64:((C-A)/B) 56:((A*C)-B) 57:((A/C)-B) 65:((C/A)-B)
                 // 60:((B+C)/A) 61:((B-C)/A) 66:((C-B)/A) 62:((B*C)-A) 63:((B/C)-A) 67:((C/B)-A)
+                {4, (4, 1_572) },
+                {5, (5, 39_677) },
+                {6, (6, 1_302_100) }
             };
 
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(3)]
-        
+        [TestCase(4)]
+        [TestCase(5)]
+        //[TestCase(6)] - takes 20s
+
         public void TestCalculateNumDistinctEquations(int testCaseId)
         {
             var testCase = testCaseDictionary[testCaseId];
