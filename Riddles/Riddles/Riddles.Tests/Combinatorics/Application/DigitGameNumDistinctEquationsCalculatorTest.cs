@@ -39,7 +39,7 @@ namespace Riddles.Tests.Combinatorics.Application
         [TestCase(3)]
         [TestCase(4)]
         [TestCase(5)]
-        //[TestCase(6)] - takes 20s
+        //[TestCase(6)] // takes 20s
 
         public void TestCalculateNumDistinctEquations(int testCaseId)
         {
