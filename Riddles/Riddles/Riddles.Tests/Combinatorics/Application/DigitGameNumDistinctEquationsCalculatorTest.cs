@@ -1,10 +1,7 @@
 ﻿using NUnit.Framework;
-using Riddles.Algebra.Domain;
 using Riddles.Combinatorics.Application;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Riddles.Tests.Combinatorics.Application
 {
@@ -31,9 +28,9 @@ namespace Riddles.Tests.Combinatorics.Application
                 // 50:((A+B)/C) 51:((A-B)/C) 58:((B-A)/C) 52:((A*B)-C) 53:((A/B)-C) 59:((B/A)-C)
                 // 54:((A+C)/B) 55:((A-C)/B) 64:((C-A)/B) 56:((A*C)-B) 57:((A/C)-B) 65:((C/A)-B)
                 // 60:((B+C)/A) 61:((B-C)/A) 66:((C-B)/A) 62:((B*C)-A) 63:((B/C)-A) 67:((C/B)-A)
-                {4, (4, 1_556) },
-                {5, (5, 39_677) },
-                {6, (6, 1_302_100) }
+                {4, (4, 1_482) },
+                {5, (5, 33_737) },
+                {6, (6, 974_860) }
             };
 
         private Dictionary<int, double[]> EvaluationDictionary = new Dictionary<int, double[]>
@@ -45,51 +42,25 @@ namespace Riddles.Tests.Combinatorics.Application
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        //[TestCase(5)]
-        //[TestCase(6)] // takes 20s
-
+        [TestCase(5)]
+        //[TestCase(6)] // takes 7 s
         public void TestCalculateNumDistinctEquations(int testCaseId)
         {
-            var testCase = testCaseDictionary[testCaseId];
             var digitGameNumDistinctEquationsCalculator =
                 new DigitGameNumDistinctEquationsCalculator();
-            var numVariables = testCase.Item1;
-            var expectedNumExpressions = testCase.Item2;
-            var actualNumExpressions = digitGameNumDistinctEquationsCalculator
-                .CalculateNumDistinctEquations(numVariables);
-            Assert.AreEqual(expectedNumExpressions, actualNumExpressions.Item1);
-        }
-
-        [TestCase(4)]
-        public void DebugIssues(int testCaseId)
-        {
-            var epsilon = 0.0000001;
-            var testCase = testCaseDictionary[testCaseId];
-            var digitGameNumDistinctEquationsCalculator =
-                new DigitGameNumDistinctEquationsCalculator();
-            var numVariables = testCase.Item1;
-            var expectedNumExpressions = testCase.Item2;
-            var actualNumExpressions = digitGameNumDistinctEquationsCalculator
-                .CalculateNumDistinctEquations(numVariables);
-            Assert.AreEqual(expectedNumExpressions, actualNumExpressions.Item1);
-
-            var expressions = actualNumExpressions.Item2[testCaseId];
-            var terms = EvaluationDictionary[testCaseId].Select((x,i) 
-                => ((char)('A' + i), x)).ToDictionary(x => x.Item1.ToString(), x => x.x);
-            var expressionsWithEvaluations
-                = expressions.Select(e => (e.GetStringRepresentation(), e.Evaluate(terms), e))
-                .OrderBy(e => e.Item2)
-                .ToList();
-            for(int i=0; i < expressions.Count - 1; i++)
-            {
-                if (
-                    (Math.Abs(expressionsWithEvaluations[i].Item2 
-                    - expressionsWithEvaluations[i + 1].Item2)) / 
-                    Math.Abs(expressionsWithEvaluations[i+1].Item2) < epsilon)
-                {
-                    var x = 9;
-                }
-            }
+            var variables = new double[] {
+                23.0/173.0, 
+                109.0/311.0, 
+                269.0/677.0, 
+                457.0/881.0,
+                643.0/997.0,
+                829.0/1811.0
+            }.Take(testCaseId).ToArray();
+            var numDistinctEquations = digitGameNumDistinctEquationsCalculator
+                .CalculateNumDistinctEquations(variables);
+            Assert.AreEqual(
+                numDistinctEquations,
+                testCaseDictionary[testCaseId].Item2);
         }
     }
 }
