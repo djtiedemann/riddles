@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using Riddles.Combinatorics.Application;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,11 +34,6 @@ namespace Riddles.Tests.Combinatorics.Application
                 {6, (6, 974_860) }
             };
 
-        private Dictionary<int, double[]> EvaluationDictionary = new Dictionary<int, double[]>
-        {
-            {4, new double[] { 23.0/173.0, 109.0/311.0, 269.0/677.0, 457.0/881.0 } }
-        };
-
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(3)]
@@ -48,14 +44,10 @@ namespace Riddles.Tests.Combinatorics.Application
         {
             var digitGameNumDistinctEquationsCalculator =
                 new DigitGameNumDistinctEquationsCalculator();
-            var variables = new double[] {
-                23.0/173.0, 
-                109.0/311.0, 
-                269.0/677.0, 
-                457.0/881.0,
-                643.0/997.0,
-                829.0/1811.0
-            }.Take(testCaseId).ToArray();
+            var random = new Random();
+            var variables = Enumerable.Range(0, testCaseId)
+                .Select(x => random.NextDouble())
+                .ToArray();
             var numDistinctEquations = digitGameNumDistinctEquationsCalculator
                 .CalculateNumDistinctEquations(variables);
             Assert.AreEqual(
