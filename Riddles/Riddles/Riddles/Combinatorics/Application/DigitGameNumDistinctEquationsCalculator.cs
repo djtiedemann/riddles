@@ -8,7 +8,8 @@ namespace Riddles.Combinatorics.Application
 {
     public class DigitGameNumDistinctEquationsCalculator
     {
-        public int CalculateNumDistinctEquations(int numVariables)
+        public (int, Dictionary<int, HashSet<Expression>>) 
+            CalculateNumDistinctEquations(int numVariables)
         {
             var variables = Enumerable.Range(0, numVariables)
                 .Select(i => ((char)('A' + i)).ToString())
@@ -41,26 +42,26 @@ namespace Riddles.Combinatorics.Application
                             }
                             var addition =
                                 new Sum(
-                                    new List<Expression> { expression1, expression2 },
+                                    new List<Expression> { expression1.Copy(), expression2.Copy() },
                                     new List<Expression>(),
                                     simplifyExpression: true
                                 );
                             var subtraction =
                                 new Sum(
-                                    new List<Expression> { expression1 },
-                                    new List<Expression> { expression2 },
+                                    new List<Expression> { expression1.Copy() },
+                                    new List<Expression> { expression2.Copy() },
                                     simplifyExpression: true
                                 );
                             var multiplication =
                                 new Product(
-                                    new List<Expression> { expression1, expression2 },
+                                    new List<Expression> { expression1.Copy(), expression2.Copy() },
                                     new List<Expression>(),
                                     simplifyExpression: true
                                 );
                             var division =
                                 new Product(
-                                    new List<Expression> { expression1 },
-                                    new List<Expression> { expression2 },
+                                    new List<Expression> { expression1.Copy() },
+                                    new List<Expression> { expression2.Copy() },
                                     simplifyExpression: true
                                 );
                             expressionsForNumVars.Add(addition);
@@ -78,7 +79,7 @@ namespace Riddles.Combinatorics.Application
             {
                 totalNumExpressions += expressionsByNumVariables[key].Count;
             }
-            return totalNumExpressions;
+            return (totalNumExpressions, expressionsByNumVariables);
         }
     }
 }

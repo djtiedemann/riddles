@@ -385,7 +385,7 @@ namespace Riddles.Tests.Algebra.Domain
                         ) 
                     },
                     true
-                ), "((((D)-(A))*(B+C)*E*F*G)/(((N)-(L))))", 
+                ), "((((A)-(D))*(B+C)*E*F*G)/(((L)-(N))))", 
                     "ABCDEFGLN", 
                     1575) },
                 { 18, (new Sum(
@@ -473,6 +473,21 @@ namespace Riddles.Tests.Algebra.Domain
                     "ABCDE",
                     34
                     )},
+                { 21, (new Product(
+                    new List<Expression>{
+                        new Term("A"),
+                        new Sum(
+                            new List<Expression>{ new Term("B")},
+                            new List<Expression>{ new Term("C")},
+                            simplifyExpression: true
+                        ),
+                    },
+                    new List<Expression>{
+
+                    },
+                    true
+                ), "(((B)-(C))*A)", "ABC",
+                    -1) }
             };
 
         private double Epsilon = 0.00000001;
@@ -498,6 +513,7 @@ namespace Riddles.Tests.Algebra.Domain
         [TestCase(18)] // Test Case 17 inverted
         [TestCase(19)] // Nested addition within multiplication
         [TestCase(20)] // Test case 19 inverted
+        [TestCase(21)] // Simple division, no need to apply sign inversion
         public void TestGetStringRepresentation(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
@@ -513,7 +529,53 @@ namespace Riddles.Tests.Algebra.Domain
                 Enumerable.Range(0, 26).Select(x => (char)('A' + x))
                 .ToDictionary(
                     x => x.ToString(),
-                    x => (x - 'A') + 1
+                    x => (double)((x - 'A') + 1)
+                );
+            var expectedEvaluation = testCase.Item4;
+            var actualEvaluation = expression.Evaluate(termDictionary);
+            Assert.LessOrEqual(
+                Math.Abs(expectedEvaluation - actualEvaluation) / actualEvaluation,
+                Epsilon
+            );
+            var copy = expression.Copy();
+            Assert.False(copy == expression);
+            Assert.AreEqual(copy, expression);
+            Assert.AreEqual(copy.GetStringRepresentation(), expression.GetStringRepresentation());
+            Assert.AreEqual(copy.Evaluate(termDictionary), expression.Evaluate(termDictionary));
+        }
+
+        [TestCase]
+        public void TestGetStringRepresentationDebug()
+        {
+            var testCase = (new Product(
+                    new List<Expression>{
+                        new Term("B"),
+                    },
+                    new List<Expression>
+                    {
+                        new Sum(
+                            new List<Expression>{ new Term("D")},
+                            new List<Expression>{ new Term("C")},
+                            simplifyExpression: true
+                        ),
+                        new Term("A")
+                    },
+                    true
+                ), "((B)/(((D)-(C))*A))", "ABCD",
+                    2);
+            var expression = testCase.Item1;
+            var exprectedResult = testCase.Item2;
+            var actualResult = expression.GetStringRepresentation();
+            Assert.AreEqual(exprectedResult, actualResult);
+            var actualTermString = expression.Terms
+                .Aggregate("", (agg, v) => $"{agg}{v}");
+            var expectedTermString = testCase.Item3;
+            Assert.AreEqual(expectedTermString, actualTermString);
+            var termDictionary =
+                Enumerable.Range(0, 26).Select(x => (char)('A' + x))
+                .ToDictionary(
+                    x => x.ToString(),
+                    x => (double)((x - 'A') + 1)
                 );
             var expectedEvaluation = testCase.Item4;
             var actualEvaluation = expression.Evaluate(termDictionary);
