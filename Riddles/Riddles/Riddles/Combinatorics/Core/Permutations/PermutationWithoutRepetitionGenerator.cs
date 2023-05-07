@@ -7,41 +7,41 @@ using Riddles.Combinatorics.Core;
 
 namespace Riddles.Combinatorics.Core.SetGeneration
 {
-	public class PermutationWithoutRepetitionGenerator
-	{
-		private FactorialCalculator _factorialCalculator;
-		private Random _random;
-		public PermutationWithoutRepetitionGenerator()
-		{
-			this._factorialCalculator = new FactorialCalculator();
-			this._random = new Random();
-		}
+    public class PermutationWithoutRepetitionGenerator
+    {
+        private FactorialCalculator _factorialCalculator;
+        private Random _random;
+        public PermutationWithoutRepetitionGenerator()
+        {
+            this._factorialCalculator = new FactorialCalculator();
+            this._random = new Random();
+        }
 
-		public List<Permutation> GenerateAllPermutations(int n, int r)
-		{
+        public List<Permutation> GenerateAllPermutations(int n, int r)
+        {
             var permutations = new List<Permutation>();
-            if(r > n || r <= 0 || n <= 0)
+            if (r > n || r <= 0 || n <= 0)
             {
                 return permutations;
             }
-			
-			bool hasNextPermutation = true;
+
+            bool hasNextPermutation = true;
             var state = new PermutationState(null, null, Enumerable.Range(1, n).ToArray(), r);
-			while (hasNextPermutation)
-			{
-				state = this.GenerateNextPermutation(state);
-				hasNextPermutation = state.CurrentPermutation != null;
-				if (hasNextPermutation)
-				{
-					permutations.Add(state.CurrentPermutation);
-				}				
-			}
-			return permutations;
-		}
+            while (hasNextPermutation)
+            {
+                state = this.GenerateNextPermutation(state);
+                hasNextPermutation = state.CurrentPermutation != null;
+                if (hasNextPermutation)
+                {
+                    permutations.Add(state.CurrentPermutation);
+                }
+            }
+            return permutations;
+        }
 
         public PermutationState GenerateNextPermutation(PermutationState permutationState)
         {
-            if(permutationState.IndicatorPermutation == null)
+            if (permutationState.IndicatorPermutation == null)
             {
                 var n = permutationState.CharacterSet.Length;
                 var indicatorPermutation = new Permutation(Enumerable.Range(1, n - permutationState.PermutationSize).Select(r => 0)
@@ -53,11 +53,6 @@ namespace Riddles.Combinatorics.Core.SetGeneration
                 return new PermutationState(nextPermutation, indicatorPermutation, permutationState.CharacterSet, permutationState.PermutationSize);
             }
             var innerPermutation = permutationState.CurrentPermutation.GetPermutation();
-            // if there's only 1 element in the permutation, there isn't a next permutation
-            if (innerPermutation.Length <= 1)
-            {
-                return new PermutationState(null, null, permutationState.CharacterSet, permutationState.PermutationSize);
-            }
             var newPermutation = new int[innerPermutation.Length];
             for (int i = 0; i < innerPermutation.Length; i++)
             {
@@ -110,13 +105,13 @@ namespace Riddles.Combinatorics.Core.SetGeneration
                     permutationState.IndicatorPermutation.GetPermutation().Length
                 );
                 var newIndicatorPermutation = this.GenerateNextPermutation(indicatorPermutationState).CurrentPermutation;
-                if(newIndicatorPermutation != null)
+                if (newIndicatorPermutation != null)
                 {
                     var indicatorCharSet =
                     permutationState.CharacterSet.Where((x, i) => newIndicatorPermutation.GetPermutation()[i] == 1)
                     .OrderBy(x => x).ToArray();
                     var nextPermutation = new Permutation(indicatorCharSet);
-                    return 
+                    return
                         new PermutationState(
                             nextPermutation,
                             newIndicatorPermutation,
