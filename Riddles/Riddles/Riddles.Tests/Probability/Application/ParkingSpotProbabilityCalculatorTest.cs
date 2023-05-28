@@ -21,10 +21,19 @@ namespace Riddles.Tests.Probability.Application
                 { 5, (2, 0, 2, 1.0) },
                 { 6, (1, 0, 2, 0.5) },
                 { 7, (0, 0, 2, 0.0) },
-                // non-trivial cases
+                // either 1 car arriving or 1 car leaving
                 { 8, (0, 1, 1, 0.5)},
                 { 9, (0, 2, 1, 2.0/3.0)},
                 { 10, (0, 1, 2, 1.0/3.0)},
+                { 11, (0, 1, 3, 1.0/4.0)},
+                { 12, (0, 3, 1, 3.0/4.0)},
+                // test cases with multiple cars arriving and leaving
+                { 13, (0, 2, 2, 7.0/12.0)},
+                { 14, (0, 3, 2, 14.0/20.0)},
+                { 15, (0, 2, 3, 14.0/30.0)},
+                { 16, (0, 3, 3, 38.0/60.0)},
+                // actual problem
+                { 17, (0, 3, 9, 0.29343434343434349)}
             };
 
         private double _epsilon = 0.00000000001;
@@ -39,6 +48,13 @@ namespace Riddles.Tests.Probability.Application
         [TestCase(8)]
         [TestCase(9)]
         [TestCase(10)]
+        [TestCase(11)]
+        [TestCase(12)]
+        [TestCase(13)]
+        [TestCase(14)]
+        [TestCase(15)]
+        [TestCase(16)]
+        [TestCase(17)]
         public void TestCalculateProbabilityOfFindingSpot(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
