@@ -68,14 +68,33 @@ namespace Riddles.Tests.Probability.DistributionGenerators
 				{ 3, 0.421875 },
 				{ 4, 0.31640625 }
 			} },
-		};
+            {6, new Dictionary<int, double> {
+                { 3, 1.0/216.0 },
+                { 4, 3.0 / 216.0 },
+                { 5, 6.0 / 216.0 },
+                { 6, 10.0 / 216.0 },
+                { 7, 15.0 / 216.0 },
+                { 8, 21.0 / 216.0 },
+                { 9, 25.0 / 216.0 },
+                { 10, 27.0 / 216.0 },
+                { 11, 27.0 / 216.0 },
+                { 12, 25.0 / 216.0 },
+                { 13, 21.0 / 216.0 },
+                { 14, 15.0 / 216.0 },
+                { 15, 10.0 / 216.0 },
+                { 16, 6.0 / 216.0 },
+                { 17, 3.0/216.0 },
+                { 18, 1.0/216.0 },
+            } },
+        };
 
 		[TestCase(1, 1, 2, Description = "fair 6 sided dice rolled twice")]
 		[TestCase(1, 2, 1, Description = "fair 6 sided dice rolled once")]
-		[TestCase(1, 3, 0, Description = "0 trials")]
+        [TestCase(1, 3, 0, Description = "0 trials")]
 		[TestCase(2, 4, 4, Description = "Coin biased towards 0, flipped 4 times")]
 		[TestCase(3, 5, 4, Description = "Coin biased towards 1, flipped 4 times")]
-		public void TestGetOutcomeProbabilityDistribution(int inputId, int outputId, int numTrials)
+        [TestCase(1, 6, 3, Description = "fair 6 sided dice rolled tnree times")]
+        public void TestGetOutcomeProbabilityDistribution(int inputId, int outputId, int numTrials)
 		{
 			var inputDistribution = initialDistribution[inputId];
 			var expectedDistribution = outcomeDistribution[outputId];
