@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Riddles.Tests.Probability
+namespace Riddles.Tests.Probability.Core
 {
     public class ProbabilityUtilTest
     {

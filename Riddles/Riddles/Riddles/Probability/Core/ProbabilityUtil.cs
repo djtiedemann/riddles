@@ -5,23 +5,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Riddles.Tests.Probability
+namespace Riddles.Probability.Core
 {
     public class ProbabilityUtil
     {
         private BinomialTheoremCalculator _binomialTheoremCalculator;
         private CombinatoricsUtil _combinatoricsUtil;
 
-        public ProbabilityUtil() { 
-            this._binomialTheoremCalculator = new BinomialTheoremCalculator();
-            this._combinatoricsUtil = new CombinatoricsUtil();
+        public ProbabilityUtil()
+        {
+            _binomialTheoremCalculator = new BinomialTheoremCalculator();
+            _combinatoricsUtil = new CombinatoricsUtil();
         }
         public double CalculateOddsOfDrawingIndistinctObjectsWithoutReplacement(IEnumerable<SetInfo> sets)
         {
-            var numerator = this._combinatoricsUtil.CalculateNumWaysToSelectIndistinctItemsFromSet(sets);
+            var numerator = _combinatoricsUtil.CalculateNumWaysToSelectIndistinctItemsFromSet(sets);
             var totalNumElements = sets.Sum(s => s.NumElements);
             var totalNumDesired = sets.Sum(s => s.NumDesired);
-            var denominator = this._binomialTheoremCalculator.CalculateBinomialCoefficient(totalNumElements, totalNumDesired);
+            var denominator = _binomialTheoremCalculator.CalculateBinomialCoefficient(totalNumElements, totalNumDesired);
             return numerator / denominator;
         }
     }

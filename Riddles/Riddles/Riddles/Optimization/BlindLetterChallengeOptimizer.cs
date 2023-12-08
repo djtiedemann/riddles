@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Riddles.Combinatorics;
 using Riddles.Combinatorics.Core.SetGeneration;
-using Riddles.Tests.Probability;
+using Riddles.Probability.Core;
 
 namespace Riddles.Optimization
 {
