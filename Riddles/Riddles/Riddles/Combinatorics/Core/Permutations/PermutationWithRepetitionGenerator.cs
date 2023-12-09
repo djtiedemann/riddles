@@ -2,14 +2,47 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Riddles.Combinatorics.Core.SetGeneration
 {
 	public class PermutationWithRepetitionGenerator
 	{
+		private class EncodeDecodeInfo
+		{
+			public EncodeDecodeInfo(
+				Dictionary<char, char> encodeMap,
+                Dictionary<char, char> decodeMap,
+				int numCharacters
+            ) {
+				this.EncodeMap = encodeMap;
+				this.DecodeMap = decodeMap;
+				this.NumCharacters = numCharacters;
+			}
+			public Dictionary<char, char> EncodeMap { get; }
+			public Dictionary<char, char> DecodeMap { get; }
+			public int NumCharacters { get; }
+		}
+
+		private Dictionary<List<char>, EncodeDecodeInfo> _encodeDecodeCache;
 		public PermutationWithRepetitionGenerator()
 		{
+			this._encodeDecodeCache =
+				new Dictionary<List<char>, EncodeDecodeInfo>();
 
+        }
+
+		public List<string> GenerateAllOutcomes(int numTrials, List<char> possibleOutcomes)
+		{
+			var firstOutcome = (char)0;
+			if (!this._encodeDecodeCache.ContainsKey(possibleOutcomes))
+			{
+				this._encodeDecodeCache[possibleOutcomes] = this.GenerateEncodeDecodeInfo(possibleOutcomes);
+			}
+			var outcomes = this.GenerateAllOutcomes(numTrials, possibleOutcomes.Count, firstOutcome);
+			return outcomes
+				.Select(o => new string(o.ToCharArray().Select(x => this._encodeDecodeCache[possibleOutcomes].DecodeMap[x]).ToArray()))
+				.ToList();
 		}
 
 		public List<string> GenerateAllOutcomes(int numTrials, int numOutcomes, char firstOutcome)
@@ -35,6 +68,29 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			}
 			return outcomes;
 		}
+
+		public string GenerateNextOutcome(string currentOutcome, List<char> possibleOutcomes, int numTrials)
+		{
+            if (!this._encodeDecodeCache.ContainsKey(possibleOutcomes))
+            {
+                this._encodeDecodeCache[possibleOutcomes] = this.GenerateEncodeDecodeInfo(possibleOutcomes);
+            }
+			if(currentOutcome == null)
+			{
+				return new string(Enumerable.Range(0, numTrials).Select(i => possibleOutcomes[0]).ToArray());
+			}
+			var encodedCurrentOutcome = new string(
+				currentOutcome.ToCharArray().Select(c => this._encodeDecodeCache[possibleOutcomes].EncodeMap[c]).ToArray()
+			);
+			var encodedNextOutcome = this.GenerateNextOutcome(encodedCurrentOutcome, (char)0, (char)(0 + possibleOutcomes.Count - 1));
+			if(encodedNextOutcome == null)
+			{
+				return null;
+			}
+			return new string(
+                encodedNextOutcome.ToCharArray().Select(c => this._encodeDecodeCache[possibleOutcomes].DecodeMap[c]).ToArray()
+            ); ;
+        }
 
 		private string GenerateNextOutcome(string currentOutcome, char firstOutcome, char lastOutcome)
 		{
@@ -88,5 +144,14 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			}
 			return nextOutcome;
 		}
-	}
+
+        private EncodeDecodeInfo GenerateEncodeDecodeInfo(List<char> possibleOutcomes)
+        {
+			return new EncodeDecodeInfo(
+                encodeMap: possibleOutcomes.Select((v, i) => (v, i)).ToDictionary(x => x.v, x => (char)(0 + x.i)),
+                decodeMap: possibleOutcomes.Select((v, i) => (v, i)).ToDictionary(x => (char)(0 + x.i), x => x.v),
+                numCharacters: possibleOutcomes.Count
+            );
+        }
+    }
 }

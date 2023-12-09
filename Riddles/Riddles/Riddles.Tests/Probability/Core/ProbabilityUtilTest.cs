@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Riddles.Combinatorics;
+using Riddles.Probability.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
