@@ -19,6 +19,10 @@ namespace Riddles.Combinatorics.Core.Permutations
         public int CalculateNumPermutations(Dictionary<string, int> elements)
         {
             var totalNumElements = elements.Values.Sum();
+            if(totalNumElements == 0)
+            {
+                return 0;
+            }
             var duplicateOrderingCorrection = elements.Values.Where(v => v > 1).ToList().OrderByDescending(x => x).ToList();
             var factorial = this._factorialCalculator.FactorialDivision(totalNumElements, duplicateOrderingCorrection[0]);
             for(int i = 1; i<duplicateOrderingCorrection.Count; i++)

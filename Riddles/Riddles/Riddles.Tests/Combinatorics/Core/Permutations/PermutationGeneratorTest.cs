@@ -101,5 +101,16 @@ namespace Riddles.Tests.Combinatorics.Core.Permutations
             }
             Assert.AreEqual(expectedNumPermutations, numPermutations);
         }
+
+        [TestCase("01100", 10)]
+        [TestCase("HTTHHTHT", 70)]
+        [TestCase("012021", 90)]
+        [TestCase("bananagram", 75600)]
+        public void TestGenerateAllAnagrams(string word, int expectedNumAnagrams)
+        {
+            var permutationGenerator = new PermutationWithoutRepetitionGenerator();
+            var permutations = permutationGenerator.GenerateAllPermutationsOfString(word);
+            Assert.AreEqual(expectedNumAnagrams, permutations.Count);
+        }
     }
 }

@@ -4,17 +4,38 @@ using System.Text;
 using System.Linq;
 using Riddles.Combinatorics.Core.Domain;
 using Riddles.Combinatorics.Core;
+using static Riddles.Combinatorics.Core.SetGeneration.PermutationWithoutRepetitionGenerator;
 
 namespace Riddles.Combinatorics.Core.SetGeneration
 {
     public class PermutationWithoutRepetitionGenerator
     {
+        private class EncodeDecodeInfo
+        {
+            public EncodeDecodeInfo(
+                Dictionary<char, int> encodeMap,
+                Dictionary<int, char> decodeMap,
+                int numCharacters
+            )
+            {
+                this.EncodeMap = encodeMap;
+                this.DecodeMap = decodeMap;
+                this.NumCharacters = numCharacters;
+            }
+            public Dictionary<char, int> EncodeMap { get; }
+            public Dictionary<int, char> DecodeMap { get; }
+            public int NumCharacters { get; }
+        }
+
         private FactorialCalculator _factorialCalculator;
         private Random _random;
+        private Dictionary<string, EncodeDecodeInfo> _encodeDecodeCache;
         public PermutationWithoutRepetitionGenerator()
         {
             this._factorialCalculator = new FactorialCalculator();
             this._random = new Random();
+            this._encodeDecodeCache =
+                new Dictionary<string, EncodeDecodeInfo>();
         }
 
         public List<Permutation> GenerateAllPermutations(int n, int r)
@@ -39,6 +60,42 @@ namespace Riddles.Combinatorics.Core.SetGeneration
             return permutations;
         }
 
+        // this is essentially an anagram generator which is similar to permutations
+        public List<string> GenerateAllPermutationsOfString(string s) 
+        {
+            var encodeDecodeInfo = this.GetEncodeDecodeInfo(s);
+            var allPermutations = new List<string>();
+            var currentPermutation = new string(s.ToCharArray().OrderBy(x => x).ToArray());
+            while (currentPermutation != null) { 
+                allPermutations.Add(currentPermutation);
+                currentPermutation = this.GenerateNextPermutation(currentPermutation, s);
+            }
+            return allPermutations;
+        }
+
+        public string GenerateNextPermutation(
+            string currentPermutation, 
+            string initialString
+        )
+        {
+            var encodeDecodeInfo = this.GetEncodeDecodeInfo(initialString);
+            if(currentPermutation == null)
+            {
+                return new string(initialString.ToCharArray().OrderBy(x => x).ToArray());
+            }
+            var encodedPermutation = 
+                currentPermutation.ToCharArray()
+                .Select(c => encodeDecodeInfo.EncodeMap[c]).ToArray();
+            var nextPermutation = this.RotatePermutation(encodedPermutation);
+            if(nextPermutation == null)
+            {
+                return null;
+            }
+            var decodedPermutation = new string(nextPermutation
+                .Select(c => encodeDecodeInfo.DecodeMap[c]).ToArray());
+            return decodedPermutation;
+        }
+
         public PermutationState GenerateNextPermutation(PermutationState permutationState)
         {
             if (permutationState.IndicatorPermutation == null)
@@ -53,10 +110,45 @@ namespace Riddles.Combinatorics.Core.SetGeneration
                 return new PermutationState(nextPermutation, indicatorPermutation, permutationState.CharacterSet, permutationState.PermutationSize);
             }
             var innerPermutation = permutationState.CurrentPermutation.GetPermutation();
-            var newPermutation = new int[innerPermutation.Length];
-            for (int i = 0; i < innerPermutation.Length; i++)
+            var newPermutation = this.RotatePermutation(innerPermutation);
+            if(newPermutation != null)
             {
-                newPermutation[i] = innerPermutation[i];
+                return new PermutationState(new Permutation(newPermutation), permutationState.IndicatorPermutation, permutationState.CharacterSet, permutationState.PermutationSize);
+            }
+            // attempt to rotate Indicator Permutation, if successful, generate the next value with the new indicator permutation
+            if (permutationState.IndicatorPermutation.GetPermutation().Any(x => x != 1))
+            {
+                var indicatorPermutationState = new PermutationState(
+                    permutationState.IndicatorPermutation,
+                    new Permutation(permutationState.IndicatorPermutation.GetPermutation().Select(i => 1).ToArray()),
+                    new int[] { 0, 1 },
+                    permutationState.IndicatorPermutation.GetPermutation().Length
+                );
+                var newIndicatorPermutation = this.GenerateNextPermutation(indicatorPermutationState).CurrentPermutation;
+                if (newIndicatorPermutation != null)
+                {
+                    var indicatorCharSet =
+                    permutationState.CharacterSet.Where((x, i) => newIndicatorPermutation.GetPermutation()[i] == 1)
+                    .OrderBy(x => x).ToArray();
+                    var nextPermutation = new Permutation(indicatorCharSet);
+                    return
+                        new PermutationState(
+                            nextPermutation,
+                            newIndicatorPermutation,
+                            permutationState.CharacterSet,
+                            permutationState.PermutationSize
+                        );
+                }
+            }
+            return new PermutationState(null, null, permutationState.CharacterSet, permutationState.PermutationSize);
+        }
+
+        private int[] RotatePermutation(int[] oldPermutation)
+        {
+            var newPermutation = new int[oldPermutation.Length];
+            for (int i = 0; i < oldPermutation.Length; i++)
+            {
+                newPermutation[i] = oldPermutation[i];
             }
 
             for (int i = newPermutation.Length - 1; i > 0; i--)
@@ -92,41 +184,15 @@ namespace Riddles.Combinatorics.Core.SetGeneration
                     {
                         newPermutation[j] = sortedDigits[j - i];
                     }
-                    return new PermutationState(new Permutation(newPermutation), permutationState.IndicatorPermutation, permutationState.CharacterSet, permutationState.PermutationSize);
+                    return newPermutation;
                 }
             }
-            // attempt to rotate Indicator Permutation, if successful, generate the next value with the new indicator permutation
-            if (permutationState.IndicatorPermutation.GetPermutation().Any(x => x != 1))
-            {
-                var indicatorPermutationState = new PermutationState(
-                    permutationState.IndicatorPermutation,
-                    new Permutation(permutationState.IndicatorPermutation.GetPermutation().Select(i => 1).ToArray()),
-                    new int[] { 0, 1 },
-                    permutationState.IndicatorPermutation.GetPermutation().Length
-                );
-                var newIndicatorPermutation = this.GenerateNextPermutation(indicatorPermutationState).CurrentPermutation;
-                if (newIndicatorPermutation != null)
-                {
-                    var indicatorCharSet =
-                    permutationState.CharacterSet.Where((x, i) => newIndicatorPermutation.GetPermutation()[i] == 1)
-                    .OrderBy(x => x).ToArray();
-                    var nextPermutation = new Permutation(indicatorCharSet);
-                    return
-                        new PermutationState(
-                            nextPermutation,
-                            newIndicatorPermutation,
-                            permutationState.CharacterSet,
-                            permutationState.PermutationSize
-                        );
-                }
-            }
-            return new PermutationState(null, null, permutationState.CharacterSet, permutationState.PermutationSize);
+            return null;
         }
-
         public Permutation GenerateRandomPermutation(int n)
-		{
-			var nFactorial = this._factorialCalculator.Factorial(n);
-			var randKey = this._random.Next(0, (int)nFactorial);
+        {
+            var nFactorial = this._factorialCalculator.Factorial(n);
+            var randKey = this._random.Next(0, (int)nFactorial);
 			return this.GeneratePermutationFromKey(randKey, n);
 		}
 
@@ -143,6 +209,20 @@ namespace Riddles.Combinatorics.Core.SetGeneration
 			}
 			return new Permutation(permutation);
 		}
+
+        private EncodeDecodeInfo GetEncodeDecodeInfo(string permutationString)
+        {
+            if (!this._encodeDecodeCache.ContainsKey(permutationString))
+            {
+                var orderedCharacters = permutationString.ToCharArray().Distinct().OrderBy(x => x);
+                this._encodeDecodeCache[permutationString] = new EncodeDecodeInfo(
+                    encodeMap: orderedCharacters.Select((v, i) => (v, i)).ToDictionary(x => x.v, x => (0 + x.i)),
+                    decodeMap: orderedCharacters.Select((v, i) => (v, i)).ToDictionary(x => (0 + x.i), x => x.v),
+                    numCharacters: orderedCharacters.Count()
+                );
+            }
+            return this._encodeDecodeCache[permutationString];
+        }
 
         public class PermutationState
         {
