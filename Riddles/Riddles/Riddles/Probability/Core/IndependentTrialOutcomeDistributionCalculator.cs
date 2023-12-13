@@ -1,4 +1,6 @@
-﻿using Riddles.Combinatorics.Core.SetGeneration;
+﻿using Riddles.Combinatorics.Core;
+using Riddles.Combinatorics.Core.Permutations;
+using Riddles.Combinatorics.Core.SetGeneration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +11,14 @@ namespace Riddles.Probability.Core
     public class IndependentTrialOutcomeDistributionCalculator
     {
         private PermutationWithRepetitionGenerator _permutationGenerator;
+        private IndistinctBallsInDistinctBinsCalculator
+            _indistinctBallsInDistinctBinsCalculator;
+        private NumPermutationsCalculator _numPermutationsCalculator;
         public IndependentTrialOutcomeDistributionCalculator() { 
             this._permutationGenerator = new PermutationWithRepetitionGenerator();
+            this._indistinctBallsInDistinctBinsCalculator 
+                = new IndistinctBallsInDistinctBinsCalculator();
+            this._numPermutationsCalculator = new NumPermutationsCalculator();
         }
 
         public List<(string, double)> CalculateOrderDependentOutcomeProbabilities(
@@ -31,11 +39,18 @@ namespace Riddles.Probability.Core
             int numTrials,
             Dictionary<char, double> outcomeProbabilities
         ) {
-            return this.CalculateOrderDependentOutcomeProbabilities(
-                numTrials,
-                outcomeProbabilities
-            ).GroupBy(g => new string(g.Item1.ToCharArray().OrderBy(v => v).ToArray()))
-            .Select(g => (g.Key, g.Sum(x => x.Item2))).ToList();
+            var outcomes = 
+                this._indistinctBallsInDistinctBinsCalculator
+                    .DetermineWaysToPlaceBallsInBins(
+                        numTrials,
+                        outcomeProbabilities.Keys.OrderBy(c => c).ToList()
+                    );
+            return outcomes.Select(
+                c => (c,
+                    c.ToCharArray().Aggregate(1.0, (agg, v) => agg * outcomeProbabilities[v]) *
+                    this._numPermutationsCalculator.CalculateNumPermutations(c)
+                )
+            ).ToList();
         }
     }
 }

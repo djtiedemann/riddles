@@ -2,6 +2,7 @@
 using Riddles.Combinatorics.Core.Permutations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Riddles.Tests.Combinatorics.Core.Permutations
@@ -18,6 +19,7 @@ namespace Riddles.Tests.Combinatorics.Core.Permutations
             {7, new Dictionary<string, int> { } },
             {8, new Dictionary<string, int> { { "1", 4 } } },
             {9, new Dictionary<string, int> { { "1", 4 }, { "2", 1 } } },
+            {10, new Dictionary<string, int> { { "1", 1 }, { "2", 1 }, { "3", 1 } } },
         };
 
         [TestCase(1, 35)]
@@ -29,11 +31,21 @@ namespace Riddles.Tests.Combinatorics.Core.Permutations
         [TestCase(7, 0)]
         [TestCase(8, 1)]
         [TestCase(9, 5)]
+        [TestCase(10, 6)]
         public void CalculateNumPermutations(int testCase, int expected)
         {
             var numPermutationsCalculator = new NumPermutationsCalculator();
             var actual = numPermutationsCalculator.CalculateNumPermutations(this._testCaseDictionary[testCase]);
+            var inputInStringFormat = this._testCaseDictionary[testCase].Keys.Select(
+                k => Enumerable.Range(0, this._testCaseDictionary[testCase][k])
+                    .Select(x => k).Aggregate("", (agg, s) => $"{agg}{s}")
+            ).Aggregate("", (agg, s) => $"{agg}{s}");
+            var actualStringInput = numPermutationsCalculator
+                .CalculateNumPermutations(
+                    inputInStringFormat
+                );
             Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected, actualStringInput);
         }
     }
 }

@@ -12,6 +12,14 @@ namespace Riddles.Combinatorics.Core.Permutations
             this._factorialCalculator = new FactorialCalculator();
         }
 
+        public int CalculateNumPermutations(string element)
+        {
+            var characterCounts = 
+                element.ToCharArray().GroupBy(g => $"{g}")
+                    .ToDictionary(g => g.Key, g => g.Count());
+            return this.CalculateNumPermutations(characterCounts);
+        }
+
         /// <summary>
         /// Calculates the number of permutations of the elements provided, taking into account duplicate items
         /// </summary>
@@ -24,7 +32,12 @@ namespace Riddles.Combinatorics.Core.Permutations
                 return 0;
             }
             var duplicateOrderingCorrection = elements.Values.Where(v => v > 1).ToList().OrderByDescending(x => x).ToList();
-            var factorial = this._factorialCalculator.FactorialDivision(totalNumElements, duplicateOrderingCorrection[0]);
+            var factorial = this._factorialCalculator.FactorialDivision(
+                totalNumElements, 
+                duplicateOrderingCorrection.Count > 0 
+                    ? duplicateOrderingCorrection[0]
+                    : 1
+            );
             for(int i = 1; i<duplicateOrderingCorrection.Count; i++)
             {
                 factorial = factorial / this._factorialCalculator.Factorial(duplicateOrderingCorrection[i]);
