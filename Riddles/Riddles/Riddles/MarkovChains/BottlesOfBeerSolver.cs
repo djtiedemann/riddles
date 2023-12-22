@@ -69,6 +69,11 @@ namespace Riddles.MarkovChains
                 return NumBottles == 0;
             }
 
+            public string TerminalStateLabel()
+            {
+                return string.Empty;
+            }
+
             public override bool Equals(object obj)
             {
                 if (!(obj is BottlesOfBeerState))

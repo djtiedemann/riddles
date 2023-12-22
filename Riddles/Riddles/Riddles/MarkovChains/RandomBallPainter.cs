@@ -150,7 +150,12 @@ namespace Riddles.MarkovChains
 				return this.BallDistributionForState.ContainsKey(this.NumBalls);
 			}
 
-			public Dictionary<int, int> DeepCloneBallDistribution()
+            public string TerminalStateLabel()
+            {
+                return string.Empty;
+            }
+
+            public Dictionary<int, int> DeepCloneBallDistribution()
 			{
 				var clone = new Dictionary<int, int>();
 				foreach (var key in this.BallDistributionForState.Keys)

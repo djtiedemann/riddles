@@ -91,9 +91,14 @@ namespace Riddles.MarkovChains
 			public bool IsStateTerminalState()
 			{
 				return Tower1.Count() == 0 && Tower3.Count() == 0;
-			}			
+			}
 
-			public override bool Equals(object obj)
+            public string TerminalStateLabel()
+            {
+                return string.Empty;
+            }
+
+            public override bool Equals(object obj)
 			{
 				if (!(obj is HanoiState))
 				{

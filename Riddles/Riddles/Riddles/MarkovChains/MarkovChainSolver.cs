@@ -9,6 +9,7 @@ namespace Riddles.MarkovChains
 	public interface IMarkovChainState
 	{
 		bool IsStateTerminalState();
+		string TerminalStateLabel();
 	}
 
 	public class MarkovChainSolver
