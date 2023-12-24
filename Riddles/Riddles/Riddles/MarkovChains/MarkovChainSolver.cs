@@ -20,23 +20,44 @@ namespace Riddles.MarkovChains
 			this._matrixUtilities = new MatrixUtilities();
 		}
 
-        public double GetExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalArgs>(TMarkovChainState initialState,
-            Func<TMarkovChainState, TAdditionalArgs, Dictionary<TMarkovChainState, double>> getStateTransitions,
-            TAdditionalArgs additionalArgs = default(TAdditionalArgs))
+        public double GetExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalProblemState>(TMarkovChainState initialState,
+            Func<TMarkovChainState, TAdditionalProblemState, Dictionary<TMarkovChainState, double>> getStateTransitions,
+            TAdditionalProblemState additionalProblemState = default(TAdditionalProblemState))
             where TMarkovChainState : IMarkovChainState
         {
             return this.CalculateMarkovChainValue(
                 initialState,
                 getStateTransitions,
-                this.CalculateExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalArgs>,
-                additionalArgs
+                this.CalculateExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalProblemState>,
+                additionalProblemState,
+                additionalAggregationArgs: default(object)
             );
         }
 
-		private double CalculateMarkovChainValue<TMarkovChainState, TAdditionalArgs>(TMarkovChainState initialState, 
-			Func<TMarkovChainState, TAdditionalArgs, Dictionary<TMarkovChainState, double>> getStateTransitions,
-            Func<TMarkovChainState, Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>>, Dictionary<TMarkovChainState, int>, double> calculateMarkovChainValueFunc,
-			TAdditionalArgs additionalArgs = default(TAdditionalArgs))
+        public double GetProbabilityOfArrivingAtSpecificTerminalStateLabel<TMarkovChainState, TAdditionalProblemState>(TMarkovChainState initialState,
+            Func<TMarkovChainState, TAdditionalProblemState, Dictionary<TMarkovChainState, double>> getStateTransitions,
+            string terminalStateLabel,
+            TAdditionalProblemState additionalProblemState = default(TAdditionalProblemState))
+            where TMarkovChainState : IMarkovChainState
+        {
+            var additionalAggregationArgs =
+                new ProbabilityOfEndingAtParticularStateAdditionalArgs(terminalStateLabel);
+            return this.CalculateMarkovChainValue(
+                initialState,
+                getStateTransitions,
+                this.CalculateProbabilityOfArrivingAtSpecificTerminalStateLabel<TMarkovChainState, TAdditionalProblemState>,
+                additionalProblemState,
+                additionalAggregationArgs
+            );
+        }
+
+
+        private double CalculateMarkovChainValue<TMarkovChainState, TAdditionalProblemState, TAdditionalAggregationArgs>(
+            TMarkovChainState initialState, 
+			Func<TMarkovChainState, TAdditionalProblemState, Dictionary<TMarkovChainState, double>> getStateTransitions,
+            Func<TMarkovChainState, Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>>, Dictionary<TMarkovChainState, int>, TAdditionalAggregationArgs, double> calculateMarkovChainValueFunc,
+			TAdditionalProblemState additionalProblemState = default,
+            TAdditionalAggregationArgs additionalAggregationArgs = default)
 			where TMarkovChainState : IMarkovChainState
 		{
 			var statesToProcess = new List<TMarkovChainState>();
@@ -48,7 +69,7 @@ namespace Riddles.MarkovChains
 			while (statesToProcess.Any())
 			{
 				var stateToProcess = statesToProcess.First();
-				var stateTransitions = getStateTransitions(stateToProcess, additionalArgs);
+				var stateTransitions = getStateTransitions(stateToProcess, additionalProblemState);
 				stateTransitionDictionary.Add(stateToProcess, stateTransitions);
 				statesToProcess.Remove(stateToProcess);
 
@@ -73,19 +94,19 @@ namespace Riddles.MarkovChains
 			}
 
             return calculateMarkovChainValueFunc(
-                initialState, stateTransitionDictionary, termDictionary   
+                initialState, stateTransitionDictionary, termDictionary, additionalAggregationArgs
             );
 		}
 
-        private double CalculateExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalArgs>(
+        private double CalculateExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalProblemState>(
             TMarkovChainState initialState,
             Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>> stateTransitionDictionary,
-            Dictionary<TMarkovChainState, int> termDictionary)
+            Dictionary<TMarkovChainState, int> termDictionary,
+            object additionalExpectedValueInformation = default)
             where TMarkovChainState : IMarkovChainState
         {
             // use those variableIds in order to construct the linear equations
             var equationsToSolve = new List<LinearEquation>();
-            var constants = new List<double>();
             foreach (var state in stateTransitionDictionary.Keys)
             {
                 // basically a state transition means that 1 turn after the current state we will be in a set of states probabilistically
@@ -131,6 +152,66 @@ namespace Riddles.MarkovChains
 
             var expectedValuesForEachState = this._matrixUtilities.SolveLinearSystemOfEquations(equationsToSolve);
             return expectedValuesForEachState[termDictionary[initialState]];
+        }
+
+        private double CalculateProbabilityOfArrivingAtSpecificTerminalStateLabel<TMarkovChainState, TAdditionalProblemState>(
+            TMarkovChainState initialState,
+            Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>> stateTransitionDictionary,
+            Dictionary<TMarkovChainState, int> termDictionary,
+            ProbabilityOfEndingAtParticularStateAdditionalArgs additionalInformation = default)
+            where TMarkovChainState : IMarkovChainState
+        {
+            // use those variableIds in order to construct the linear equations
+            var equationsToSolve = new List<LinearEquation>();
+            foreach (var state in stateTransitionDictionary.Keys)
+            {
+                // if the state is terminal, then check the label. If the label matches
+                // the probability is 1, otherwise it is 0
+                if (state.IsStateTerminalState())
+                {
+                    equationsToSolve.Add(new LinearEquation(
+                        terms: new List<LinearTerm> { new LinearTerm(coefficient: 1, variableId: termDictionary[state]) },
+                        constant: state.TerminalStateLabel() == additionalInformation.Label ? 1 : 0
+                    ));
+                    continue;
+                }
+
+                var terms = new List<LinearTerm>();
+                // need to take into account the chance that the state could transition to itself
+                // if it can't, the coefficient will be 1
+                var termForThisState = new LinearTerm(
+                    coefficient: 1 - (stateTransitionDictionary[state].ContainsKey(state) ? stateTransitionDictionary[state][state] : 0),
+                    variableId: termDictionary[state]
+                );
+                terms.Add(termForThisState);
+
+                // construct an equation such that
+                // p[state] = p[state_1]*transition_probability_1 + ... + p[state_n]*transition_probability_n
+                // bring all variables to the left hand side of the equation and set the constant to 0
+                foreach (var transitionState in stateTransitionDictionary[state].Keys)
+                {
+                    if (!transitionState.Equals(state))
+                    {
+                        terms.Add(new LinearTerm(
+                            coefficient: stateTransitionDictionary[state][transitionState] * -1,
+                            variableId: termDictionary[transitionState]
+                        ));
+                    }
+                }
+                equationsToSolve.Add(new LinearEquation(terms: terms, constant: 0));
+            }
+
+            var expectedValuesForEachState = this._matrixUtilities.SolveLinearSystemOfEquations(equationsToSolve);
+            return expectedValuesForEachState[termDictionary[initialState]];
+        }
+
+        private class ProbabilityOfEndingAtParticularStateAdditionalArgs
+        {
+            public ProbabilityOfEndingAtParticularStateAdditionalArgs(string label)
+            {
+                this.Label = label;
+            }
+            public string Label { get; }
         }
     }
 }
