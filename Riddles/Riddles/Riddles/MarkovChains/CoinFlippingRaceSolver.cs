@@ -24,9 +24,11 @@ namespace Riddles.MarkovChains
     {
         private MarkovChainSolver _markovChainSolver;
         private PermutationWithRepetitionGenerator _outcomeGenerator;
+        private PermutationWithoutRepetitionGenerator _permutationGenerator;
         public CoinFlippingRaceSolver() { 
             this._markovChainSolver = new MarkovChainSolver();
             this._outcomeGenerator = new PermutationWithRepetitionGenerator();
+            this._permutationGenerator = new PermutationWithoutRepetitionGenerator();
         }
 
         public double CalculateProbabilityOfCertainPlayerWinningCoinFlipRace(
@@ -60,6 +62,49 @@ namespace Riddles.MarkovChains
                 terminalLabel,
                 globalCoinFlippingRaceState
             );
+        }
+
+        public Dictionary<string, double> FindWinningLikelihoodBasedOnStartingPick(
+            int numPlayers, 
+            Dictionary<char, double> outcomeDictionary,
+            int numRolls)
+        {
+            var possibleOutcomes = this._outcomeGenerator.GenerateAllOutcomes(
+                numRolls,
+                outcomeDictionary.Keys.ToList()
+            );
+            var possibleSequences = this._permutationGenerator
+                .GenerateAllPermutations(possibleOutcomes.Count, numPlayers)
+                .Select(g => g.GetPermutation()).ToList();
+            var selectionsGroupedByFirstPerson = possibleSequences.GroupBy(o => o[0]);
+            var likelihoodOfWinningByHand = new Dictionary<string, double>();
+            foreach(var outcomeDrawnByFirstPerson in selectionsGroupedByFirstPerson)
+            {
+                var probabilityOfWinning = 0.0;
+                foreach(var fullOutcome in outcomeDrawnByFirstPerson)
+                {
+                    var winningOutcomeList = new List<List<string>>();
+                    for(int i=0; i<numPlayers; i++)
+                    {
+                        var playerOutcome = possibleOutcomes[fullOutcome[i]-1];
+                        winningOutcomeList.Add(
+                            playerOutcome.ToCharArray().Select(i => i.ToString()).ToList()
+                        );
+                    }
+                    var probabilityOfWinningThisRound = this.
+                        CalculateProbabilityOfCertainPlayerWinningCoinFlipRace(
+                            "0",
+                            outcomeDictionary,
+                            winningOutcomeList
+                        );
+                    probabilityOfWinning +=
+                        probabilityOfWinningThisRound * (1.0 / outcomeDrawnByFirstPerson.Count());
+                }
+                var firstPersonWinningKey = possibleOutcomes[outcomeDrawnByFirstPerson.Key - 1];
+                likelihoodOfWinningByHand[firstPersonWinningKey]
+                    = probabilityOfWinning;
+            }
+            return likelihoodOfWinningByHand;
         }
 
         public Dictionary<CoinFlippingRaceState, double> GetStateTransitions(

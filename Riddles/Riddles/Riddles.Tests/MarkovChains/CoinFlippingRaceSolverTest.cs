@@ -230,6 +230,12 @@ namespace Riddles.Tests.MarkovChains
                 }, "0", new Dictionary<char, double> { { 'H', 0.5}, { 'T', 0.5} }, 45_667.0/71_106.0)},
         };
 
+        private Dictionary<int, (int, int, Dictionary<char, double>, Dictionary<string, double>)>
+            _mostEvenTestCaseDictionary = new Dictionary<int, (int, int, Dictionary<char, double>, Dictionary<string, double>)>
+            {
+                { 1, (2, 3, new Dictionary<char, double> { { 'H', 0.5 }, { 'T', 0.5} }, new Dictionary<string, double> { { "THT", 0.49644519065771492 } })}
+            };
+
         [TestCase(1)]
         [TestCase(2)]
         public void TestCalculateProbabilityOfCertainPlayerWinningCoinFlipRace(int testCaseId) { 
@@ -242,6 +248,23 @@ namespace Riddles.Tests.MarkovChains
                     testCase.Item1
                 );
             Assert.LessOrEqual(Math.Abs(actual - testCase.Item4), this.epsilon);
+        }
+
+        [TestCase(1)]
+        public void TestFindMostEvenStartingPick(int testCaseId)
+        {
+            var coinFlippingRaceSolver = new CoinFlippingRaceSolver();
+            var testCase = this._mostEvenTestCaseDictionary[testCaseId];
+            var actual = coinFlippingRaceSolver.FindWinningLikelihoodBasedOnStartingPick(
+                testCase.Item1,
+                testCase.Item3,
+                testCase.Item2
+            );
+            foreach(var key in testCase.Item4.Keys)
+            {
+                Assert.LessOrEqual(Math.Abs(testCase.Item4[key] - actual[key])
+                    , epsilon);
+            }
         }
 
         [TestCase(1)]
