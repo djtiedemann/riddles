@@ -97,7 +97,9 @@ namespace Riddles.Combinatorics.Core.Permutations
         // same as anagram generator, but using a list of ints instead of strings to allow for arbitrarily many characters
         public List<int[]> GenerateAllPermutations(int[] initialPermutation) { 
             var allPermutations = new List<int[]> { };
-            var currentPermutation = initialPermutation.ToArray();
+            var currentPermutationList = initialPermutation.ToList();
+            currentPermutationList.Sort();
+            var currentPermutation = currentPermutationList.ToArray();
             while(currentPermutation != null)
             {
                 allPermutations.Add(currentPermutation);
