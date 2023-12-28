@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Riddles.Combinatorics;
-using Riddles.Combinatorics.Core.SetGeneration;
+using Riddles.Combinatorics.Core.Permutations;
 using Riddles.Probability.Core;
 
 namespace Riddles.Optimization

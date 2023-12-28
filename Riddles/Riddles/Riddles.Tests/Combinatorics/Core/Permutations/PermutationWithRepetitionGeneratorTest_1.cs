@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Combinatorics.Core.SetGeneration;
+using Riddles.Combinatorics.Core.Permutations;
 using System.Linq;
 
-namespace Riddles.Tests.Combinatorics.Core.SetGeneration
+namespace Riddles.Tests.Combinatorics.Core.Permutations
 {
-    public class OutcomeGeneratorTest
+    public class PermutationWithRepetitionGeneratorTest
     {
         private Dictionary<int, (int, int, int, int, int[], int)> _testCaseDictionary =
             new Dictionary<int, (int, int, int, int, int[], int)> {

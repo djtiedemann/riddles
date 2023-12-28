@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Riddles.Combinatorics.Core.Permutations;
-using Riddles.Combinatorics.Core.SetGeneration;
+using Riddles.Combinatorics.Core.Permutations;
 
 namespace Riddles.MarkovChains
 {

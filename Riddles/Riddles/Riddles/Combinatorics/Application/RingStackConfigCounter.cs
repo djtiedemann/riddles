@@ -1,4 +1,4 @@
-﻿using Riddles.Combinatorics.Core.SetGeneration;
+﻿using Riddles.Combinatorics.Core.Permutations;
 using Riddles.Combinatorics.Core.Sets;
 using System;
 using System.Collections.Generic;

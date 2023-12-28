@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
-namespace Riddles.Combinatorics.Core.SetGeneration
+namespace Riddles.Combinatorics.Core.Permutations
 {
 	public class PermutationWithRepetitionGenerator
 	{

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using NUnit.Framework;
-using Riddles.Combinatorics.Core.SetGeneration;
+using Riddles.Combinatorics.Core.Permutations;
 using Riddles.Combinatorics.Core;
-using static Riddles.Combinatorics.Core.SetGeneration.PermutationWithoutRepetitionGenerator;
+using static Riddles.Combinatorics.Core.Permutations.PermutationWithoutRepetitionGenerator;
 
 namespace Riddles.Tests.Combinatorics.Core.Permutations
 {
-    public class PermutationGeneratorTest
+    public class PermutationWithoutRepetitionGeneratorTest
     {
         [TestCase(1, 1)]
         [TestCase(2, 2)]

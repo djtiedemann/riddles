@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Riddles.Combinatorics.Core.Domain;
-using Riddles.Combinatorics.Core;
-using static Riddles.Combinatorics.Core.SetGeneration.PermutationWithoutRepetitionGenerator;
 
-namespace Riddles.Combinatorics.Core.SetGeneration
+namespace Riddles.Combinatorics.Core.Permutations
 {
     public class PermutationWithoutRepetitionGenerator
     {
@@ -94,6 +92,18 @@ namespace Riddles.Combinatorics.Core.SetGeneration
             var decodedPermutation = new string(nextPermutation
                 .Select(c => encodeDecodeInfo.DecodeMap[c]).ToArray());
             return decodedPermutation;
+        }
+
+        // same as anagram generator, but using a list of ints instead of strings to allow for arbitrarily many characters
+        public List<int[]> GenerateAllPermutations(int[] initialPermutation) { 
+            var allPermutations = new List<int[]> { };
+            var currentPermutation = initialPermutation.ToArray();
+            while(currentPermutation != null)
+            {
+                allPermutations.Add(currentPermutation);
+                currentPermutation = RotatePermutation(currentPermutation);
+            }
+            return allPermutations;
         }
 
         public PermutationState GenerateNextPermutation(PermutationState permutationState)
