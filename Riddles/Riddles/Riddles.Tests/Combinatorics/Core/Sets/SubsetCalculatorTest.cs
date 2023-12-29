@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Riddles.Combinatorics.Core.Sets;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Riddles.Tests.Combinatorics.Core.Sets
 {
@@ -24,7 +25,21 @@ namespace Riddles.Tests.Combinatorics.Core.Sets
             var subsetCalculator = new SubsetCalculator();
             var testCase = this._calculateSubsetsTestCaseDictionary[testCaseId];
             var allPermutations = subsetCalculator.CalculateSubsets(testCase.Item1);
+            HashSet<string> subsetStringRepresentations = new HashSet<string>();
+            foreach (var subset in allPermutations) {
+                var stringRepresentation = subset.Aggregate(
+                    string.Empty,
+                    (agg, x) => $"{agg}|{this.TurnHashSetIntoString(x)}"
+                );
+                subsetStringRepresentations.Add(stringRepresentation);
+            }
             Assert.AreEqual(testCase.Item2, allPermutations.Count);
+            Assert.AreEqual(testCase.Item2, subsetStringRepresentations.Count);
+        }
+
+        private string TurnHashSetIntoString(HashSet<int> hashSet)
+        {
+            return hashSet.OrderBy(x => x).Aggregate(string.Empty, (agg, x) => $"{agg}{x}");
         }
     }
 }
