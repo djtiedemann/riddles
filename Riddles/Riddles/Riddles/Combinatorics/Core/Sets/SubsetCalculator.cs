@@ -18,7 +18,7 @@ namespace Riddles.Combinatorics.Core.Sets
         // if necessary
         // could be made to work for more than 10 groups by applying some abstractions
         // and using lists of ints instead of strings in PermutationGenerator
-        public List<List<List<int>>> CalculateSubsets(
+        public List<List<HashSet<int>>> CalculateSubsets(
             List<int> groupSizes)
         {
             var elementNums = Enumerable.Range(0, groupSizes.Sum());
@@ -27,7 +27,7 @@ namespace Riddles.Combinatorics.Core.Sets
             var allPermutations = this._permutationGenerator.GenerateAllPermutations(initialPermutation);
             
             var groupings = allPermutations.Select(p => 
-                elementNums.GroupBy(x => p[x]).Select(g => g.ToList()).ToList()
+                elementNums.GroupBy(x => p[x]).Select(g => g.ToHashSet()).ToList()
             ).ToList();
             return groupings;
         }

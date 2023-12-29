@@ -8,11 +8,6 @@ using Riddles.Probability.Core;
 
 namespace Riddles.Optimization
 {
-    public enum Strategy
-    {
-        Optimal = 0,
-        EvenSpacing = 1,
-    }
     // Answer: https://fivethirtyeight.com/features/can-you-take-down-all-the-bottles-of-beer/
     public class BlindLetterChallengeOptimizer
     {
@@ -131,6 +126,12 @@ namespace Riddles.Optimization
                 result[index] = letter;
             }
             return true;
+        }
+
+        public enum Strategy
+        {
+            Optimal = 0,
+            EvenSpacing = 1,
         }
     }
 }
