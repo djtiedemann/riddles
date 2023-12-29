@@ -13,82 +13,18 @@ namespace Riddles.Strategy
             this._subsetCalculator = new SubsetCalculator();
         }
 
-        public int CalculateNumGuessesNeededToSolve()
+        public SubsetCalculatorDecisionTree FindOptimalDecisionTree()
         {
-            var allPossibleGroups = this._subsetCalculator.CalculateSubsets(
-                new List<int> { 4, 4 }
-            ).Select(g => new ConnectionGrouping(g[0], g[1]));
+            var allPossibleGroups = this.GetAllPossibleGroups();
             var equivalenceTags = Enumerable.Range(0, 8).ToDictionary(x => x,x => string.Empty);
             var optimalDecisionTree = new SubsetCalculatorDecisionTree(allPossibleGroups, equivalenceTags, allPossibleGroups, 0, int.MaxValue);
-            var nodeCount = optimalDecisionTree.NodeCount;
-            var depth = optimalDecisionTree.TreeDepth;
-            var verifiedSolution = this.VerifySolution(allPossibleGroups.ToList(), optimalDecisionTree);
-            return depth;
+            return optimalDecisionTree;
         }
 
-        public List<(ConnectionGrouping, List<ConnectionGrouping>, HashSet<int>, HashSet<int>)> VerifySolution(List<ConnectionGrouping> allPossibleGroupings, SubsetCalculatorDecisionTree decisionTree) {
-            var answers = new List<(ConnectionGrouping, List<ConnectionGrouping>, HashSet<int>, HashSet<int>)> { };
-            foreach(var grouping in allPossibleGroupings )
-            {
-                var currentDecisionTree = decisionTree;
-                var answerForGrouping = new List<ConnectionGrouping> { };
-                bool foundAnswer = false;
-                while(currentDecisionTree != null ) {
-                    var distance = currentDecisionTree.GuessAtNode.CalculateDistanceFromGroup(grouping.Group1);
-                    answerForGrouping.Add(currentDecisionTree.GuessAtNode);
-                    if (distance == ConnectionDistance.Correct)
-                    {
-                        foundAnswer = true;
-                        break;
-                    }
-                    else if (distance == ConnectionDistance.OneAway) {
-                        currentDecisionTree = currentDecisionTree.DecisionTreeIfOneAway;
-                    } 
-                    else if (distance == ConnectionDistance.TwoAway)
-                    {
-                        currentDecisionTree = currentDecisionTree.DecisionTreeIfTwoAway;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Invalid distance");
-                    }
-                }
-                if(!foundAnswer)
-                {
-                    throw new InvalidOperationException("Didn't find answer");
-                }
-                if (answerForGrouping.Count > decisionTree.TreeDepth) { 
-                    throw new InvalidOperationException("Required more guesses than anticipated");
-                }
-                var lastGuess = answerForGrouping.Last()!;
-                var matchesGroup1LastGuess = true;
-                var matchesGroup2LastGuess = true;
-                if (lastGuess.Group1.Count != grouping.Group1.Count)
-                {
-                    matchesGroup1LastGuess = false;
-                }
-                if (lastGuess.Group2.Count != grouping.Group1.Count)
-                {
-                    matchesGroup2LastGuess = false;
-                }
-                foreach (var member in grouping.Group1)
-                {
-                    if (!lastGuess.Group1.Contains(member))
-                    {
-                        matchesGroup1LastGuess = false;
-                    }
-                    if (!lastGuess.Group2.Contains(member))
-                    {
-                        matchesGroup2LastGuess = false;
-                    }
-                }
-                if (!matchesGroup1LastGuess && !matchesGroup2LastGuess)
-                {
-                    throw new InvalidOperationException("Last guess wouldn't work");
-                }
-                answers.Add((grouping, answerForGrouping, grouping.Group1, lastGuess.Group1));
-            }
-            return answers;
+        public List<ConnectionGrouping> GetAllPossibleGroups() {
+            return this._subsetCalculator.CalculateSubsets(
+                new List<int> { 4, 4 }
+            ).Select(g => new ConnectionGrouping(g[0], g[1])).ToList();
         }
 
         public class SubsetCalculatorDecisionTree
