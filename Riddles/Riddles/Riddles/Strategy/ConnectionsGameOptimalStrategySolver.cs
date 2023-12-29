@@ -17,7 +17,7 @@ namespace Riddles.Strategy
         {
             var allPossibleGroups = this.GetAllPossibleGroups();
             var equivalenceTags = Enumerable.Range(0, 8).ToDictionary(x => x,x => string.Empty);
-            var optimalDecisionTree = new SubsetCalculatorDecisionTree(allPossibleGroups, equivalenceTags, allPossibleGroups, 0, int.MaxValue);
+            var optimalDecisionTree = new SubsetCalculatorDecisionTree(allPossibleGroups, equivalenceTags, allPossibleGroups, 0, int.MaxValue, int.MaxValue);
             return optimalDecisionTree;
         }
 
@@ -29,7 +29,13 @@ namespace Riddles.Strategy
 
         public class SubsetCalculatorDecisionTree
         {
-            public SubsetCalculatorDecisionTree(IEnumerable<ConnectionGrouping> possibleGroupings, Dictionary<int, string> equivalenceTags, IEnumerable<ConnectionGrouping> allPossibleGroupings, int currentDepth, int maxAllowedDepth) 
+            public SubsetCalculatorDecisionTree(
+                IEnumerable<ConnectionGrouping> possibleGroupings, 
+                Dictionary<int, string> equivalenceTags, 
+                IEnumerable<ConnectionGrouping> allPossibleGroupings, 
+                int currentDepth, 
+                int maxAllowedDepth, 
+                int bestNumNodes) 
             {
                 if(currentDepth >= maxAllowedDepth)
                 {
@@ -37,7 +43,7 @@ namespace Riddles.Strategy
                     return;
                 }
                 this.IsTerminatedForBeingTooDeep = false;
-                var (group, subtreeIfOneAway, subtreeIfTwoAway) = this.ConstructTree(possibleGroupings.ToList(), equivalenceTags, allPossibleGroupings.ToList(), currentDepth, maxAllowedDepth);
+                var (group, subtreeIfOneAway, subtreeIfTwoAway) = this.ConstructTree(possibleGroupings.ToList(), equivalenceTags, allPossibleGroupings.ToList(), currentDepth, maxAllowedDepth, bestNumNodes);
                 if (group == null) {
                     this.IsTerminatedForBeingTooDeep = true;
                     return;
@@ -62,15 +68,15 @@ namespace Riddles.Strategy
 
             private int CalculateTreeDepth()
             {
-                var leftTreeDepth = this.DecisionTreeIfOneAway != null ? this.DecisionTreeIfOneAway.CalculateTreeDepth() : 0;
-                var rightTreeDepth = this.DecisionTreeIfTwoAway != null ? this.DecisionTreeIfTwoAway.CalculateTreeDepth() : 0;
+                var leftTreeDepth = this.DecisionTreeIfOneAway != null ? this.DecisionTreeIfOneAway.TreeDepth : 0;
+                var rightTreeDepth = this.DecisionTreeIfTwoAway != null ? this.DecisionTreeIfTwoAway.TreeDepth : 0;
                 return 1 + Math.Max(leftTreeDepth, rightTreeDepth);
             }
 
             private int CalculateNodeCount()
             {
-                var leftNodeCount = this.DecisionTreeIfOneAway != null ? this.DecisionTreeIfOneAway.CalculateNodeCount() : 0;
-                var rightNodeCount = this.DecisionTreeIfTwoAway != null ? this.DecisionTreeIfTwoAway.CalculateNodeCount() : 0;
+                var leftNodeCount = this.DecisionTreeIfOneAway != null ? this.DecisionTreeIfOneAway.NodeCount : 0;
+                var rightNodeCount = this.DecisionTreeIfTwoAway != null ? this.DecisionTreeIfTwoAway.NodeCount : 0;
                 return 1 + leftNodeCount + rightNodeCount;
             }
 
@@ -79,8 +85,14 @@ namespace Riddles.Strategy
             public SubsetCalculatorDecisionTree DecisionTreeIfOneAway { get; }
             public SubsetCalculatorDecisionTree DecisionTreeIfTwoAway { get; }
 
-            private (ConnectionGrouping, SubsetCalculatorDecisionTree, SubsetCalculatorDecisionTree) 
-                ConstructTree(List<ConnectionGrouping> possibleGroupings, Dictionary<int, string> equivalenceTags, List<ConnectionGrouping> allPossibleGroupings, int currentDepth, int maxAllowedDepth)
+            private (ConnectionGrouping, SubsetCalculatorDecisionTree, SubsetCalculatorDecisionTree) ConstructTree(
+                List<ConnectionGrouping> possibleGroupings, 
+                Dictionary<int, string> equivalenceTags, 
+                List<ConnectionGrouping> allPossibleGroupings, 
+                int currentDepth, 
+                int maxAllowedDepth, 
+                int bestNumNodes
+            )
             {
                 var bestPossibleDepth = this.CalculateBestDepth(possibleGroupings);
                 var groupingsToTry = new List<(ConnectionGrouping, List<ConnectionGrouping>, List<ConnectionGrouping>, Dictionary<int, string>)>();
@@ -126,6 +138,7 @@ namespace Riddles.Strategy
                 }
 
                 int bestDepth = maxAllowedDepth;
+                int currentBestNumNodes = bestNumNodes;
                 ConnectionGrouping bestGrouping = null;
                 SubsetCalculatorDecisionTree bestDecisionTreeIfOneAway = null;
                 SubsetCalculatorDecisionTree bestDecisionTreeIfTwoAway = null;
@@ -139,25 +152,29 @@ namespace Riddles.Strategy
                     }
 
                     SubsetCalculatorDecisionTree decisionTreeIfOneAway = groupingsOneAway.Any() 
-                        ? new SubsetCalculatorDecisionTree(groupingsOneAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth) 
+                        ? new SubsetCalculatorDecisionTree(groupingsOneAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth, currentBestNumNodes) 
                         : null;
                     SubsetCalculatorDecisionTree decisionTreeIfTwoAway = groupingsTwoAway.Any()
-                        ? new SubsetCalculatorDecisionTree(groupingsTwoAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth)
+                        ? new SubsetCalculatorDecisionTree(groupingsTwoAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth, currentBestNumNodes)
                         : null;
 
                     if(decisionTreeIfOneAway?.IsTerminatedForBeingTooDeep == true || decisionTreeIfTwoAway?.IsTerminatedForBeingTooDeep == true)
                     {
                         continue;
                     }
-                    var leftTreeDepth = decisionTreeIfOneAway != null ? decisionTreeIfOneAway.CalculateTreeDepth() : 0;
-                    var rightTreeDepth = decisionTreeIfTwoAway != null ? decisionTreeIfTwoAway.CalculateTreeDepth() : 0;
+                    var leftTreeDepth = decisionTreeIfOneAway != null ? decisionTreeIfOneAway.TreeDepth : 0;
+                    var rightTreeDepth = decisionTreeIfTwoAway != null ? decisionTreeIfTwoAway.TreeDepth : 0;
                     var depth = 1 + Math.Max(leftTreeDepth, rightTreeDepth);
-                    if(depth < bestDepth)
+                    var leftNumNodes = decisionTreeIfOneAway != null ? decisionTreeIfOneAway.NodeCount : 0;
+                    var rightNumNodes = decisionTreeIfTwoAway != null ? decisionTreeIfTwoAway.NodeCount : 0;
+                    var nodeCount = 1 + leftNumNodes + rightNumNodes; 
+                    if (depth < bestDepth || (depth == bestDepth && nodeCount < currentBestNumNodes))
                     {
                         bestGrouping = grouping;
                         bestDecisionTreeIfOneAway = decisionTreeIfOneAway;
                         bestDecisionTreeIfTwoAway = decisionTreeIfTwoAway;
                         bestDepth = depth;
+                        currentBestNumNodes = nodeCount;
                         if (bestDepth == bestPossibleDepth)
                         {
                             break;
