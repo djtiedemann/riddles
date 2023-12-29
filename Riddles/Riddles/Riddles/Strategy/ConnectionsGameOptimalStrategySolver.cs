@@ -64,7 +64,7 @@ namespace Riddles.Strategy
                 ConstructTree(List<ConnectionGrouping> possibleGroupings, Dictionary<int, string> equivalenceTags, List<ConnectionGrouping> allPossibleGroupings)
             {
                 var bestPossibleDepth = this.CalculateBestDepth(possibleGroupings);
-                var groupingsToTry = new HashSet<ConnectionGrouping>();
+                var groupingsToTry = new List<(ConnectionGrouping, List<ConnectionGrouping>, List<ConnectionGrouping>, Dictionary<int, string>)>();
                 var relevantGroupingCache = new HashSet<string>();
                 // we don't want to try all combinations of groupings because many of them are functionally the same. For instance, on the first try there's only one relevant grouping
                 // two values are effectively the same if they've been grouped together in every past iteration
@@ -76,8 +76,28 @@ namespace Riddles.Strategy
                         + grouping.Group1.Select(c => equivalenceTags[c]).OrderBy(x => x).Aggregate(string.Empty, (agg, x) => $"{agg}{x}");
                     if (!relevantGroupingCache.Contains(equivalenceKey1) && !relevantGroupingCache.Contains(equivalenceKey2))
                     {
+                        List<ConnectionGrouping> groupingsOneAway = new List<ConnectionGrouping>();
+                        List<ConnectionGrouping> groupingsTwoAway = new List<ConnectionGrouping>();
+                        // split the possible groupings at this point into those that are one away from this grouping and one that are two away
+                        foreach (var possibleGrouping in possibleGroupings)
+                        {
+                            var distance = possibleGrouping.CalculateDistanceFromGroup(grouping.Group1);
+                            if (distance == ConnectionDistance.OneAway)
+                            {
+                                groupingsOneAway.Add(possibleGrouping);
+                            }
+                            else if (distance == ConnectionDistance.TwoAway)
+                            {
+                                groupingsTwoAway.Add(possibleGrouping);
+                            }
+                        }
+
+                        var newEquivalenceTags = equivalenceTags.ToDictionary(
+                            k => k.Key,
+                            k => grouping.Group1.Contains(k.Key) ? $"{k.Value}1" : $"{k.Value}2"
+                        );
                         relevantGroupingCache.Add(equivalenceKey1);
-                        groupingsToTry.Add(grouping);
+                        groupingsToTry.Add((grouping, groupingsOneAway, groupingsTwoAway, newEquivalenceTags));
                     }
                 }
 
@@ -85,32 +105,15 @@ namespace Riddles.Strategy
                 ConnectionGrouping bestGrouping = null;
                 SubsetCalculatorDecisionTree bestDecisionTreeIfOneAway = null;
                 SubsetCalculatorDecisionTree bestDecisionTreeIfTwoAway = null;
-                foreach (var grouping in groupingsToTry)
+                // first try groupings that are most likely to split the trees evenly, as those are most likely to lead to shallow trees.
+                //groupingsToTry = groupingsToTry.OrderBy(x => Math.Abs(x.Item2.Count - x.Item3.Count)).ToList();
+                foreach (var (grouping, groupingsOneAway, groupingsTwoAway, newEquivalenceTags) in groupingsToTry)
                 {
-                    List<ConnectionGrouping> groupingsOneAway = new List<ConnectionGrouping>();
-                    List<ConnectionGrouping> groupingsTwoAway = new List<ConnectionGrouping>();
-                    // split the possible groupings at this point into those that are one away from this grouping and one that are two away
-                    foreach (var possibleGrouping in possibleGroupings)
-                    {
-                        var distance = possibleGrouping.CalculateDistanceFromGroup(grouping.Group1);
-                        if (distance == ConnectionDistance.OneAway)
-                        {
-                            groupingsOneAway.Add(possibleGrouping);
-                        } else if (distance == ConnectionDistance.TwoAway)
-                        {
-                            groupingsTwoAway.Add(possibleGrouping);
-                        }
-                    }
-
                     // don't try something that doesn't actually change the groupings
                     if (groupingsOneAway.Count() == possibleGroupings.Count() || groupingsTwoAway.Count() == possibleGroupings.Count()) {
                         continue;
                     }
 
-                    var newEquivalenceTags = equivalenceTags.ToDictionary(
-                        k => k.Key,
-                        k => grouping.Group1.Contains(k.Key) ? $"{k.Value}1" : $"{k.Value}2"
-                    );
                     SubsetCalculatorDecisionTree decisionTreeIfOneAway = groupingsOneAway.Any() 
                         ? new SubsetCalculatorDecisionTree(groupingsOneAway, newEquivalenceTags, allPossibleGroupings) 
                         : null;
