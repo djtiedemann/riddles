@@ -13,6 +13,7 @@ namespace Riddles.Tests.Strategy
         {
             var connectionsGameOptimalStrategySolver = new ConnectionsGameOptimalStrategySolver();
             var actualNumGuessesNeededToSolve = connectionsGameOptimalStrategySolver.CalculateNumGuessesNeededToSolve();
+            Assert.AreEqual(actualNumGuessesNeededToSolve, 6);
         }
     }
 }

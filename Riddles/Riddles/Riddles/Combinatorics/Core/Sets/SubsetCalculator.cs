@@ -27,7 +27,7 @@ namespace Riddles.Combinatorics.Core.Sets
             var allPermutations = this._permutationGenerator.GenerateAllPermutations(initialPermutation);
             
             var groupings = allPermutations.Select(p => 
-                elementNums.GroupBy(x => p[x]).Select(g => g.ToHashSet()).ToList()
+                elementNums.GroupBy(x => p[x]).OrderBy(x => x.Key).Select(g => g.ToHashSet()).ToList()
             ).ToList();
             return groupings;
         }
