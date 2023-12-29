@@ -20,8 +20,8 @@ namespace Riddles.Strategy
             ).Select(g => new ConnectionGrouping(g[0], g[1]));
             var equivalenceTags = Enumerable.Range(0, 8).ToDictionary(x => x,x => string.Empty);
             var optimalDecisionTree = new SubsetCalculatorDecisionTree(allPossibleGroups, equivalenceTags, allPossibleGroups, 0, int.MaxValue);
-            var debugMessages = optimalDecisionTree.CalculateInOrderTraversal();
-            var depth = optimalDecisionTree.CalculateTreeDepth();
+            var nodeCount = optimalDecisionTree.NodeCount;
+            var depth = optimalDecisionTree.TreeDepth;
             var verifiedSolution = this.VerifySolution(allPossibleGroups.ToList(), optimalDecisionTree);
             return depth;
         }
@@ -57,7 +57,36 @@ namespace Riddles.Strategy
                 {
                     throw new InvalidOperationException("Didn't find answer");
                 }
-                answers.Add((grouping, answerForGrouping, grouping.Group1, answerForGrouping.LastOrDefault()!.Group1));
+                if (answerForGrouping.Count > decisionTree.TreeDepth) { 
+                    throw new InvalidOperationException("Required more guesses than anticipated");
+                }
+                var lastGuess = answerForGrouping.Last()!;
+                var matchesGroup1LastGuess = true;
+                var matchesGroup2LastGuess = true;
+                if (lastGuess.Group1.Count != grouping.Group1.Count)
+                {
+                    matchesGroup1LastGuess = false;
+                }
+                if (lastGuess.Group2.Count != grouping.Group1.Count)
+                {
+                    matchesGroup2LastGuess = false;
+                }
+                foreach (var member in grouping.Group1)
+                {
+                    if (!lastGuess.Group1.Contains(member))
+                    {
+                        matchesGroup1LastGuess = false;
+                    }
+                    if (!lastGuess.Group2.Contains(member))
+                    {
+                        matchesGroup2LastGuess = false;
+                    }
+                }
+                if (!matchesGroup1LastGuess && !matchesGroup2LastGuess)
+                {
+                    throw new InvalidOperationException("Last guess wouldn't work");
+                }
+                answers.Add((grouping, answerForGrouping, grouping.Group1, lastGuess.Group1));
             }
             return answers;
         }
@@ -83,37 +112,30 @@ namespace Riddles.Strategy
                 this.GroupingsSolvedAtThisNode = possibleGroupings.Where(g => g.CalculateDistanceFromGroup(this.GuessAtNode.Group1) == ConnectionDistance.Correct).ToHashSet();
                 this.DecisionTreeIfOneAway = subtreeIfOneAway;
                 this.DecisionTreeIfTwoAway = subtreeIfTwoAway;
+                this.TreeDepth = this.CalculateTreeDepth();
+                this.NodeCount = this.CalculateNodeCount();
             }
 
             public bool IsTerminatedForBeingTooDeep { get; }
 
             public string StringGuessAtNode { get; }
 
-            public int CalculateTreeDepth()
+            public int TreeDepth { get; }
+
+            public int NodeCount { get; }
+
+            private int CalculateTreeDepth()
             {
                 var leftTreeDepth = this.DecisionTreeIfOneAway != null ? this.DecisionTreeIfOneAway.CalculateTreeDepth() : 0;
                 var rightTreeDepth = this.DecisionTreeIfTwoAway != null ? this.DecisionTreeIfTwoAway.CalculateTreeDepth() : 0;
                 return 1 + Math.Max(leftTreeDepth, rightTreeDepth);
             }
 
-            public List<string> CalculateInOrderTraversal()
+            private int CalculateNodeCount()
             {
-                var nodeToProcess = (0, this, (SubsetCalculatorDecisionTree)null, "None");
-                var nodesToProcess = new List<(int, SubsetCalculatorDecisionTree, SubsetCalculatorDecisionTree, string)> { nodeToProcess };
-                List<string> messages = new List<string> { };
-                while (nodesToProcess.Any()) {
-                    var (depth, decisionTree, parentDecisionTree, type) = nodesToProcess[0];
-                    nodesToProcess.RemoveAt(0);
-                    var parentString = parentDecisionTree != null ? parentDecisionTree.StringGuessAtNode : "None";
-                    messages.Add($"Depth: {depth}, Group: {decisionTree.StringGuessAtNode}, Parent: {parentString}, Type: {type}");
-                    if (decisionTree.DecisionTreeIfOneAway != null) {
-                        nodesToProcess.Add((depth + 1, decisionTree.DecisionTreeIfOneAway, decisionTree, "One Away"));
-                    }
-                    if (decisionTree.DecisionTreeIfTwoAway != null) {
-                        nodesToProcess.Add((depth + 1, decisionTree.DecisionTreeIfTwoAway, decisionTree, "Two Away"));
-                    }
-                }
-                return messages;
+                var leftNodeCount = this.DecisionTreeIfOneAway != null ? this.DecisionTreeIfOneAway.CalculateNodeCount() : 0;
+                var rightNodeCount = this.DecisionTreeIfTwoAway != null ? this.DecisionTreeIfTwoAway.CalculateNodeCount() : 0;
+                return 1 + leftNodeCount + rightNodeCount;
             }
 
             public ConnectionGrouping GuessAtNode { get; }
