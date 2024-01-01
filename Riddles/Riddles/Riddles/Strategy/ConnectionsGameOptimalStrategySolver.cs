@@ -6,6 +6,17 @@ using Riddles.Combinatorics.Core.Sets;
 
 namespace Riddles.Strategy
 {
+    // https://thefiddler.substack.com/p/can-you-make-the-connection
+    // You have 8 words that should be split into two groups with common themes (based on New York Times Connections game)
+    // If you don't know anything about the words, what is the maximum number of guesses needed (taking into account the fact that you are prompted when you are one away)
+    //
+    // The idea here is that you form a decision tree by making a guess, and making a new guess based on the response.
+    // We recursively search through the space with a few optimizations to speed up the search
+    // - Equivalence Tags: If two numbers have been in the same group for all previous rounds, they are functionally equivalent, and we shouldn't make new guesses when only equivalent numbers are switched.
+    // This allows us to only try one first guess, because whatever you guess initially will lead to the same outcome
+    // - Terminating for being too deep: If you ever reach a state where you know the result will be less optimal than a previous tree you've found stop early
+    // - Returning early if solution is optimal: If you ever reach a state where you have found the single optimal result for a subtree, return it without continuing to search
+    // - Ordering most even splits first. To take advantage of the early termination optimization, we first consider guesses that will split the space most evenly
     public class ConnectionsGameOptimalStrategySolver
     {
         private SubsetCalculator _subsetCalculator;
@@ -13,11 +24,11 @@ namespace Riddles.Strategy
             this._subsetCalculator = new SubsetCalculator();
         }
 
-        public SubsetCalculatorDecisionTree FindOptimalDecisionTree()
+        public SubsetCalculatorDecisionTree FindOptimalDecisionTree(bool findSmallestNumNodes)
         {
             var allPossibleGroups = this.GetAllPossibleGroups();
             var equivalenceTags = Enumerable.Range(0, 8).ToDictionary(x => x,x => string.Empty);
-            var optimalDecisionTree = new SubsetCalculatorDecisionTree(allPossibleGroups, equivalenceTags, allPossibleGroups, 0, int.MaxValue, int.MaxValue);
+            var optimalDecisionTree = new SubsetCalculatorDecisionTree(allPossibleGroups, equivalenceTags, allPossibleGroups, 0, int.MaxValue, int.MaxValue, findSmallestNumNodes);
             return optimalDecisionTree;
         }
 
@@ -35,7 +46,8 @@ namespace Riddles.Strategy
                 IEnumerable<ConnectionGrouping> allPossibleGroupings, 
                 int currentDepth, 
                 int maxAllowedDepth, 
-                int bestNumNodes) 
+                int bestNumNodes,
+                bool findSmallestNumNodes) 
             {
                 if(currentDepth >= maxAllowedDepth)
                 {
@@ -43,7 +55,7 @@ namespace Riddles.Strategy
                     return;
                 }
                 this.IsTerminatedForBeingTooDeep = false;
-                var (group, subtreeIfOneAway, subtreeIfTwoAway) = this.ConstructTree(possibleGroupings.ToList(), equivalenceTags, allPossibleGroupings.ToList(), currentDepth, maxAllowedDepth, bestNumNodes);
+                var (group, subtreeIfOneAway, subtreeIfTwoAway) = this.ConstructTree(possibleGroupings.ToList(), equivalenceTags, allPossibleGroupings.ToList(), currentDepth, maxAllowedDepth, bestNumNodes, findSmallestNumNodes);
                 if (group == null) {
                     this.IsTerminatedForBeingTooDeep = true;
                     return;
@@ -91,10 +103,12 @@ namespace Riddles.Strategy
                 List<ConnectionGrouping> allPossibleGroupings, 
                 int currentDepth, 
                 int maxAllowedDepth, 
-                int bestNumNodes
+                int bestNumNodes,
+                bool findSmallestNumNodes
             )
             {
                 var bestPossibleDepth = this.CalculateBestDepth(possibleGroupings);
+                var bestPossibleNumNodes = possibleGroupings.Count / 2;
                 var groupingsToTry = new List<(ConnectionGrouping, List<ConnectionGrouping>, List<ConnectionGrouping>, Dictionary<int, string>)>();
                 var relevantGroupingCache = new HashSet<string>();
                 // we don't want to try all combinations of groupings because many of them are functionally the same. For instance, on the first try there's only one relevant grouping
@@ -152,10 +166,10 @@ namespace Riddles.Strategy
                     }
 
                     SubsetCalculatorDecisionTree decisionTreeIfOneAway = groupingsOneAway.Any() 
-                        ? new SubsetCalculatorDecisionTree(groupingsOneAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth, currentBestNumNodes) 
+                        ? new SubsetCalculatorDecisionTree(groupingsOneAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth, currentBestNumNodes, findSmallestNumNodes) 
                         : null;
                     SubsetCalculatorDecisionTree decisionTreeIfTwoAway = groupingsTwoAway.Any()
-                        ? new SubsetCalculatorDecisionTree(groupingsTwoAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth, currentBestNumNodes)
+                        ? new SubsetCalculatorDecisionTree(groupingsTwoAway, newEquivalenceTags, allPossibleGroupings, currentDepth, bestDepth, currentBestNumNodes, findSmallestNumNodes)
                         : null;
 
                     if(decisionTreeIfOneAway?.IsTerminatedForBeingTooDeep == true || decisionTreeIfTwoAway?.IsTerminatedForBeingTooDeep == true)
@@ -175,7 +189,9 @@ namespace Riddles.Strategy
                         bestDecisionTreeIfTwoAway = decisionTreeIfTwoAway;
                         bestDepth = depth;
                         currentBestNumNodes = nodeCount;
-                        if (bestDepth == bestPossibleDepth)
+                        // findSmallestNumNodes is an optimization to make the test suite run faster. For the best answer, it should be set to false
+                        if (bestDepth == bestPossibleDepth 
+                            && (!findSmallestNumNodes || currentBestNumNodes == bestPossibleNumNodes))
                         {
                             break;
                         }
@@ -185,6 +201,7 @@ namespace Riddles.Strategy
                 return (bestGrouping, bestDecisionTreeIfOneAway, bestDecisionTreeIfTwoAway);
             }
 
+            // shortcuts by returning the first optimal tree when there could be many optimal trees
             private int CalculateBestDepth(IEnumerable<ConnectionGrouping> possibleGroupings)
             {
                 // due to the symmetry of the problem, each guess eliminates 2 pairs
@@ -199,6 +216,7 @@ namespace Riddles.Strategy
             }
         }
 
+        // since you can guess either of the two groups of 4, these are the only possible values
         public enum ConnectionDistance
         {
             Correct = 1,

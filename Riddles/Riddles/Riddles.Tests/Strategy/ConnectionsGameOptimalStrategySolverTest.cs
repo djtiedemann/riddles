@@ -9,11 +9,12 @@ namespace Riddles.Tests.Strategy
 {
     public class ConnectionsGameOptimalStrategySolverTest
     {
-        [Test]
-        public void TestCalculateNumGuessesNeededToSolve()
+        //[TestCase(true)] - commented out, takes 10s. Returns a tree with 36 nodes instead of 63. depths are the same
+        [TestCase(false)]
+        public void TestCalculateNumGuessesNeededToSolve(bool findOptimallySmallTree)
         {
             var connectionsGameOptimalStrategySolver = new ConnectionsGameOptimalStrategySolver();
-            var optimalDecisionTree = connectionsGameOptimalStrategySolver.FindOptimalDecisionTree();
+            var optimalDecisionTree = connectionsGameOptimalStrategySolver.FindOptimalDecisionTree(findOptimallySmallTree);
             var allGroups = connectionsGameOptimalStrategySolver.GetAllPossibleGroups();
             this.VerifySolution(allGroups, optimalDecisionTree);
             Assert.AreEqual(optimalDecisionTree.TreeDepth, 6);
