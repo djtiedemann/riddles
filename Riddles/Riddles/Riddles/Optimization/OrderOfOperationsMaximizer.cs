@@ -13,28 +13,32 @@ namespace Riddles.Optimization
             this._subsetCalculator = new SubsetCalculator();
         }
 
-        public (double, Equation) CalculateMaximumValue(
+        public (double, Equation, double) CalculateMaximumValue(
             List<double> values, 
-            List<Operation> operations)
+            List<Operation> operations,
+            bool shouldPruneUnnecessaryEquations)
         {
             var allEquations = this.GenerateAllEquations(
                 values, 
-                operations
+                operations,
+                shouldPruneUnnecessaryEquations
             );
+            this.DebugEquations(allEquations);
             Equation bestEquation = null;
             double bestValue = double.MinValue;
+
             foreach(var equation in allEquations)
             {
-                if(equation.Value > bestValue)
+                if(equation.Value > bestValue && !double.IsInfinity(equation.Value))
                 {
                     bestEquation = equation;
                     bestValue = equation.Value;
                 }
             }
-            return (bestValue, bestEquation);
+            return (bestValue, bestEquation, allEquations.Count());
         }
 
-        private List<Equation> GenerateAllEquations(List<double> values, List<Operation> operations) {
+        private List<Equation> GenerateAllEquations(List<double> values, List<Operation> operations, bool shouldPruneUnnecessaryEquations) {
             
             var allEquations = new List<Equation>();
             if(values.Count() == 1)
@@ -77,14 +81,28 @@ namespace Riddles.Optimization
                                 .Where((x, i) => leftValueSubsetIndicators.Contains(i));
                             var rightValueSubset = values
                                 .Where((x, i) => rightValueSubsetIndicators.Contains(i));
+
+                            // for addition and multiplication, the results are symmetric
+                            // so ignore duplicate equations
+                            // (where the minimum value is on the right hand side)
+                            if (shouldPruneUnnecessaryEquations &&
+                                (operation == Operation.Addition || operation == Operation.Multiplication)) { 
+                                if(leftValueSubset.Min() > rightValueSubset.Min())
+                                {
+                                    continue;
+                                }
+                            }
+
                             var leftEquations = this
                                 .GenerateAllEquations(
                                     leftValueSubset.ToList(), 
-                                    leftOperatorSubset.ToList()
+                                    leftOperatorSubset.ToList(),
+                                    shouldPruneUnnecessaryEquations
                                 );
                             var rightEquations = this.GenerateAllEquations(
                                     rightValueSubset.ToList(),
-                                    rightOperatorSubset.ToList()
+                                    rightOperatorSubset.ToList(),
+                                    shouldPruneUnnecessaryEquations
                                 );
                             foreach (var leftEquation in leftEquations)
                             { 
@@ -104,6 +122,21 @@ namespace Riddles.Optimization
                 }
             }
             return allEquations;
+        }
+
+        // the number of equations is determined by
+        // 1) the number of ways to structure the parentheses for the operators
+        // 2) the number of ways to order the operators within a structure
+        // 3) the number of ways to order the values within the structure
+        // the product of these three values is the number of equations produced
+        // by the most naive implementation
+        private void DebugEquations(List<Equation> equations)
+        {
+            var numDistinctWaysToFormParenthesis = equations.Select(e => (e, e.ToString()
+            .Select((x, i) => (x, i))
+            .Where(x => x.x == '(' || x.x == ')')
+            .Aggregate("", (agg, x) => $"{agg}_{x.i}")))
+            .GroupBy(x => x.Item2).ToList();
         }
 
         public enum Operation
