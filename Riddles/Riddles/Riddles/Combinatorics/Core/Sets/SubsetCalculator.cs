@@ -26,10 +26,36 @@ namespace Riddles.Combinatorics.Core.Sets
                 Enumerable.Range(0, x).Select(x => i)).ToArray();
             var allPermutations = this._permutationGenerator.GenerateAllPermutations(initialPermutation);
             
-            var groupings = allPermutations.Select(p => 
+            var subsets = allPermutations.Select(p => 
                 elementNums.GroupBy(x => p[x]).OrderBy(x => x.Key).Select(g => g.ToHashSet()).ToList()
             ).ToList();
-            return groupings;
+
+            if(!groupSizes.Any(x => x == 0))
+            {
+                return subsets;
+            }
+
+            var subsetsWithEmptyGroupsFilled = new List<List<HashSet<int>>>();
+            foreach ( var subset in subsets)
+            {
+                var subsetWithEmptyGroupsFilled = new List<HashSet<int>>();
+                int subsetGroupIndex = 0;
+
+                for(int i=0; i<groupSizes.Count; i++)
+                {
+                    if (groupSizes[i] == 0)
+                    {
+                        subsetWithEmptyGroupsFilled.Add(new HashSet<int>());
+                    } 
+                    else
+                    {
+                        subsetWithEmptyGroupsFilled.Add(subset[subsetGroupIndex]);
+                        subsetGroupIndex++;
+                    }
+                }
+                subsetsWithEmptyGroupsFilled.Add(subsetWithEmptyGroupsFilled);
+            }
+            return subsetsWithEmptyGroupsFilled;
         }
     }
 }

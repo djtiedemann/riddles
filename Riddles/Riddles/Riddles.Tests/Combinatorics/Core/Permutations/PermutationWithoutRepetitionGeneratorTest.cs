@@ -106,6 +106,7 @@ namespace Riddles.Tests.Combinatorics.Core.Permutations
         [TestCase("HTTHHTHT", new int[] { 1, 0, 0, 1, 1, 0, 1, 0 }, 70)]
         [TestCase("012021", new int[] { 0, 1, 2, 0, 2, 1 }, 90)]
         [TestCase("bananagram", new int[] { 0, 1, 2, 1, 2, 1, 3, 4, 1, 5 }, 75600)]
+        [TestCase("++--**//", new int[] { 3, 3, 2, 2, 1, 1, 0, 0}, 2520)]
         public void TestGenerateAllAnagrams(string word, int[] intArrayRepresentation, int expectedNumAnagrams)
         {
             var permutationGenerator = new PermutationWithoutRepetitionGenerator();
