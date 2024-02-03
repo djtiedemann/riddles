@@ -13,8 +13,33 @@ namespace Riddles.Optimization
     public class RecursiveDigitSummer
     {
         private Dictionary<string, int> _cache;
+        private Dictionary<int, string> _smallestNumberSummingToNCache;
         public RecursiveDigitSummer() { 
             this._cache = new Dictionary<string, int>();
+            this._smallestNumberSummingToNCache = new Dictionary<int, string>();
+        }
+
+        public string FindSmallestNumberSummingToN(int n)
+        {
+            if(n == 0)
+            {
+                return 0.ToString();
+            }
+            if(n == 1)
+            {
+                return 10.ToString();
+            }
+            if (!this._smallestNumberSummingToNCache.ContainsKey(n)) {
+                var targetValue = int.Parse(this.FindSmallestNumberSummingToN(n - 1));
+                var numNines = targetValue / 9;
+                var precedingNumber = targetValue % 9;
+                var nines = Enumerable.Range(0, numNines).Select(n => "9")
+                    .Aggregate("", (agg, v) => $"{agg}{v}");
+                this._smallestNumberSummingToNCache[n] =
+                    (precedingNumber != 0 ? precedingNumber.ToString() : string.Empty)
+                    + nines;
+            }
+            return this._smallestNumberSummingToNCache[n];
         }
 
         public int CalculateNumNumbersSummingToN(int maximumNum, int n)

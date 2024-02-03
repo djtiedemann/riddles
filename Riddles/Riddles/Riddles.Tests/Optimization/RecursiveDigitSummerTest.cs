@@ -8,7 +8,7 @@ namespace Riddles.Tests.Optimization
 {
     public class RecursiveDigitSummerTest
     {
-        //[TestCase("0", 0)]
+        [TestCase("0", 0)]
         [TestCase("10", 1)]
         [TestCase("19", 2)]
         [TestCase("199", 3)]
@@ -17,6 +17,18 @@ namespace Riddles.Tests.Optimization
         {
             var recursiveDigitSummer = new RecursiveDigitSummer();
             var actual = recursiveDigitSummer.CalculateDepth(n);
+            Assert.AreEqual(actual, expected);
+        }
+
+        [TestCase(0, "0")]
+        [TestCase(1, "10")]
+        [TestCase(2, "19")]
+        [TestCase(3, "199")]
+        [TestCase(4, "19999999999999999999999")]
+        public void TestFindSmallestNumberSummingToN(int n, string expected)
+        {
+            var recursiveDigitSummer = new RecursiveDigitSummer();
+            var actual = recursiveDigitSummer.FindSmallestNumberSummingToN(n);
             Assert.AreEqual(actual, expected);
         }
 
