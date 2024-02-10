@@ -8,22 +8,7 @@ namespace Riddles.Graphs.Application
 {
     // https://thefiddler.substack.com/p/how-many-loops-can-you-slither-around
     // You're a snake making a cycle on a 4x4 grid. Count the number of unique
-    // cycles. 
-    // Rules:
-    // You can never visit a node smaller than the node starting the circle.
-    // This prevents duplicate cycles with different starting points.
-    // For instance 1, 2, 3, 4 is the same as 2, 3, 4, 1.
-    // The lowest number node will come first in the cycle
-    // 
-    // You can never visit the node that you immediately came from.
-    // This prevents "cycles" where you simply turn around.
-    // 
-    // You can never visit a non-starting node that you've visited before.
-    // Once you reach the starting node, you must end.
-    // You cannot go out of bounds.
-    //
-    // The second to last node cannot be less than the second node.
-    // This prevents the cycle from going counterclockwise.
+    // cycles.
     public class TwoDimensionalGridCycleFinder
     {
         private TwoDimensionalRectangularGrid _gridGenerator;
