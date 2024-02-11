@@ -9,7 +9,9 @@ namespace Riddles.Graphs.Application
 {
     /// <summary>
     /// Find the number of Slitherlink games with a single solution can be generated on
-    /// a nxn grid
+    /// a nxn grid. https://thefiddler.substack.com/p/how-many-loops-can-you-slither-around
+    /// 
+    /// Look up Slitherlink to learn about the game. There must be one solution.
     /// </summary>
     public class SlitherlinkGameGenerator
     {
@@ -75,36 +77,56 @@ namespace Riddles.Graphs.Application
             var edgeCount = Enumerable.Range(0, (length - 1) * (width - 1)).ToArray();
             for(int i=0; i<cycle.Count - 1; i++)
             {
-                var location1 = cycle[i];
-                var location2 = cycle[i+1];
-                // either the X location must match or the Y location must match
-                // each edge is associated with 1 or 2 boxes depending on whether or not it is on the edge of the grid
-                if(location1.X == location2.X)
+                var indexesForEdge = this.GetIndexesForEdge(
+                    cycle[i],
+                    cycle[i + 1],
+                    length,
+                    width
+                );
+                foreach(var index in indexesForEdge)
                 {
-                    var minY = Math.Min(location1.Y, location2.Y);
-                    if (location1.X != 0)
-                    {
-                        edgeCount[(location1.X - 1) * width + minY]++;
-                    }
-                    if (location1.X != length - 1)
-                    {
-                        edgeCount[(location1.X * width) + minY]++;
-                    }
-                }
-                else
-                {
-                    var minX = Math.Min(location1.X, location2.X);
-                    if(location1.Y != 0)
-                    {
-                        edgeCount[(minX * width) - location1.Y]++;
-                    }
-                    if(location1.Y != width - 1)
-                    {
-                        edgeCount[(minX * width ) + location1.Y]++;
-                    }
+                    edgeCount[index]++;
                 }
             }
             return edgeCount;
+        }
+
+        public IEnumerable<int> GetIndexesForEdge(
+            TwoDimensionalRectangularGrid.Location location1,
+            TwoDimensionalRectangularGrid.Location location2,
+            int length,
+            int width
+        )
+        {
+            // either the row location must match or the col location must match
+            // each edge is associated with 1 or 2 boxes depending on whether or not it is on the edge of the grid
+            var edges = new List<int>() { };
+            if (location1.Row == location2.Row)
+            {
+                var minCol = Math.Min(location1.Column, location2.Column);
+                if (location1.Row != length - 1)
+                {
+                    edges.Add((location1.Row * (width - 1)) + minCol);
+                }
+                if (location1.Row != 0)
+                {
+                    edges.Add((location1.Row - 1) * (width - 1) + minCol);
+                }
+            }
+            else
+            {
+                var minRow = Math.Min(location1.Row, location2.Row);
+                var maxRow = Math.Max(location1.Row, location2.Row);
+                if (location1.Column != width - 1)
+                {
+                    edges.Add((minRow * (width - 1)) + location1.Column);
+                }
+                if (location1.Column != 0)
+                {
+                    edges.Add((minRow * (width - 1)) + location1.Column - 1);
+                }
+            }
+            return edges;
         }
     }
 }

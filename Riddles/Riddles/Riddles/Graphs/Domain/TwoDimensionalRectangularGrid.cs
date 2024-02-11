@@ -20,26 +20,26 @@ namespace Riddles.Graphs.Domain
             private List<Location> _adjacentLocations;
             private int _length;
             private int _width;
-            public Location(int x, int y, int length, int width)
+            public Location(int row, int col, int length, int width)
             {
-                this.X = x;
-                this.Y = y;
+                this.Row = row;
+                this.Column = col;
                 this._length = length;
                 this._width = width;
-                this.Id = x * width + y;
+                this.Id = row * width + col;
             }
 
             public Location(int id, int length, int width)
             {
-                this.X = id / width;
-                this.Y = id % width;
+                this.Row = id / width;
+                this.Column = id % width;
                 this._length = length;
                 this._width = width;
                 this.Id = id;
             }
-            public int X { get; }
+            public int Row { get; }
 
-            public int Y { get; }
+            public int Column { get; }
 
             public int Id { get; }
 
@@ -50,12 +50,12 @@ namespace Riddles.Graphs.Domain
                     return false;
                 }
                 Location other = (Location)obj;
-                return other.X == this.X && other.Y == this.Y;
+                return other.Row == this.Row && other.Column == this.Column;
             }
 
             public override int GetHashCode()
             {
-                return $"{this.X}_{this.Y}".GetHashCode();
+                return $"{this.Row}_{this.Column}".GetHashCode();
             }
 
             public List<Location> GetAdjacentLocations()
@@ -69,7 +69,7 @@ namespace Riddles.Graphs.Domain
                         (0, 1),
                     };
                     this._adjacentLocations = directions.Select(
-                        d => (this.X + d.Item1, this.Y + d.Item2)
+                        d => (this.Row + d.Item1, this.Column + d.Item2)
                     ).Where(l =>
                         l.Item1 >= 0
                         && l.Item2 >= 0

@@ -41,5 +41,35 @@ namespace Riddles.Tests.Graphs.Domain
             Assert.AreEqual(square13Neighbors[1].Id, 12);
             Assert.AreEqual(square13Neighbors[2].Id, 14);
         }
+
+        [TestCase(3, 3, 0, 0, 0)]
+        [TestCase(3, 3, 0, 1, 1)]
+        [TestCase(3, 3, 0, 2, 2)]
+        [TestCase(3, 3, 1, 0, 3)]
+        [TestCase(3, 3, 1, 1, 4)]
+        [TestCase(3, 3, 1, 2, 5)]
+        [TestCase(3, 3, 2, 0, 6)]
+        [TestCase(3, 3, 2, 1, 7)]
+        [TestCase(3, 3, 2, 2, 8)]
+        public void TestIdToRowAndColMapping(int length, int width, int row, int col, int id)
+        {
+            var location1 = new TwoDimensionalRectangularGrid.Location(
+                row: row,
+                col: col,
+                length: length,
+                width: width
+            );
+            var location2 = new TwoDimensionalRectangularGrid.Location(
+                id: id,
+                length: length,
+                width: width
+            );
+            Assert.AreEqual(location1.Id, id);
+            Assert.AreEqual(location1.Row, row);
+            Assert.AreEqual(location1.Column, col);
+            Assert.AreEqual(location2.Id, id);
+            Assert.AreEqual(location2.Row, row);
+            Assert.AreEqual(location2.Column, col);
+        }
     }
 }
