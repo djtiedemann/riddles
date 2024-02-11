@@ -72,9 +72,9 @@ namespace Riddles.Graphs.Application
             return canonicalRepresentations;
         }
 
-        private int[] GetEdgeCountForCycle(int length, int width, List<TwoDimensionalRectangularGrid.Location> cycle)
+        public int[] GetEdgeCountForCycle(int length, int width, List<TwoDimensionalRectangularGrid.Location> cycle)
         {
-            var edgeCount = Enumerable.Range(0, (length - 1) * (width - 1)).ToArray();
+            var edgeCount = Enumerable.Range(0, (length - 1) * (width - 1)).Select(i => 0).ToArray();
             for(int i=0; i<cycle.Count - 1; i++)
             {
                 var indexesForEdge = this.GetIndexesForEdge(
