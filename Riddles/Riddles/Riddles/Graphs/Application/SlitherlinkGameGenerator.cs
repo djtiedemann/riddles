@@ -62,7 +62,7 @@ namespace Riddles.Graphs.Application
             return gamesWithOneSolution.Count();
         }
 
-        private List<string> GenerateCanonicalPuzzleRepresentation(int[] edgeCountsForCycle, List<string> permutations)
+        public List<string> GenerateCanonicalPuzzleRepresentation(int[] edgeCountsForCycle, List<string> permutations)
         {
             var canonicalRepresentations = permutations.Select(
                 p => edgeCountsForCycle.Select(

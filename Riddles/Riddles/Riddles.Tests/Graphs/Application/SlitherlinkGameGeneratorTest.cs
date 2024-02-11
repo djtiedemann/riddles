@@ -27,6 +27,21 @@ namespace Riddles.Tests.Graphs.Application
                 { 13, (3, 3, new int[] { 0, 1, 2, 5, 8, 7, 6, 3, 0 }, new int[] { 2, 2, 2, 2 })},
             };
 
+        private Dictionary<int, (int[], List<string>, List<string>)> _testGenerateCanonicalPuzzleRepresentationTestCaseDictionary =
+            new Dictionary<int, (int[], List<string>, List<string>)>
+            {
+                { 1, (new int[] { 4, 1, 1, 0 }, 
+                    new List<string> { 
+                        "0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111",
+                        "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111",
+                    },
+                    new List<string>{
+                        "____", "___0", "__1_", "__10", "_1__", "_1_0", "_11_", "_110",
+                        "4___", "4__0", "4_1_", "4_10", "41__", "41_0", "411_", "4110",
+                    })
+                }
+            };
+
         [TestCase(3, 3)]
         public void TestGenerateNumValidSlitherlinkGames(int length, int width)
         {
@@ -111,6 +126,22 @@ namespace Riddles.Tests.Graphs.Application
             for(int i=0; i<actual.Length; i++)
             {
                 Assert.AreEqual(actual[i], expected[i]);
+            }
+        }
+
+        [TestCase(1)]
+        public void TestGenerateCanonicalPuzzleRepresentation(int testCaseId)
+        {
+            var testCase = this._testGenerateCanonicalPuzzleRepresentationTestCaseDictionary[testCaseId];
+            var slitherlinkGameGenerator = new SlitherlinkGameGenerator();
+            var actual = slitherlinkGameGenerator.GenerateCanonicalPuzzleRepresentation(
+                testCase.Item1,
+                testCase.Item2
+            );
+            Assert.AreEqual(actual.Count, testCase.Item3.Count);
+            for(int i=0; i<actual.Count; i++)
+            {
+                Assert.AreEqual(actual.ElementAt(i), testCase.Item3.ElementAt(i));
             }
         }
     }
