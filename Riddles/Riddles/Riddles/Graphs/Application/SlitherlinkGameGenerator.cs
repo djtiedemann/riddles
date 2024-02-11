@@ -58,7 +58,7 @@ namespace Riddles.Graphs.Application
             }
             var gamesWithOneSolution = numSolutionsPerGame.Keys.Where(
                 k => numSolutionsPerGame[k] == 1
-            );
+            ).ToList();
             return gamesWithOneSolution.Count();
         }
 

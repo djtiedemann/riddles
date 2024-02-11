@@ -42,11 +42,13 @@ namespace Riddles.Tests.Graphs.Application
                 }
             };
 
-        [TestCase(3, 3)]
-        public void TestGenerateNumValidSlitherlinkGames(int length, int width)
+        [TestCase(3, 3, 93)]
+        [TestCase(4, 4, 41433)]
+        public void TestGenerateNumValidSlitherlinkGames(int length, int width, int expected)
         {
             var slitherlinkGameGenerator = new SlitherlinkGameGenerator();
             var actual = slitherlinkGameGenerator.GenerateNumValidSlitherlinkGames(length, width);
+            Assert.AreEqual(expected, actual);
         }
 
         [TestCase(1)]
