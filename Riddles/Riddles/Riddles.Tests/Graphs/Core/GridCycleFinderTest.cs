@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Riddles.Graphs.Application;
+using Riddles.Graphs.Core;
 using Riddles.Graphs.Domain;
 
-namespace Riddles.Tests.Graphs.Application
+namespace Riddles.Tests.Graphs.Core
 {
     public class GridCycleFinderTest
     {

@@ -4,21 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Riddles.Graphs.Application
+namespace Riddles.Graphs.Core
 {
     // https://thefiddler.substack.com/p/how-many-loops-can-you-slither-around
     // You're a snake making a cycle on a 4x4 grid. Count the number of unique
     // cycles.
     public class GridCycleFinder
     {
-        public GridCycleFinder() { 
+        public GridCycleFinder()
+        {
         }
 
         public List<List<TGraphLocation>> FindCycles<TGraphLocation>(int length, int width, IEnumerable<TGraphLocation> grid)
             where TGraphLocation : IGraphLocation
         {
-            return grid.SelectMany(sl => 
-                this.FindCyclesStartingAtLocation<TGraphLocation>(sl, sl, new List<TGraphLocation> { }).ToList()
+            return grid.SelectMany(sl =>
+                FindCyclesStartingAtLocation(sl, sl, new List<TGraphLocation> { }).ToList()
             ).ToList();
         }
 
@@ -60,9 +61,9 @@ namespace Riddles.Graphs.Application
                 );
 
             var allPaths = new List<List<TGraphLocation>>();
-            foreach(var nextPossibleLocation in nextPossibleLocations)
+            foreach (var nextPossibleLocation in nextPossibleLocations)
             {
-                var pathsFromLocation = this.FindCyclesStartingAtLocation<TGraphLocation>(
+                var pathsFromLocation = FindCyclesStartingAtLocation(
                     (TGraphLocation)nextPossibleLocation,
                     startingLocation,
                     pathCopy

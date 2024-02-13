@@ -1,4 +1,5 @@
 ﻿using Riddles.Combinatorics.Core.Permutations;
+using Riddles.Graphs.Core;
 using Riddles.Graphs.Domain;
 using System;
 using System.Collections.Generic;
