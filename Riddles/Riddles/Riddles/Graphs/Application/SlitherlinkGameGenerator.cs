@@ -12,6 +12,8 @@ namespace Riddles.Graphs.Application
     /// Find the number of Slitherlink games with a single solution can be generated on
     /// a nxn grid. https://thefiddler.substack.com/p/how-many-loops-can-you-slither-around
     /// 
+    /// Write up: https://docs.google.com/document/d/1VFDRO47u34L9N_zZ6TDA40LdocdON52bOTAZUyo3ut8/edit
+    /// 
     /// Look up Slitherlink to learn about the game. There must be one solution.
     /// </summary>
     public class SlitherlinkGameGenerator
