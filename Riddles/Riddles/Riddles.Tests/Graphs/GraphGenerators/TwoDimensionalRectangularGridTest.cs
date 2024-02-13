@@ -12,7 +12,7 @@ namespace Riddles.Tests.Graphs.Domain
         [Test]
         public void TestGenerate4x4Grid()
         {
-            var twoDimensionalRectangularGrid = new TwoDimensionalRectangularGrid();
+            var twoDimensionalRectangularGrid = new TwoDimensionalRectangularGridGenerator();
             var grid = twoDimensionalRectangularGrid.GenerateGrid(4, 4)
                 .OrderBy(x => x.Id)
                 .ToList();
@@ -53,13 +53,13 @@ namespace Riddles.Tests.Graphs.Domain
         [TestCase(3, 3, 2, 2, 8)]
         public void TestIdToRowAndColMapping(int length, int width, int row, int col, int id)
         {
-            var location1 = new TwoDimensionalRectangularGrid.Location(
+            var location1 = new TwoDimensionalRectangularGridGenerator.Location(
                 row: row,
                 col: col,
                 length: length,
                 width: width
             );
-            var location2 = new TwoDimensionalRectangularGrid.Location(
+            var location2 = new TwoDimensionalRectangularGridGenerator.Location(
                 id: id,
                 length: length,
                 width: width

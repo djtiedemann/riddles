@@ -69,7 +69,7 @@ namespace Riddles.Tests.Graphs.Application
             var testCase = this._testEdgeCountForCycleTestCases[testCaseId];
             var slitherlinkGameGenerator = new SlitherlinkGameGenerator();
             var cycle = testCase.Item3.Select(
-                c => new TwoDimensionalRectangularGrid.Location(id: c, length: testCase.Item1, width: testCase.Item2)
+                c => new TwoDimensionalRectangularGridGenerator.Location(id: c, length: testCase.Item1, width: testCase.Item2)
             );
             var actual = slitherlinkGameGenerator.GetEdgeCountForCycle(
                 testCase.Item1,
@@ -105,13 +105,13 @@ namespace Riddles.Tests.Graphs.Application
             int width,
             int[] expected)
         {
-            var location1 = new TwoDimensionalRectangularGrid.Location(
+            var location1 = new TwoDimensionalRectangularGridGenerator.Location(
                 row: row1,
                 col: col1,
                 length: length,
                 width: width
             );
-            var location2 = new TwoDimensionalRectangularGrid.Location(
+            var location2 = new TwoDimensionalRectangularGridGenerator.Location(
                 row: row2,
                 col: col2,
                 length: length,

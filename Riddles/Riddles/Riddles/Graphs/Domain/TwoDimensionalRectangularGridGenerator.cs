@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Riddles.Graphs.Domain
 {
-    public class TwoDimensionalRectangularGrid
+    public class TwoDimensionalRectangularGridGenerator
     {
         public List<Location> GenerateGrid(int length, int width)
         {
@@ -15,7 +15,7 @@ namespace Riddles.Graphs.Domain
                 .ToList();
         }
 
-        public class Location
+        public class Location : IGraphLocation
         {
             private List<Location> _adjacentLocations;
             private int _length;
@@ -58,7 +58,7 @@ namespace Riddles.Graphs.Domain
                 return $"{this.Row}_{this.Column}".GetHashCode();
             }
 
-            public List<Location> GetAdjacentLocations()
+            public IEnumerable<IGraphLocation> GetAdjacentLocations()
             {
                 if (this._adjacentLocations == null)
                 {

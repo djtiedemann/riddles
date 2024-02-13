@@ -9,26 +9,25 @@ namespace Riddles.Graphs.Application
     // https://thefiddler.substack.com/p/how-many-loops-can-you-slither-around
     // You're a snake making a cycle on a 4x4 grid. Count the number of unique
     // cycles.
-    public class TwoDimensionalGridCycleFinder
+    public class GridCycleFinder
     {
-        private TwoDimensionalRectangularGrid _gridGenerator;
-        public TwoDimensionalGridCycleFinder() { 
-            this._gridGenerator = new TwoDimensionalRectangularGrid();
+        public GridCycleFinder() { 
         }
 
-        public List<List<TwoDimensionalRectangularGrid.Location>> FindCycles(int length, int width)
+        public List<List<TGraphLocation>> FindCycles<TGraphLocation>(int length, int width, IEnumerable<TGraphLocation> grid)
+            where TGraphLocation : IGraphLocation
         {
-            var startingLocations = this._gridGenerator.GenerateGrid(length, width);
-            return startingLocations.SelectMany(sl => 
-                this.FindCyclesStartingAtLocation(sl, sl, new List<TwoDimensionalRectangularGrid.Location> { })
+            return grid.SelectMany(sl => 
+                this.FindCyclesStartingAtLocation<TGraphLocation>(sl, sl, new List<TGraphLocation> { }).ToList()
             ).ToList();
         }
 
 
-        private List<List<TwoDimensionalRectangularGrid.Location>> FindCyclesStartingAtLocation(
-            TwoDimensionalRectangularGrid.Location currentLocation,
-            TwoDimensionalRectangularGrid.Location startingLocation,
-            IEnumerable<TwoDimensionalRectangularGrid.Location> currentPath)
+        private List<List<TGraphLocation>> FindCyclesStartingAtLocation<TGraphLocation>(
+            TGraphLocation currentLocation,
+            TGraphLocation startingLocation,
+            IEnumerable<TGraphLocation> currentPath)
+            where TGraphLocation : IGraphLocation
         {
             // Copy the path and add the current location to it.
             // This ensures that it cannot be modified by another branch
@@ -42,9 +41,9 @@ namespace Riddles.Graphs.Application
                 // This prevents duplicate cycles in opposite directions.
                 if (currentPath.ElementAt(1).Id > currentPath.ElementAt(currentPath.Count() - 1).Id)
                 {
-                    return new List<List<TwoDimensionalRectangularGrid.Location>>();
+                    return new List<List<TGraphLocation>>();
                 }
-                return new List<List<TwoDimensionalRectangularGrid.Location>> { pathCopy };
+                return new List<List<TGraphLocation>> { pathCopy };
             }
             var nextPossibleLocations = currentLocation.GetAdjacentLocations()
                 .Where(
@@ -60,11 +59,11 @@ namespace Riddles.Graphs.Application
                     && !currentPath.Select((x, i) => (x, i)).Any(x => x.i > 0 && x.x.Id == l.Id)
                 );
 
-            var allPaths = new List<List<TwoDimensionalRectangularGrid.Location>>();
+            var allPaths = new List<List<TGraphLocation>>();
             foreach(var nextPossibleLocation in nextPossibleLocations)
             {
-                var pathsFromLocation = this.FindCyclesStartingAtLocation(
-                    nextPossibleLocation,
+                var pathsFromLocation = this.FindCyclesStartingAtLocation<TGraphLocation>(
+                    (TGraphLocation)nextPossibleLocation,
                     startingLocation,
                     pathCopy
                 );

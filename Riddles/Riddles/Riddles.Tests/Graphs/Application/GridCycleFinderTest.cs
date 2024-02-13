@@ -3,17 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Riddles.Graphs.Application;
+using Riddles.Graphs.Domain;
 
 namespace Riddles.Tests.Graphs.Application
 {
-    public class TwoDimensionalGridCycleFinderTest
+    public class GridCycleFinderTest
     {
         [TestCase(3, 3, 13)]
         [TestCase(4, 4, 213)]
         public void TestFindCyclesStartingAtLocation(int length, int width, int expected)
         {
-            var twoDimensionalGridCycleFinder = new TwoDimensionalGridCycleFinder();
-            var cycles = twoDimensionalGridCycleFinder.FindCycles(length, width);
+            var gridCycleFinder = new GridCycleFinder();
+            var twoDimensionalGridGenerator = new TwoDimensionalRectangularGridGenerator();
+            var twoDimensionalGrid = twoDimensionalGridGenerator.GenerateGrid(length, width);
+            var cycles = gridCycleFinder.FindCycles(length, width, twoDimensionalGrid);
             var actual = cycles.Count;
             Assert.AreEqual(expected, actual);
         }

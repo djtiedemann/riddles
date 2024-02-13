@@ -15,13 +15,13 @@ namespace Riddles.Graphs.Application
     /// </summary>
     public class SlitherlinkGameGenerator
     {
-        private TwoDimensionalGridCycleFinder _gridCycleFinder;
-        private TwoDimensionalRectangularGrid _gridGenerator;
+        private GridCycleFinder _gridCycleFinder;
+        private TwoDimensionalRectangularGridGenerator _gridGenerator;
         private PermutationWithRepetitionGenerator _permutationGenerator;
 
         public SlitherlinkGameGenerator() { 
-            this._gridCycleFinder = new TwoDimensionalGridCycleFinder();
-            this._gridGenerator = new TwoDimensionalRectangularGrid();
+            this._gridCycleFinder = new GridCycleFinder();
+            this._gridGenerator = new TwoDimensionalRectangularGridGenerator();
             this._permutationGenerator = new PermutationWithRepetitionGenerator();
         }
 
@@ -35,7 +35,7 @@ namespace Riddles.Graphs.Application
         {
             Dictionary<string, int> numSolutionsPerGame = new Dictionary<string, int>();
             var grid = this._gridGenerator.GenerateGrid(length, width);
-            var gridCycles = this._gridCycleFinder.FindCycles(length, width);
+            var gridCycles = this._gridCycleFinder.FindCycles(length, width, grid);
             var permutations = this._permutationGenerator.GenerateAllOutcomes((length - 1) * (width - 1), new List<char> { '0', '1' });
             var fullySpecifiedGames = 
                 gridCycles.Select(c => 
@@ -72,7 +72,7 @@ namespace Riddles.Graphs.Application
             return canonicalRepresentations;
         }
 
-        public int[] GetEdgeCountForCycle(int length, int width, List<TwoDimensionalRectangularGrid.Location> cycle)
+        public int[] GetEdgeCountForCycle(int length, int width, List<TwoDimensionalRectangularGridGenerator.Location> cycle)
         {
             var edgeCount = Enumerable.Range(0, (length - 1) * (width - 1)).Select(i => 0).ToArray();
             for(int i=0; i<cycle.Count - 1; i++)
@@ -92,8 +92,8 @@ namespace Riddles.Graphs.Application
         }
 
         public IEnumerable<int> GetIndexesForEdge(
-            TwoDimensionalRectangularGrid.Location location1,
-            TwoDimensionalRectangularGrid.Location location2,
+            TwoDimensionalRectangularGridGenerator.Location location1,
+            TwoDimensionalRectangularGridGenerator.Location location2,
             int length,
             int width
         )
