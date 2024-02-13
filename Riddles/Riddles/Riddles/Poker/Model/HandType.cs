@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Riddles.Poker.Domain
+namespace Riddles.Poker.Model
 {
     public enum HandType
     {

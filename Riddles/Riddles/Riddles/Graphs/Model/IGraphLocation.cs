@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Riddles.Graphs.Domain
+namespace Riddles.Graphs.Model
 {
     public interface IGraphLocation
     {

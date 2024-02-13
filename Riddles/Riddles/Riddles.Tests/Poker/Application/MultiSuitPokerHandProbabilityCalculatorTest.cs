@@ -26,12 +26,12 @@ namespace Riddles.Tests.Poker.Application
 
             var fullHouseOdds = fiveCardStudProbabilityCalculator
                 .CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.FullHouse,
+                    Riddles.Poker.Model.HandType.FullHouse,
                     numSuits
                 );
             var straightOdds = fiveCardStudProbabilityCalculator
                 .CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Straight,
+                    Riddles.Poker.Model.HandType.Straight,
                     numSuits
                 );
 
@@ -50,43 +50,43 @@ namespace Riddles.Tests.Poker.Application
                 = new FiveCardStudPokerHandProbabilityCalculator();
             var cumulativeProbability =
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.HighCard,
+                    Riddles.Poker.Model.HandType.HighCard,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Pair,
+                    Riddles.Poker.Model.HandType.Pair,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.TwoPair,
+                    Riddles.Poker.Model.HandType.TwoPair,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.ThreeOfAKind,
+                    Riddles.Poker.Model.HandType.ThreeOfAKind,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Straight,
+                    Riddles.Poker.Model.HandType.Straight,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Flush,
+                    Riddles.Poker.Model.HandType.Flush,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.FullHouse,
+                    Riddles.Poker.Model.HandType.FullHouse,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.FourOfAKind,
+                    Riddles.Poker.Model.HandType.FourOfAKind,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.StraightFlush,
+                    Riddles.Poker.Model.HandType.StraightFlush,
                     numSuits
                 ) +
                 fiveCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.RoyalFlush,
+                    Riddles.Poker.Model.HandType.RoyalFlush,
                     numSuits
                 );
             Assert.LessOrEqual(Math.Abs(cumulativeProbability - 1), Epsilon);
@@ -105,12 +105,12 @@ namespace Riddles.Tests.Poker.Application
 
             var fullHouseOdds = sevenCardStudProbabilityCalculator
                 .CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.FullHouse,
+                    Riddles.Poker.Model.HandType.FullHouse,
                     numSuits
                 );
             var straightOdds = sevenCardStudProbabilityCalculator
                 .CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Straight,
+                    Riddles.Poker.Model.HandType.Straight,
                     numSuits
                 );
             Assert.LessOrEqual(Math.Abs(expectedFullHouseOdds - fullHouseOdds), this.Epsilon);
@@ -128,43 +128,43 @@ namespace Riddles.Tests.Poker.Application
                 = new SevenCardStudPokerHandProbabilityCalculator();
             var cumulativeProbability =
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.HighCard,
+                    Riddles.Poker.Model.HandType.HighCard,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Pair,
+                    Riddles.Poker.Model.HandType.Pair,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.TwoPair,
+                    Riddles.Poker.Model.HandType.TwoPair,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.ThreeOfAKind,
+                    Riddles.Poker.Model.HandType.ThreeOfAKind,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Straight,
+                    Riddles.Poker.Model.HandType.Straight,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.Flush,
+                    Riddles.Poker.Model.HandType.Flush,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.FullHouse,
+                    Riddles.Poker.Model.HandType.FullHouse,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.FourOfAKind,
+                    Riddles.Poker.Model.HandType.FourOfAKind,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.StraightFlush,
+                    Riddles.Poker.Model.HandType.StraightFlush,
                     numSuits
                 ) +
                 sevenCardStudProbabilityCalculator.CalculateOddsOfHand(
-                    Riddles.Poker.Domain.HandType.RoyalFlush,
+                    Riddles.Poker.Model.HandType.RoyalFlush,
                     numSuits
                 );
             Assert.LessOrEqual(Math.Abs(cumulativeProbability - 1), Epsilon);

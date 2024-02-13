@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Riddles.Graphs.Domain;
+using Riddles.Graphs.Model;
 
-namespace Riddles.Tests.Graphs.Domain
+namespace Riddles.Tests.Graphs.Model
 {
     public class TwoDimensionalRectangularGridTest
     {

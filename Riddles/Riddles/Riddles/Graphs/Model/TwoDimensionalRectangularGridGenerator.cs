@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Riddles.Graphs.Domain
+namespace Riddles.Graphs.Model
 {
     public class TwoDimensionalRectangularGridGenerator
     {

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using Riddles.Poker.Core;
-using Riddles.Poker.Domain;
+using Riddles.Poker.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,6 +1,6 @@
 ﻿using Riddles.Combinatorics.Core.Permutations;
 using Riddles.Graphs.Core;
-using Riddles.Graphs.Domain;
+using Riddles.Graphs.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

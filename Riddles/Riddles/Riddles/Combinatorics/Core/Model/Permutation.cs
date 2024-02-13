@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace Riddles.Combinatorics.Core.Domain
+namespace Riddles.Combinatorics.Core.Model
 {
 	public class Permutation
 	{

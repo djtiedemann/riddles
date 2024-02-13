@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Riddles.Graphs.Core;
-using Riddles.Graphs.Domain;
+using Riddles.Graphs.Model;
 
 namespace Riddles.Tests.Graphs.Core
 {

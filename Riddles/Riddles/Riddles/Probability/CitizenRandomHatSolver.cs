@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Riddles.Combinatorics.Core.Domain;
+using Riddles.Combinatorics.Core.Model;
 using Riddles.Combinatorics.Core.Permutations;
 using System.Linq;
 

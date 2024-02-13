@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Riddles.Combinatorics.Core.Domain;
+using Riddles.Combinatorics.Core.Model;
 using Riddles.Combinatorics.Core.Permutations;
 
 namespace Riddles.Combinatorics.Application
