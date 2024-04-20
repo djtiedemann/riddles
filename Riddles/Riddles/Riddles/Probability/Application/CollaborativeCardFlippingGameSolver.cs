@@ -4,6 +4,14 @@ using System.Text;
 
 namespace Riddles.Probability.Application
 {
+    /// <summary>
+    /// https://thefiddler.substack.com/p/can-you-win-the-collaborative-card
+    /// You and a friend have 2 52 card decks. You flip a card at the same time
+    /// If the card is the same you both lose, otherwise you continue.
+    /// 
+    /// What are the odds that you win? What about if you shuffled the decks
+    /// together before you started?
+    /// </summary>
     public class CollaborativeCardFlippingGameSolver
     {
         private Dictionary<(int, int), double> _cache;
@@ -20,65 +28,68 @@ namespace Riddles.Probability.Application
         }
 
         private double CalculateProbabilityOfWinning(
-            int numUniqueCardsInEachDeck, 
-            int numSharedCardsInEachDeck)
+            int numSharedCardsInEachDeck, 
+            int numUniqueCardsInEachDeck)
         {
-            if(numUniqueCardsInEachDeck < 0 || numSharedCardsInEachDeck < 0)
+            // you've hit an impossible scenario with probability = 0
+            if(numSharedCardsInEachDeck < 0 || numUniqueCardsInEachDeck < 0)
             {
                 return 0;
             }
-            if (numUniqueCardsInEachDeck == 0)
+            // if you don't have any cards in common, you've won
+            if (numSharedCardsInEachDeck == 0)
             {
                 return 1.0;
             }
-            if (numSharedCardsInEachDeck == 0 && numUniqueCardsInEachDeck == 1)
+            // if you have exactly one of the same card, you've lost
+            if (numUniqueCardsInEachDeck == 0 && numSharedCardsInEachDeck == 1)
             {
                 return 0.0;
             }
             if (!this._cache.ContainsKey(
-                (numUniqueCardsInEachDeck, numSharedCardsInEachDeck)
+                (numSharedCardsInEachDeck, numUniqueCardsInEachDeck)
             ))
             {
-                var numCardsInEachDeck = numUniqueCardsInEachDeck +
-                    numSharedCardsInEachDeck;
-                // you could each draw a shared card
-                var oddsOfBothDrawingSharedCard = 
-                    (double)numSharedCardsInEachDeck / numCardsInEachDeck
-                    * numSharedCardsInEachDeck / numCardsInEachDeck;
-                var pWinBothShared = this.CalculateProbabilityOfWinning(
-                    numUniqueCardsInEachDeck,
-                    numSharedCardsInEachDeck - 1
+                var numCardsInEachDeck = numSharedCardsInEachDeck +
+                    numUniqueCardsInEachDeck;
+                // you could each draw a unique card
+                var oddsOfBothDrawingUniqueCard = 
+                    (double)numUniqueCardsInEachDeck / numCardsInEachDeck
+                    * numUniqueCardsInEachDeck / numCardsInEachDeck;
+                var pWinBothUnique = this.CalculateProbabilityOfWinning(
+                    numSharedCardsInEachDeck,
+                    numUniqueCardsInEachDeck - 1
                 );
 
                 // one of you could draw a unique card and the other could
                 // draw a shared card
                 var oddsOfDrawingOneUniqueAndOneSharedCard =
-                    ((double)numSharedCardsInEachDeck / numCardsInEachDeck
-                    * numUniqueCardsInEachDeck / numCardsInEachDeck) * 2;
+                    ((double)numUniqueCardsInEachDeck / numCardsInEachDeck
+                    * numSharedCardsInEachDeck / numCardsInEachDeck) * 2;
                 var pWinOneUniqueOneShared = this.CalculateProbabilityOfWinning(
-                    numUniqueCardsInEachDeck - 1,
-                    numSharedCardsInEachDeck
+                    numSharedCardsInEachDeck - 1,
+                    numUniqueCardsInEachDeck
                 );
-                // you could each draw a non-matching unique card
-                var oddsOfBothDrawingUniqueNonMatchingCard =
-                    (double)numUniqueCardsInEachDeck / numCardsInEachDeck 
-                    * (numUniqueCardsInEachDeck - 1) / numCardsInEachDeck;
-                var pWinBothUnique = this.CalculateProbabilityOfWinning(
-                    numUniqueCardsInEachDeck - 2,
-                    numSharedCardsInEachDeck + 1
+                // you could each draw a non-matching shared card
+                var oddsOfBothDrawingSharedNonMatchingCard =
+                    (double)numSharedCardsInEachDeck / numCardsInEachDeck 
+                    * (numSharedCardsInEachDeck - 1) / numCardsInEachDeck;
+                var pWinBothShared = this.CalculateProbabilityOfWinning(
+                    numSharedCardsInEachDeck - 2,
+                    numUniqueCardsInEachDeck + 1
                 );
 
                 // you could each draw the same card and lose
                 var oddsOfImmediatelyLosing = 
-                    (double)numUniqueCardsInEachDeck /(numCardsInEachDeck)
+                    (double)numSharedCardsInEachDeck/(numCardsInEachDeck)
                     * 1 / numCardsInEachDeck;
 
-                this._cache[(numUniqueCardsInEachDeck, numSharedCardsInEachDeck)]
-                    = oddsOfBothDrawingSharedCard * pWinBothShared
+                this._cache[(numSharedCardsInEachDeck, numUniqueCardsInEachDeck)]
+                    = oddsOfBothDrawingUniqueCard * pWinBothUnique
                     + oddsOfDrawingOneUniqueAndOneSharedCard * pWinOneUniqueOneShared
-                    + oddsOfBothDrawingUniqueNonMatchingCard * pWinBothUnique;
+                    + oddsOfBothDrawingSharedNonMatchingCard * pWinBothShared;
             }
-            return this._cache[(numUniqueCardsInEachDeck, numSharedCardsInEachDeck)]; 
+            return this._cache[(numSharedCardsInEachDeck, numUniqueCardsInEachDeck)]; 
         }
     }
 }
