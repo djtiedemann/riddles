@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Riddles.Combinatorics.Core;
 
-namespace Riddles.Probability.Application
+namespace Riddles.Tests.Probability.Application
 {
     /// <summary>
     /// The idea here is that we take two identical decks, shuffle them

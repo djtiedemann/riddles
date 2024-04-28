@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using Riddles.Probability.Core;
+using Riddles.Probability.Application;
 
 namespace Riddles.Tests.Probability.Application
 {

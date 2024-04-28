@@ -20,8 +20,48 @@ namespace Riddles.Tests.Probability.Application
         public void TestCalculateProbabilityOfWinning(int numCards, double expected)
         {
             var collaborativeCardFlippingGameSolver = new CollaborativeCardFlippingGameSolver();
-            var actual = collaborativeCardFlippingGameSolver.CalculateProbabilityOfWinning(numCards);
+            var actual = collaborativeCardFlippingGameSolver.CalculateProbabilityOfWinning(numCards, 0);
             Assert.LessOrEqual(Math.Abs(actual - expected), epsilon);
+        }
+
+        [TestCase(52, 0.603608017516776)]
+        public void TestCalculateProbabilityOfWinningShuffled(int numCards, double expected)
+        {
+            var collaborativeCardFlippingGameSolver = new CollaborativeCardFlippingGameSolver();
+            var actual = collaborativeCardFlippingGameSolver.CalculateProbabilityOfWinningShuffledDeck(numCards);
+            Assert.LessOrEqual(Math.Abs(actual - expected), epsilon);
+        }
+
+        [Test] // 60.3 should be right
+        public void SimulateShuffledVersion()
+        {
+            int numWins = 0;
+            var numTries = 1_000_000;
+            for (int i = 0; i < numTries; i++)
+            {
+                var random = new Random();
+                var sequence = Enumerable.Range(0, 104)
+                    .OrderBy(_ => random.Next())
+                    .Select(x => x/2)
+                    .ToList();
+
+                var sequence1 = sequence.Where((x, i) => i<52).ToList();
+                var sequence2 = sequence.Where((x, i) => i >= 52).ToList();
+                bool won = true;
+                for (int j = 0; j < sequence1.Count(); j++)
+                {
+                    if (sequence1[j] == sequence2[j])
+                    {
+                        won = false;
+                        break;
+                    }
+                }
+                if (won)
+                {
+                    numWins++;
+                }
+            }
+            var winRate = (double)numWins / numTries;
         }
 
         //[Test]

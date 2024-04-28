@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Riddles.Tests.Probability.Application;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,19 +16,32 @@ namespace Riddles.Probability.Application
     public class CollaborativeCardFlippingGameSolver
     {
         private Dictionary<(int, int), double> _cache;
+        private DuplicateDeckShufflerAndDivider _duplicateDeckShufflerAndDivider;
         public CollaborativeCardFlippingGameSolver() { 
             this._cache = new Dictionary<(int, int), double>();
+            this._duplicateDeckShufflerAndDivider = new 
+                DuplicateDeckShufflerAndDivider();
         }
 
-        public double CalculateProbabilityOfWinning(int numCardsInEachDeck)
+        public double CalculateProbabilityOfWinningShuffledDeck(int numCards)
         {
-            return this.CalculateProbabilityOfWinning(
-                numCardsInEachDeck,
-                0
-            );
+            var distributions = this._duplicateDeckShufflerAndDivider
+                .CalculateDistributionsWithProbability(
+                    numCards
+                );
+            var cumulativeProbability = 0.0;
+            foreach(var distribution in distributions)
+            {
+                cumulativeProbability +=
+                    distribution.Item2 * this.CalculateProbabilityOfWinning(
+                        distribution.Item1.Item1,
+                        distribution.Item1.Item2
+                    );
+            }
+            return cumulativeProbability;
         }
 
-        private double CalculateProbabilityOfWinning(
+        public double CalculateProbabilityOfWinning(
             int numSharedCardsInEachDeck, 
             int numUniqueCardsInEachDeck)
         {
