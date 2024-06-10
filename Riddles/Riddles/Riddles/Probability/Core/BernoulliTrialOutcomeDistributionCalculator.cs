@@ -33,17 +33,6 @@ namespace Riddles.Probability.Core
                 {
                     return 0.0;
                 }
-                // for efficiency - if the number of successes requires
-                // iterating over more than half of the outcomes,
-                // reverse the search. ask for the probability of failures
-                // and reverse the outcome.
-                var shouldCheckForFailures
-                    = numSuccesses < ((double)numTrials / 2);
-                if (shouldCheckForFailures)
-                {
-                    numSuccesses = numTrials - numSuccesses + 1;
-                    probabilityOfSuccess = 1 - probabilityOfSuccess;
-                }
                 // find the probability of exactly k successes
                 var probabilityOfExactNumberOfSuccesses 
                     = this._binomialTheoremCalculator.CalculateBinomialCoefficient(
@@ -60,10 +49,6 @@ namespace Riddles.Probability.Core
                     );
                 var cumulativeProbability = 
                     probabilityOfExactNumberOfSuccesses + probabilityOfMoreSuccesses;
-                if (shouldCheckForFailures)
-                {
-                    cumulativeProbability = 1 - cumulativeProbability;
-                }
                 if (!this._useCache)
                 {
                     return cumulativeProbability;

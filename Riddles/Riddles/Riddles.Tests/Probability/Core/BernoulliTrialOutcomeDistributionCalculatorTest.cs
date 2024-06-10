@@ -30,6 +30,9 @@ namespace Riddles.Tests.Probability.Core
                 { 16, (4, 3, 0.25, 13.0/256.0 )},
                 { 17, (4, 4, 0.25, 1.0/256.0 )},
                 { 18, (4, 5, 0.25, 0.0/256.0 )},
+                { 19, (101, 51, 0.5, 0.5 )},
+                { 20, (3, 2, 0.5, 0.5 )},
+                { 21, (3, 3, 0.5, 1.0/8.0 )}
         };
 
         [TestCase(1)]
@@ -50,6 +53,9 @@ namespace Riddles.Tests.Probability.Core
         [TestCase(16)]
         [TestCase(17)]
         [TestCase(18)]
+        [TestCase(19)]
+        [TestCase(20)]
+        [TestCase(21)]
         public void TestCalculateOddsOfAnOutcomeOfAtLeastKSuccesses(int testCaseId)
         {
             var testCase = this._testCaseDictionary[testCaseId];
