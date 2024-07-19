@@ -25,6 +25,24 @@ namespace Riddles.Tests.MarkovChains
                 { 2, 231.0/512.0 }
             };
 
+        private Dictionary<int, double> _setExpected =
+            new Dictionary<int, double>
+            {
+                { 6, 2.0/64.0 },
+                { 5, 6.0/64.0 },
+                { 4, 21.0/128.0 },
+                { 3, 56.0/256.0 },
+                { 2, 189.0/512.0 },
+                { 1, 63/512.0 }
+            };
+
+        private Dictionary<int, double> _matchExpected =
+            new Dictionary<int, double>
+            {
+                { 2, 0.5 },
+                { 1, 0.5 }
+            };
+
         [Test]
         public void TestCalculateOddsOfWinningGameByXPoints()
         {
@@ -33,8 +51,14 @@ namespace Riddles.Tests.MarkovChains
                 .CalculateOddsOfWinningStandardGame();
             var tiebreakGameActual = tennisGameSolver
                 .CalculateOddsOfWinningTiebreakGame();
+            var setActual = tennisGameSolver
+                .CalculateOddsOfWinningSet();
+            var matchActual = tennisGameSolver
+                .CalculateOddsOfWinningMatch();
             this.CompareOutcomes(standardGameActual, _standardGameExpected);
             this.CompareOutcomes(tiebreakGameActual, _tiebreakGameExpected);
+            this.CompareOutcomes(setActual, _setExpected);
+            this.CompareOutcomes(matchActual, _matchExpected);
         }
 
         private void CompareOutcomes(

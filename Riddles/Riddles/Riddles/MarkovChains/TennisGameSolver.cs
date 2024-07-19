@@ -30,6 +30,26 @@ namespace Riddles.MarkovChains
             );
         }
 
+        public Dictionary<int, double> CalculateOddsOfWinningSet()
+        {
+            return this.CalculateOddsOfWinningByX(
+                this.SetIsTerminalStateFunc,
+                this.SetOrMatchTerminalLabelFunc,
+                1,
+                6
+            );
+        }
+
+        public Dictionary<int, double> CalculateOddsOfWinningMatch()
+        {
+            return this.CalculateOddsOfWinningByX(
+                this.MatchIsTerminalStateFunc,
+                this.SetOrMatchTerminalLabelFunc,
+                1,
+                2
+            );
+        }
+
         private Dictionary<int, double> CalculateOddsOfWinningByX(
             Func<int, int, bool> isTerminalStateFunc,
             Func<int, int, string> terminalLabelFunc,
@@ -93,6 +113,33 @@ namespace Riddles.MarkovChains
             return $"{label}";
         }
 
+        public bool SetIsTerminalStateFunc(
+            int numWinsTeamOne, 
+            int numWinsTeamTwo
+        )
+        {
+            return (numWinsTeamOne >= 6 && numWinsTeamTwo <= 4)
+                || (numWinsTeamTwo >= 6 && numWinsTeamOne <= 4)
+                || numWinsTeamOne >= 7
+                || numWinsTeamTwo >= 7;
+        }
+
+        public bool MatchIsTerminalStateFunc(
+            int numWinsTeamOne,
+            int numWinsTeamTwo
+        )
+        {
+            return numWinsTeamOne >= 2 || numWinsTeamTwo >= 2;
+        }
+
+        public string SetOrMatchTerminalLabelFunc(
+            int numWinsTeamOne, 
+            int numWinsTeamTwo
+        )
+        {
+            return $"{Math.Abs(numWinsTeamOne - numWinsTeamTwo)}";
+        }
+
         public Dictionary<TennisGameState, double> GetStateTransitions(
            TennisGameState state,
            TennisGameSolverArgs args)
@@ -100,6 +147,28 @@ namespace Riddles.MarkovChains
             if (state.IsStateTerminalState())
             {
                 return new Dictionary<TennisGameState, double>();
+            }
+            if(
+                args.IsTerminalStateFunc(
+                    state.NumWinsTeamOne + 1,
+                    state.NumWinsTeamTwo
+                ) && args.IsTerminalStateFunc(
+                    state.NumWinsTeamOne,
+                    state.NumWinsTeamTwo + 1
+                )
+            )
+            {
+                // don't add the same key twice if this will result in
+                // a win either way
+                return new Dictionary<TennisGameState, double>
+                {
+                    { new TennisGameState(
+                    state.NumWinsTeamOne + 1,
+                    state.NumWinsTeamTwo,
+                    args.IsTerminalStateFunc,
+                    args.TerminalLabelFunc
+                    ), 1.0 }
+                };
             }
             return new Dictionary<TennisGameState, double> {
                 { new TennisGameState(
