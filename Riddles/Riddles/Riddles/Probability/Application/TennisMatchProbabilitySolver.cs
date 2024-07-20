@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Riddles.Tests.Probability.Application
+namespace Riddles.Probability.Application
 {
     // in a 3 set tennis match, what are the odds that you win
     // the game, but lose the majority of the points
