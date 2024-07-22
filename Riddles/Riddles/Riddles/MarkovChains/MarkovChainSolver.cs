@@ -15,9 +15,12 @@ namespace Riddles.MarkovChains
 	public class MarkovChainSolver
 	{
 		private MatrixUtilities _matrixUtilities;
-		public MarkovChainSolver()
+        private bool _useCache;
+        private bool _cachedStateTransitionDict;
+		public MarkovChainSolver(bool useCache=false)
 		{
 			this._matrixUtilities = new MatrixUtilities();
+            this._useCache = useCache;
 		}
 
         public double GetExpectedValueOfNumTurnsToReachTerminalState<TMarkovChainState, TAdditionalProblemState>(TMarkovChainState initialState,
@@ -51,6 +54,82 @@ namespace Riddles.MarkovChains
             );
         }
 
+        public Dictionary<TMarkovChainState, double> 
+            CalculateProbabilityOfArrivingAtAllTerminalStates<TMarkovChainState, TAdditionalProblemState>(
+            TMarkovChainState initialState,
+            Func<TMarkovChainState, TAdditionalProblemState, Dictionary<TMarkovChainState, double>> getStateTransitions,
+            TAdditionalProblemState additionalProblemState = default(TAdditionalProblemState))
+            where TMarkovChainState : IMarkovChainState
+        {
+            var (stateTransitionDictionary, termDictionary) =
+                this.GetMarkovStateInfo(
+                    initialState,
+                    getStateTransitions,
+                    additionalProblemState
+                );
+            var terminalStates = stateTransitionDictionary.Keys
+                .Where(k => k.IsStateTerminalState());
+            var probabilities = new Dictionary<TMarkovChainState, double>();
+            foreach(var terminalState in terminalStates)
+            {
+                var additionalAggregationArgs =
+                    new ProbabilityOfEndingAtParticularStateAdditionalArgs(
+                        terminalState.TerminalStateLabel()
+                    );
+                var probability = this.CalculateMarkovChainValue(
+                    initialState,
+                    getStateTransitions,
+                    this.CalculateProbabilityOfArrivingAtSpecificTerminalStateLabel<TMarkovChainState, TAdditionalProblemState>,
+                    additionalProblemState,
+                    additionalAggregationArgs
+                );
+                probabilities.Add(terminalState, probability);
+            }
+            return probabilities;
+        }
+
+        private (Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>>,
+            Dictionary<TMarkovChainState, int>)
+            GetMarkovStateInfo<TMarkovChainState, TAdditionalProblemState>(
+                TMarkovChainState initialState,
+                Func<TMarkovChainState, TAdditionalProblemState, Dictionary<TMarkovChainState, double>> getStateTransitions,
+                TAdditionalProblemState additionalProblemState = default
+            )
+        {
+            var statesToProcess = new List<TMarkovChainState>();
+            var stateTransitionDictionary = new Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>>();
+            statesToProcess.Add(initialState);
+
+            // while there are states that we haven't yet processed, calculate the transitions for those states
+            // add any new states that we've found as states to process
+            while (statesToProcess.Any())
+            {
+                var stateToProcess = statesToProcess.First();
+                var stateTransitions = getStateTransitions(stateToProcess, additionalProblemState);
+                stateTransitionDictionary.Add(stateToProcess, stateTransitions);
+                statesToProcess.Remove(stateToProcess);
+
+                foreach (var transitionState in stateTransitions.Keys)
+                {
+                    if (!statesToProcess.Contains(transitionState) && !stateTransitionDictionary.ContainsKey(transitionState))
+                    {
+                        statesToProcess.Add(transitionState);
+                    }
+                }
+            }
+
+            // once we've calculated all of the state transitions and found all possible states, turn those state transitions into linear equations
+
+            // first assign each state an id which represents the column it will be in the matrix representation
+            var termDictionary = new Dictionary<TMarkovChainState, int>();
+            var nextStateId = 0;
+            foreach (var state in stateTransitionDictionary.Keys)
+            {
+                termDictionary[state] = nextStateId;
+                nextStateId++;
+            }
+            return (stateTransitionDictionary, termDictionary);
+        }
 
         private double CalculateMarkovChainValue<TMarkovChainState, TAdditionalProblemState, TAdditionalAggregationArgs>(
             TMarkovChainState initialState, 
@@ -60,39 +139,12 @@ namespace Riddles.MarkovChains
             TAdditionalAggregationArgs additionalAggregationArgs = default)
 			where TMarkovChainState : IMarkovChainState
 		{
-			var statesToProcess = new List<TMarkovChainState>();
-			var stateTransitionDictionary = new Dictionary<TMarkovChainState, Dictionary<TMarkovChainState, double>>();
-			statesToProcess.Add(initialState);
-
-			// while there are states that we haven't yet processed, calculate the transitions for those states
-			// add any new states that we've found as states to process
-			while (statesToProcess.Any())
-			{
-				var stateToProcess = statesToProcess.First();
-				var stateTransitions = getStateTransitions(stateToProcess, additionalProblemState);
-				stateTransitionDictionary.Add(stateToProcess, stateTransitions);
-				statesToProcess.Remove(stateToProcess);
-
-				foreach (var transitionState in stateTransitions.Keys)
-				{
-					if (!statesToProcess.Contains(transitionState) && !stateTransitionDictionary.ContainsKey(transitionState))
-					{
-						statesToProcess.Add(transitionState);
-					}
-				}
-			}
-
-			// once we've calculated all of the state transitions and found all possible states, turn those state transitions into linear equations
-
-			// first assign each state an id which represents the column it will be in the matrix representation
-			var termDictionary = new Dictionary<TMarkovChainState, int>();
-			var nextStateId = 0;
-			foreach (var state in stateTransitionDictionary.Keys)
-			{
-				termDictionary[state] = nextStateId;
-				nextStateId++;
-			}
-
+            var (stateTransitionDictionary, termDictionary) =
+                this.GetMarkovStateInfo(
+                    initialState,
+                    getStateTransitions,
+                    additionalProblemState
+                );
             return calculateMarkovChainValueFunc(
                 initialState, stateTransitionDictionary, termDictionary, additionalAggregationArgs
             );

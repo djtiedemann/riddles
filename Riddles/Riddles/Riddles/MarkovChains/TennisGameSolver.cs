@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace Riddles.MarkovChains
 {
 
@@ -14,9 +16,7 @@ namespace Riddles.MarkovChains
         {
             return this.CalculateOddsOfWinningByX(
                 this.StandardGameIsTerminalStateFunc,
-                this.GameTerminalStateLabel,
-                2,
-                4
+                this.GameTerminalStateLabel
             );
         }
 
@@ -24,9 +24,7 @@ namespace Riddles.MarkovChains
         {
             return this.CalculateOddsOfWinningByX(
                 this.TiebreakGameIsTerminalStateFunc,
-                this.GameTerminalStateLabel,
-                2,
-                7
+                this.GameTerminalStateLabel
             );
         }
 
@@ -34,9 +32,7 @@ namespace Riddles.MarkovChains
         {
             return this.CalculateOddsOfWinningByX(
                 this.SetIsTerminalStateFunc,
-                this.SetOrMatchTerminalLabelFunc,
-                1,
-                6
+                this.SetOrMatchTerminalLabelFunc
             );
         }
 
@@ -44,17 +40,13 @@ namespace Riddles.MarkovChains
         {
             return this.CalculateOddsOfWinningByX(
                 this.MatchIsTerminalStateFunc,
-                this.SetOrMatchTerminalLabelFunc,
-                1,
-                2
+                this.SetOrMatchTerminalLabelFunc
             );
         }
 
         private Dictionary<int, double> CalculateOddsOfWinningByX(
             Func<int, int, bool> isTerminalStateFunc,
-            Func<int, int, string> terminalLabelFunc,
-            int minPointsToWinBy,
-            int maxPointsToWinBy
+            Func<int, int, string> terminalLabelFunc
         )
         {
             var odds = new Dictionary<int, double>();
@@ -62,24 +54,21 @@ namespace Riddles.MarkovChains
                 isTerminalStateFunc,
                 terminalLabelFunc
             );
-            for(int i=minPointsToWinBy; i<=maxPointsToWinBy; i++)
-            {
-                var oddsOfSpecificState =
-                    this._markovChainSolver
-                        .GetProbabilityOfArrivingAtSpecificTerminalStateLabel(
-                            new TennisGameState(
-                                0, 
-                                0, 
-                                isTerminalStateFunc, 
-                                terminalLabelFunc
-                            ),
-                            this.GetStateTransitions,
-                            $"{i}",
-                            args
-                        );
-                odds[i] = oddsOfSpecificState;
-            }
-            return odds;
+            var initialState = new TennisGameState(
+                0,
+                0,
+                isTerminalStateFunc,
+                terminalLabelFunc
+            );
+            var probabilitiesByState = this._markovChainSolver
+                .CalculateProbabilityOfArrivingAtAllTerminalStates(
+                    initialState,
+                    this.GetStateTransitions,
+                    args
+                ).ToDictionary(k => int.Parse(k.Key.TerminalStateLabel()), 
+                    k => k.Value);
+
+            return probabilitiesByState;
         }
 
         public bool StandardGameIsTerminalStateFunc(
