@@ -68,7 +68,7 @@ namespace Riddles.MarkovChains
                     additionalProblemState
                 );
             var terminalStates = stateTransitionDictionary.Keys
-                .Where(k => k.IsStateTerminalState());
+                .Where(k => k.IsStateTerminalState()).ToList();
             var probabilities = new Dictionary<TMarkovChainState, double>();
             foreach(var terminalState in terminalStates)
             {

@@ -12,121 +12,125 @@ namespace Riddles.MarkovChains
             this._markovChainSolver = new MarkovChainSolver();
         }
 
-        public Dictionary<int, double> CalculateOddsOfWinningStandardGame()
+        public Dictionary<(int, int), double> CalculateOddsOfWinningStandardGame()
         {
             return this.CalculateOddsOfWinningByX(
-                this.StandardGameIsTerminalStateFunc,
-                this.GameTerminalStateLabel
+                this.StandardGameTerminalLabelFunc
             );
         }
 
-        public Dictionary<int, double> CalculateOddsOfWinningTiebreakGame()
+        public Dictionary<(int, int), double> CalculateOddsOfWinningTiebreakGame()
         {
             return this.CalculateOddsOfWinningByX(
-                this.TiebreakGameIsTerminalStateFunc,
-                this.GameTerminalStateLabel
+                this.TiebreakGameTerminalLabelFunc
             );
         }
 
-        public Dictionary<int, double> CalculateOddsOfWinningSet()
+        public Dictionary<(int, int), double> CalculateOddsOfWinningSet()
         {
             return this.CalculateOddsOfWinningByX(
-                this.SetIsTerminalStateFunc,
-                this.SetOrMatchTerminalLabelFunc
+                this.SetTerminalLabelFunc
             );
         }
 
-        public Dictionary<int, double> CalculateOddsOfWinningMatch()
+        public Dictionary<(int, int), double> CalculateOddsOfWinningMatch()
         {
             return this.CalculateOddsOfWinningByX(
-                this.MatchIsTerminalStateFunc,
-                this.SetOrMatchTerminalLabelFunc
+                this.MatchTerminalLabelFunc
             );
         }
 
-        private Dictionary<int, double> CalculateOddsOfWinningByX(
-            Func<int, int, bool> isTerminalStateFunc,
-            Func<int, int, string> terminalLabelFunc
+        private Dictionary<(int, int), double> CalculateOddsOfWinningByX(
+            Func<int, int, (int?, int?)> TerminalLabelFunc
         )
         {
             var odds = new Dictionary<int, double>();
             var args = new TennisGameSolverArgs(
-                isTerminalStateFunc,
-                terminalLabelFunc
+                TerminalLabelFunc
             );
             var initialState = new TennisGameState(
                 0,
                 0,
-                isTerminalStateFunc,
-                terminalLabelFunc
+                TerminalLabelFunc
             );
             var probabilitiesByState = this._markovChainSolver
                 .CalculateProbabilityOfArrivingAtAllTerminalStates(
                     initialState,
                     this.GetStateTransitions,
                     args
-                ).ToDictionary(k => int.Parse(k.Key.TerminalStateLabel()), 
-                    k => k.Value);
-
-            return probabilitiesByState;
+                );
+            var deduplicatedProbabilitesByState =
+                 probabilitiesByState
+                    .GroupBy(k => k.Key.GetTerminalStateNumWinsInfo())
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.ToList().Sum(g => g.Value)
+                    );
+              
+            return deduplicatedProbabilitesByState;
         }
 
-        public bool StandardGameIsTerminalStateFunc(
+        public (int?, int?) StandardGameTerminalLabelFunc(
             int numWinsTeamOne, 
             int numWinsTeamTwo)
         {
-            return numWinsTeamOne >= 4
-                   || numWinsTeamTwo >= 4
-                   || (numWinsTeamOne >= 2 && numWinsTeamTwo >= 2);
-        }
-
-        public bool TiebreakGameIsTerminalStateFunc(
-            int numWinsTeamOne,
-            int numWinsTeamTwo)
-        {
-            return numWinsTeamOne >= 7
-                   || numWinsTeamTwo >= 7
-                   || (numWinsTeamOne >= 5 && numWinsTeamTwo >= 5);
-        }
-
-        public string GameTerminalStateLabel(
-            int numWinsTeamOne,
-            int numWinsTeamTwo
-        )
-        {
-            var label = Math.Abs(numWinsTeamOne - numWinsTeamTwo);
-            if (label < 2)
+            if (numWinsTeamOne >= 4 || numWinsTeamTwo >=4)
             {
-                label = 2;
+                return (Math.Max(numWinsTeamOne, numWinsTeamTwo),
+                    Math.Min(numWinsTeamOne, numWinsTeamTwo));
             }
-            return $"{label}";
+            else if (numWinsTeamOne >= 2 && numWinsTeamTwo >= 2)
+            {
+                return (4, 2);
+            }
+            return (null, null);
         }
 
-        public bool SetIsTerminalStateFunc(
+        public (int?, int?) TiebreakGameTerminalLabelFunc(
+            int numWinsTeamOne,
+            int numWinsTeamTwo)
+        {
+            if (numWinsTeamOne >= 7 || numWinsTeamTwo >= 7)
+            {
+                return (Math.Max(numWinsTeamOne, numWinsTeamTwo),
+                    Math.Min(numWinsTeamOne, numWinsTeamTwo));
+            }
+            else if (numWinsTeamOne >= 5 && numWinsTeamTwo >= 5)
+            {
+                return (7, 5);
+            }
+            return (null, null);
+        }
+
+        public (int?, int?) SetTerminalLabelFunc(
             int numWinsTeamOne, 
             int numWinsTeamTwo
         )
         {
-            return (numWinsTeamOne >= 6 && numWinsTeamTwo <= 4)
-                || (numWinsTeamTwo >= 6 && numWinsTeamOne <= 4)
-                || numWinsTeamOne >= 7
-                || numWinsTeamTwo >= 7;
+            if((numWinsTeamOne >= 6 && numWinsTeamTwo <= 4)
+                || (numWinsTeamTwo >= 6 && numWinsTeamOne <= 4))
+            {
+                return (Math.Max(numWinsTeamOne, numWinsTeamTwo),
+                    Math.Min(numWinsTeamOne, numWinsTeamTwo));
+            }
+            else if(numWinsTeamOne >= 7 || numWinsTeamTwo >= 7)
+            {
+                return (7, 6);
+            }
+            return (null, null);
         }
 
-        public bool MatchIsTerminalStateFunc(
+        public (int?, int?) MatchTerminalLabelFunc(
             int numWinsTeamOne,
             int numWinsTeamTwo
         )
         {
-            return numWinsTeamOne >= 2 || numWinsTeamTwo >= 2;
-        }
-
-        public string SetOrMatchTerminalLabelFunc(
-            int numWinsTeamOne, 
-            int numWinsTeamTwo
-        )
-        {
-            return $"{Math.Abs(numWinsTeamOne - numWinsTeamTwo)}";
+            if(numWinsTeamOne >= 2 || numWinsTeamTwo >= 2)
+            {
+                return (Math.Max(numWinsTeamOne, numWinsTeamTwo),
+                    Math.Min(numWinsTeamOne, numWinsTeamTwo));
+            }
+            return (null, null);
         }
 
         public Dictionary<TennisGameState, double> GetStateTransitions(
@@ -138,13 +142,13 @@ namespace Riddles.MarkovChains
                 return new Dictionary<TennisGameState, double>();
             }
             if(
-                args.IsTerminalStateFunc(
+                args.TerminalLabelFunc(
                     state.NumWinsTeamOne + 1,
                     state.NumWinsTeamTwo
-                ) && args.IsTerminalStateFunc(
+                ).Item1 != null && args.TerminalLabelFunc(
                     state.NumWinsTeamOne,
                     state.NumWinsTeamTwo + 1
-                )
+                ).Item1 != null
             )
             {
                 // don't add the same key twice if this will result in
@@ -152,10 +156,9 @@ namespace Riddles.MarkovChains
                 return new Dictionary<TennisGameState, double>
                 {
                     { new TennisGameState(
-                    state.NumWinsTeamOne + 1,
-                    state.NumWinsTeamTwo,
-                    args.IsTerminalStateFunc,
-                    args.TerminalLabelFunc
+                        state.NumWinsTeamOne + 1,
+                        state.NumWinsTeamTwo,
+                        args.TerminalLabelFunc
                     ), 1.0 }
                 };
             }
@@ -163,13 +166,11 @@ namespace Riddles.MarkovChains
                 { new TennisGameState(
                     state.NumWinsTeamOne + 1,
                     state.NumWinsTeamTwo,
-                    args.IsTerminalStateFunc,
                     args.TerminalLabelFunc
                 ), 0.5 },
                 { new TennisGameState(
                     state.NumWinsTeamOne,
                     state.NumWinsTeamTwo + 1,
-                    args.IsTerminalStateFunc,
                     args.TerminalLabelFunc
                 ), 0.5 },
             };
@@ -177,18 +178,15 @@ namespace Riddles.MarkovChains
 
         public class TennisGameState : IMarkovChainState
         {
-            private Func<int, int, bool> _isTerminalStateFunc;
-            private Func<int, int, string> _terminalLabelFunc;
+            private Func<int, int, (int?, int?)> _terminalLabelFunc;
             public TennisGameState(
                 int numWinsTeamOne, 
                 int numWinsTeamTwo,
-                Func<int, int, bool> isTerminalStateFunc,
-                Func<int, int, string> terminalLabelFunc
-            )
+                Func<int, int, (int?, int?)> terminalLabelFunc
+            ) 
             {
                 this.NumWinsTeamOne = numWinsTeamOne;
                 this.NumWinsTeamTwo = numWinsTeamTwo;
-                this._isTerminalStateFunc = isTerminalStateFunc;
                 this._terminalLabelFunc = terminalLabelFunc;
                 this.StringRepresentation = this.GetStringRepresentation();
             }
@@ -199,27 +197,29 @@ namespace Riddles.MarkovChains
             
             private string GetStringRepresentation()
             {
-                if (this.IsStateTerminalState())
-                {
-                    return $"Y{this.TerminalStateLabel()}";
-                }
-                return $"N{this.NumWinsTeamOne}:{this.NumWinsTeamTwo}";
+                return $"{this.NumWinsTeamOne}:{this.NumWinsTeamTwo}";
             }
 
             public bool IsStateTerminalState()
             {
-                return this._isTerminalStateFunc(
+                return this._terminalLabelFunc(
+                    this.NumWinsTeamOne,
+                    this.NumWinsTeamTwo
+                ).Item1 != null;
+            }
+
+            public (int, int) GetTerminalStateNumWinsInfo()
+            {
+                var numGamesInfo = this._terminalLabelFunc(
                     this.NumWinsTeamOne,
                     this.NumWinsTeamTwo
                 );
+                return (numGamesInfo.Item1.Value, numGamesInfo.Item2.Value);
             }
 
             public string TerminalStateLabel()
             {
-                return this._terminalLabelFunc(
-                    this.NumWinsTeamOne,
-                    this.NumWinsTeamTwo
-                );
+                return this.GetStringRepresentation();
             }
 
             public override bool Equals(object obj)
@@ -242,14 +242,11 @@ namespace Riddles.MarkovChains
     public class TennisGameSolverArgs
     {
         public TennisGameSolverArgs(
-            Func<int, int, bool> isTerminalStateFunc,
-            Func<int, int, string> terminalLabelFunc
+            Func<int, int, (int?, int?)> terminalLabelFunc
         ) { 
-            this.IsTerminalStateFunc = isTerminalStateFunc;
             this.TerminalLabelFunc = terminalLabelFunc;
         }
-        public Func<int, int, bool> IsTerminalStateFunc { get; }
-        public Func<int, int, string> TerminalLabelFunc { get; }
+        public Func<int, int, (int?, int?)> TerminalLabelFunc { get; }
 
     }
 }
