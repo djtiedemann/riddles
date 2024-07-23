@@ -115,7 +115,8 @@ namespace Riddles.MarkovChains
             }
             else if(numWinsTeamOne >= 7 || numWinsTeamTwo >= 7)
             {
-                return (7, 6);
+                return (Math.Max(numWinsTeamOne, numWinsTeamTwo),
+                    Math.Min(numWinsTeamOne, numWinsTeamTwo));
             }
             return (null, null);
         }

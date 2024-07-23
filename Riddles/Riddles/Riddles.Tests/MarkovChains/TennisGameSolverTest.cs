@@ -32,8 +32,9 @@ namespace Riddles.Tests.MarkovChains
                 { (6, 1), 6.0/64.0 },
                 { (6, 2), 21.0/128.0 },
                 { (6, 3), 56.0/256.0 },
-                { (6, 4), 189.0/512.0 },
-                { (7, 5), 63/512.0 }
+                { (6, 4), 126.0/512.0 },
+                { (7, 5), 63/512.0 },
+                { (7, 6), 63/512.0 },
             };
 
         private Dictionary<(int, int), double> _matchExpected =
@@ -57,7 +58,7 @@ namespace Riddles.Tests.MarkovChains
                 .CalculateOddsOfWinningMatch();
             this.CompareOutcomes(standardGameActual, _standardGameExpected);
             this.CompareOutcomes(tiebreakGameActual, _tiebreakGameExpected);
-            //this.CompareOutcomes(setActual, _setExpected);
+            this.CompareOutcomes(setActual, _setExpected);
             this.CompareOutcomes(matchActual, _matchExpected);
         }
 
