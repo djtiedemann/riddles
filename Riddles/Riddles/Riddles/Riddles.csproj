@@ -6,15 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Graphs\GraphGenerators\**" />
+    <EmbeddedResource Remove="Graphs\GraphGenerators\**" />
+    <None Remove="Graphs\GraphGenerators\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Words\enable1Dictionary.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Linq" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Graphs\GraphGenerators\" />
   </ItemGroup>
 
 </Project>
