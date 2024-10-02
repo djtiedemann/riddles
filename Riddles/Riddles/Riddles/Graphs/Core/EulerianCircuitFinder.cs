@@ -6,67 +6,67 @@ using System.Text;
 
 namespace Riddles.Graphs.Core
 {
-    public class EulerianPathFinder
+    public class EulerianCircuitFinder
     {
-        public EulerianPathFinder() { }
+        public EulerianCircuitFinder() { }
 
-        public List<List<string>> FindPaths(Dictionary<string, HashSet<string>> adjacencies)
+        public List<List<string>> FindCircuits(Dictionary<string, HashSet<string>> adjacencies)
         {
             var numEdges = adjacencies.Sum(
                 g => g.Value.Count
             );
 
-            var paths = new List<List<string>>();
+            var circuits = new List<List<string>>();
             foreach(var startingNode in adjacencies.Keys)
             {
-                var newPaths = this.GetPaths(
+                var newCircuits = this.GetCircuits(
                     startingNode,
                     adjacencies,
                     new List<string> { startingNode },
                     new List<List<string>>(),
                     numEdges
                 );
-                paths.AddRange( newPaths );
+                circuits.AddRange( newCircuits );
             }
-            return paths;
+            return circuits;
         }
 
-        private List<List<string>> GetPaths(
+        private List<List<string>> GetCircuits(
             string currentNode,
             Dictionary<string, HashSet<string>> adjacencies,
-            List<string> currentPath,
-            List<List<string>> allPaths,
+            List<string> currentCircuit,
+            List<List<string>> allCircuits,
             int numEdges
         )
         {
-            // if we've travelled across all edges, add the path to the list
-            if(currentPath.Count() == numEdges + 1)
+            // if we've travelled across all edges, add the circuit to the list
+            if(currentCircuit.Count() == numEdges + 1)
             {
-                allPaths.Add(currentPath);
+                allCircuits.Add(currentCircuit);
             }
-            // if there are no remaining paths from here, return
+            // if there are no remaining edges from here, return
             if (adjacencies[currentNode].Count == 0)
             {
-                return allPaths;
+                return allCircuits;
             }
 
             var nextNodes = adjacencies[currentNode].ToList();
             foreach(var nextNode in nextNodes)
             {
-                var clonedPath = currentPath.ToList();
-                clonedPath.Add(nextNode);
+                var clonedCircuit = currentCircuit.ToList();
+                clonedCircuit.Add(nextNode);
                 adjacencies[currentNode].Remove(nextNode);
-                this.GetPaths(
+                this.GetCircuits(
                     nextNode,
                     adjacencies,
-                    clonedPath,
-                    allPaths,
+                    clonedCircuit,
+                    allCircuits,
                     numEdges
                 );
                 // add the edge back to the potential list of edges
                 adjacencies[currentNode].Add(nextNode);
             }
-            return allPaths;
+            return allCircuits;
         }
     }
 }

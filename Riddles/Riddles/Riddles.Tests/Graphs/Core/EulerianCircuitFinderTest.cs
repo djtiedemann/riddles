@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace Riddles.Tests.Graphs.Core
 {
-    public class EulerianPathFinderTest
+    public class EulerianCircuitFinderTest
     {
         [Test]
-        public void TestGetRockPaperScissorsPaths()
+        public void TestGetRockPaperScissorsCircuits()
         {
             var rockPaperScissorsAdjacencies =
                 new Dictionary<string, HashSet<string>>
@@ -20,16 +20,16 @@ namespace Riddles.Tests.Graphs.Core
                     { "Paper", new HashSet<string> { "Rock" } },
                 };
 
-            var eulerianPathFinder = new EulerianPathFinder();
-            var paths = eulerianPathFinder.FindPaths(
+            var eulerianCircuitFinder = new EulerianCircuitFinder();
+            var circuits = eulerianCircuitFinder.FindCircuits(
                 rockPaperScissorsAdjacencies
             );
-            this.VerifyUniqueness(paths);
-            Assert.AreEqual(3, paths.Count);
+            this.VerifyUniqueness(circuits);
+            Assert.AreEqual(3, circuits.Count);
         }
 
         [Test]
-        public void TestGetRockPaperScissorsLizardSpockPaths()
+        public void TestGetRockPaperScissorsLizardSpockCircuits()
         {
             var rockPaperScissorsAdjacencies =
                 new Dictionary<string, HashSet<string>>
@@ -41,20 +41,20 @@ namespace Riddles.Tests.Graphs.Core
                     { "Spock", new HashSet<string> { "Scissors", "Rock" } },
                 };
 
-            var eulerianPathFinder = new EulerianPathFinder();
-            var paths = eulerianPathFinder.FindPaths(
+            var eulerianCircuitFinder = new EulerianCircuitFinder();
+            var circuits = eulerianCircuitFinder.FindCircuits(
                 rockPaperScissorsAdjacencies
             );
-            this.VerifyUniqueness(paths);
-            Assert.AreEqual(110, paths.Count);
+            this.VerifyUniqueness(circuits);
+            Assert.AreEqual(110, circuits.Count);
         }
 
-        private void VerifyUniqueness(List<List<string>> paths)
+        private void VerifyUniqueness(List<List<string>> circuits)
         {
-            var pathStrings = paths.Select(
+            var circuitsStrings = circuits.Select(
                 p => p.Aggregate("", (agg, y) => $"{agg}{y}")
             ).Distinct();
-            Assert.AreEqual(paths.Count, pathStrings.Count());
+            Assert.AreEqual(circuits.Count, circuitsStrings.Count());
         }
     }
 }
