@@ -7,6 +7,14 @@ using System.Text;
 
 namespace Riddles.Probability.Application
 {
+    /// <summary>
+    /// https://thefiddler.substack.com/p/did-xkcd-get-its-math-right
+    /// https://xkcd.com/3015/
+    /// 
+    /// The scenario is: draw 2 arrows at random, avoid the 5 poisoned
+    /// arrows out of 10. The question is what skill check in D&D gets
+    /// those odds. 3 d6s and a d4 with a check of 16 works. What else?
+    /// </summary>
     public class XkcdPoisonArrowProbabilityCalculator
     {
         private double _epsilon = 0.00000000001;
