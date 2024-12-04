@@ -13,10 +13,14 @@ namespace Riddles.Tests.Probability.Application
         private Dictionary<int, (int[], int, double)> _testCaseDictionary
             = new Dictionary<int, (int[], int, double)>
             {
-                { 1, (new int[] { 6, 6, 6, 4 }, 16, 2.0/9.0) }
+                { 1, (new int[] { 6, 6, 6, 4 }, 16, 2.0/9.0) },
+                { 2, (new int[] { 6, 6, 8, 10}, 21, 2.0/9.0) },
+                { 3, (new int[] { 10, 12, 12, 20}, 36, 2.0/9.0) }
             };
 
         [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
         public void TestCalculateOddsOfPassingCheckAtTarget(int testCaseId)
         {
             var dungeonsAndDragonsSkillCheckProbabilityCalculator =
