@@ -27,7 +27,7 @@ namespace Riddles.Optimization
 			Dictionary<int, double> numDiceToExpectedValuePerDieDictionary = new Dictionary<int, double>();
 			numDiceToExpectedValuePerDieDictionary[0] = 0;
 			for (int i = 1; i <= numDice; i++) {
-				var outcomes = this._permutationGenerator.GenerateAllOutcomes(i, numSides, '1');
+				var outcomes = this._permutationGenerator.GenerateAllOutcomes(i, numSides, '1', true);
 				var diceRolls = this.TransformOutcomesToDiceRolls(outcomes);
 				numDiceToExpectedValuePerDieDictionary[i] = this.GetExpectedValueInternal(diceRolls, i, numDiceToExpectedValuePerDieDictionary);
 			}

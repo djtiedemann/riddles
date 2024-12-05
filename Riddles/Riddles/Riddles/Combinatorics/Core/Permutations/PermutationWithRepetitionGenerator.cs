@@ -31,20 +31,25 @@ namespace Riddles.Combinatorics.Core.Permutations
 
         }
 
-		public List<string> GenerateAllOutcomes(int numTrials, List<char> possibleOutcomes)
+		public List<string> GenerateAllOutcomes(int numTrials, List<char> possibleOutcomes, bool isOrdered)
 		{
 			var firstOutcome = (char)0;
 			if (!this._encodeDecodeCache.ContainsKey(possibleOutcomes))
 			{
 				this._encodeDecodeCache[possibleOutcomes] = this.GenerateEncodeDecodeInfo(possibleOutcomes);
 			}
-			var outcomes = this.GenerateAllOutcomes(numTrials, possibleOutcomes.Count, firstOutcome);
+			var outcomes = this.GenerateAllOutcomes(numTrials, possibleOutcomes.Count, firstOutcome, isOrdered);
 			return outcomes
 				.Select(o => new string(o.ToCharArray().Select(x => this._encodeDecodeCache[possibleOutcomes].DecodeMap[x]).ToArray()))
 				.ToList();
 		}
 
-		public List<string> GenerateAllOutcomes(int numTrials, int numOutcomes, char firstOutcome)
+		public List<string> GenerateAllOutcomes(
+			int numTrials, 
+			int numOutcomes, 
+			char firstOutcome,
+			bool isOrdered
+		)
 		{
 			if (numTrials <= 0 || numOutcomes <= 0)
 			{
@@ -59,7 +64,7 @@ namespace Riddles.Combinatorics.Core.Permutations
 			outcomes.Add(currentPasscode);
 			while (currentPasscode != null)
 			{
-				currentPasscode = this.GenerateNextOutcome(currentPasscode, firstOutcome, lastOutcome);
+				currentPasscode = this.GenerateNextOutcome(currentPasscode, firstOutcome, lastOutcome, isOrdered);
 				if (currentPasscode != null)
 				{
 					outcomes.Add(currentPasscode);
@@ -68,7 +73,12 @@ namespace Riddles.Combinatorics.Core.Permutations
 			return outcomes;
 		}
 
-		public string GenerateNextOutcome(string currentOutcome, List<char> possibleOutcomes, int numTrials)
+		public string GenerateNextOutcome(
+			string currentOutcome, 
+			List<char> possibleOutcomes, 
+			int numTrials, 
+			bool isOrdered
+		)
 		{
             if (!this._encodeDecodeCache.ContainsKey(possibleOutcomes))
             {
@@ -81,7 +91,7 @@ namespace Riddles.Combinatorics.Core.Permutations
 			var encodedCurrentOutcome = new string(
 				currentOutcome.ToCharArray().Select(c => this._encodeDecodeCache[possibleOutcomes].EncodeMap[c]).ToArray()
 			);
-			var encodedNextOutcome = this.GenerateNextOutcome(encodedCurrentOutcome, (char)0, (char)(0 + possibleOutcomes.Count - 1));
+			var encodedNextOutcome = this.GenerateNextOutcome(encodedCurrentOutcome, (char)0, (char)(0 + possibleOutcomes.Count - 1), isOrdered);
 			if(encodedNextOutcome == null)
 			{
 				return null;
@@ -91,7 +101,7 @@ namespace Riddles.Combinatorics.Core.Permutations
             ); ;
         }
 
-		private string GenerateNextOutcome(string currentOutcome, char firstOutcome, char lastOutcome)
+		private string GenerateNextOutcome(string currentOutcome, char firstOutcome, char lastOutcome, bool isOrdered)
 		{
 			var currentOutcomeAsCharArray = currentOutcome.ToCharArray();
 
@@ -108,7 +118,9 @@ namespace Riddles.Combinatorics.Core.Permutations
 					currentOutcomeAsCharArray[i]++;
 					for (int j = i + 1; j < currentOutcomeAsCharArray.Length; j++)
 					{
-						currentOutcomeAsCharArray[j] = firstOutcome;
+                        // if order doesn't matter skip over any outcome that
+                        // has already been generated
+                        currentOutcomeAsCharArray[j] = isOrdered ? firstOutcome : currentOutcomeAsCharArray[i];
 					}
 					break;
 				}
@@ -117,7 +129,12 @@ namespace Riddles.Combinatorics.Core.Permutations
 			return nextOutcome;
 		}
 
-		public int[] GenerateNextOutcome(int[] currentOutcome, int firstOutcome, int lastOutcome)
+		public int[] GenerateNextOutcome(
+			int[] currentOutcome, 
+			int firstOutcome, 
+			int lastOutcome, 
+			bool isOrdered
+		)
 		{
 			if(currentOutcome == null)
 			{
@@ -136,7 +153,9 @@ namespace Riddles.Combinatorics.Core.Permutations
 					nextOutcome[i]++;
 					for (int j = i + 1; j < nextOutcome.Length; j++)
 					{
-						nextOutcome[j] = firstOutcome;
+						// if order doesn't matter skip over any outcome that
+						// has already been generated
+						nextOutcome[j] = isOrdered ? firstOutcome : nextOutcome[i];
 					}
 					break;
 				}

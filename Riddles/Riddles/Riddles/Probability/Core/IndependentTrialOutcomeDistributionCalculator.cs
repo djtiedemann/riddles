@@ -28,7 +28,8 @@ namespace Riddles.Probability.Core
         {
             var outcomes = this._permutationGenerator.GenerateAllOutcomes(
                 numTrials,
-                outcomeProbabilities.Keys.OrderBy(x => x).ToList()
+                outcomeProbabilities.Keys.OrderBy(x => x).ToList(),
+                isOrdered: true
             );
             return outcomes.Select(
                 o => (o, o.ToCharArray().Aggregate(1.0, (agg, v) => agg * outcomeProbabilities[v]))

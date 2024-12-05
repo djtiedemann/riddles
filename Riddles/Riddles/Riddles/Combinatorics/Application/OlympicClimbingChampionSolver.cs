@@ -123,7 +123,7 @@ namespace Riddles.Combinatorics.Application
 			var currentOutcome = challengerScores;
 			while (true)
 			{
-				var nextOutcome = this._permutationGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes);
+				var nextOutcome = this._permutationGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes, isOrdered: true);
 				if (nextOutcome == null || nextOutcome[0] != challengerScores[0]){ return null; }
 				var challengerScore = nextOutcome.Aggregate(1, (agg, o) => agg * o);
 				var comesInSamePositionAsPlayer =
@@ -139,7 +139,7 @@ namespace Riddles.Combinatorics.Application
 		public List<int[]> GenerateDistinctPossiblePlacementsForSingleAthlete(int numContests, int numAthletes)
 		{
 			var outcomes = this._permutationGenerator
-				.GenerateAllOutcomes(numContests, numAthletes, '1')
+				.GenerateAllOutcomes(numContests, numAthletes, '1', true)
 				.Select(o => new string(o.ToCharArray().OrderBy(e => e).ToArray()))
 				.Distinct()
 				.Select(o => o.ToCharArray().Select(c => c - '1' + 1).ToArray())

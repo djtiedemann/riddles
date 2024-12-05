@@ -39,7 +39,7 @@ namespace Riddles.Graphs.Application
             Dictionary<string, int> numSolutionsPerGame = new Dictionary<string, int>();
             var grid = this._gridGenerator.GenerateGrid(length, width);
             var gridCycles = this._gridCycleFinder.FindCycles(length, width, grid);
-            var permutations = this._permutationGenerator.GenerateAllOutcomes((length - 1) * (width - 1), new List<char> { '0', '1' });
+            var permutations = this._permutationGenerator.GenerateAllOutcomes((length - 1) * (width - 1), new List<char> { '0', '1' }, true);
             var fullySpecifiedGames = 
                 gridCycles.Select(c => 
                     this.GetEdgeCountForCycle(length, width, c)

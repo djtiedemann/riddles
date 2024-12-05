@@ -17,7 +17,7 @@ namespace Riddles.Probability
 
 		public List<HatAssignment> GenerateAllPossibleHatAssignments(int numCitizens, int numHatColors, int firstCitizenId)
 		{
-			var assignments = this._permutationGenerator.GenerateAllOutcomes(numCitizens, numHatColors, '1');
+			var assignments = this._permutationGenerator.GenerateAllOutcomes(numCitizens, numHatColors, '1', true);
 
 			return assignments.Select(p =>
 			{

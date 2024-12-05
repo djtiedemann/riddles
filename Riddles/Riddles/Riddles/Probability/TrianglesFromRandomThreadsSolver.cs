@@ -19,7 +19,7 @@ namespace Riddles.Probability
 			var firstChar = '0';
 			var threadLengthMappingDictionary = threadLengths.Select((length, index) => new { key = (char)(firstChar + index), length })
 				.ToDictionary(k => k.key, k => k.length);
-			var possibleCombinations = this._permutationGenerator.GenerateAllOutcomes(3, threadLengths.Length, firstChar);
+			var possibleCombinations = this._permutationGenerator.GenerateAllOutcomes(3, threadLengths.Length, firstChar, isOrdered: true);
 			var possibleCombinationsOfThreads = possibleCombinations.Select(c => c.Select(i => threadLengthMappingDictionary[i]).ToList()).ToList();
 
 			var numCombinations = possibleCombinations.Count();

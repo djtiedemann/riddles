@@ -80,7 +80,8 @@ namespace Riddles.Probability
                 currentOutcome = this._outcomeGenerator.GenerateNextOutcome(
                     currentOutcome,
                     0,
-                    numRanges - 1
+                    numRanges - 1,
+                    isOrdered: true
                 );
             }
             return probabilities;

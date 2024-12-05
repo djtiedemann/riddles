@@ -20,7 +20,7 @@ namespace Riddles.Optimization
 
 		public string FindShortestStringContainingAllPossiblePasscodes(int lengthOfPasscode, int numDigitsOnPadlock)
 		{
-			var allPossiblePasscodes = this._permutationGenerator.GenerateAllOutcomes(lengthOfPasscode, numDigitsOnPadlock, FirstCharacterToProcess);
+			var allPossiblePasscodes = this._permutationGenerator.GenerateAllOutcomes(lengthOfPasscode, numDigitsOnPadlock, FirstCharacterToProcess, true);
 			var digitsOnPadlock = Enumerable.Range(0, numDigitsOnPadlock).Select(digit => (char)(FirstCharacterToProcess + digit)).ToArray();
 			Dictionary<char, char?> nextDigitToProcess = new Dictionary<char, char?>();
 			for(int i=0; i<numDigitsOnPadlock; i++)

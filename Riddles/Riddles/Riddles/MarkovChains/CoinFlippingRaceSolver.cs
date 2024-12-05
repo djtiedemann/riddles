@@ -44,7 +44,8 @@ namespace Riddles.MarkovChains
             var initialState = new CoinFlippingRaceState(initialEmptyArrays, winningSequences);
             var collectiveOutcomes = this._outcomeGenerator.GenerateAllOutcomes(
                 winningSequences.Count,
-                outcomeProbabilities.Keys.ToList()
+                outcomeProbabilities.Keys.ToList(),
+                true
             );
             var collectiveOutcomeProbabilities =
                 collectiveOutcomes.ToDictionary(
@@ -71,7 +72,8 @@ namespace Riddles.MarkovChains
         {
             var possibleOutcomes = this._outcomeGenerator.GenerateAllOutcomes(
                 numRolls,
-                outcomeDictionary.Keys.ToList()
+                outcomeDictionary.Keys.ToList(),
+                true
             );
             var possibleSequences = this._permutationGenerator
                 .GenerateAllPermutations(possibleOutcomes.Count, numPlayers)

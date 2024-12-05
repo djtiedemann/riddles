@@ -54,37 +54,23 @@ namespace Riddles.Probability.Application
                 {
                     count++;
                     var dice = currentOutcome.Select(i => diceTypes[i]).ToArray();
-                    if (this.AreDiceOrdered(dice))
+
+                    var skillCheckDistribution = this._skillCheckProbabilityGenerator
+                        .CalculateOddsOfPassingCheckAtVariousTargets(dice);
+                    foreach (var skillCheck in skillCheckDistribution.Keys)
                     {
-                        var skillCheckDistribution = this._skillCheckProbabilityGenerator
-                            .CalculateOddsOfPassingCheckAtVariousTargets(dice);
-                        foreach (var skillCheck in skillCheckDistribution.Keys)
+                        var successProbability = skillCheckDistribution[skillCheck];
+                        if (Math.Abs(successProbability - targetOdds)
+                            <= this._epsilon)
                         {
-                            var successProbability = skillCheckDistribution[skillCheck];
-                            if (Math.Abs(successProbability - targetOdds)
-                                <= this._epsilon)
-                            {
-                                validChecks.Add((dice, skillCheck));
-                            }
+                            validChecks.Add((dice, skillCheck));
                         }
                     }
                     currentOutcome = this._permutationGenerator
-                        .GenerateNextOutcome(currentOutcome, firstOutcome, lastOutcome);
+                        .GenerateNextOutcome(currentOutcome, firstOutcome, lastOutcome, isOrdered: false);
                 }
             }
             return validChecks;
-        }
-
-        public bool AreDiceOrdered(int[] dice)
-        {
-            for(int i=1; i<dice.Length; i++)
-            {
-                if (dice[i] < dice[i - 1])
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         public double CalculateOddsOfDrawingAllNonPoisonedArrows(
