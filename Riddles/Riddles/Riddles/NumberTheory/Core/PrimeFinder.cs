@@ -12,7 +12,7 @@ namespace Riddles.NumberTheory.Core
 
 		public PrimeFinder()
 		{
-			primeNumbers = new HashSet<int> { 1 };
+			primeNumbers = new HashSet<int> { };
 			compositeNumbers = new HashSet<int> { };
 		}
 

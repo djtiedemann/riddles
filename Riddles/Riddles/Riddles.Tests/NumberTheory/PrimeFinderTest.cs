@@ -8,7 +8,7 @@ namespace Riddles.Tests.NumberTheory
 {
 	public class PrimeFinderTest
 	{
-		[TestCase(100, new int[] { 1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97})]
+		[TestCase(100, new int[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97})]
 		public void TestFindPrimeNumbers(int n, int[] expectedPrimes)
 		{
 			var primeFinder = new PrimeFinder();
