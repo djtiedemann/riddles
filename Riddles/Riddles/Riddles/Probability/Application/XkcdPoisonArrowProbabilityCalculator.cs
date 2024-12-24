@@ -67,7 +67,7 @@ namespace Riddles.Probability.Application
                         }
                     }
                     currentOutcome = this._permutationGenerator
-                        .GenerateNextOutcome(currentOutcome, firstOutcome, lastOutcome, isOrdered: false);
+                        .GenerateNextOutcome(currentOutcome, firstOutcome, lastOutcome, doesOrderMatter: false);
                 }
             }
             return validChecks;

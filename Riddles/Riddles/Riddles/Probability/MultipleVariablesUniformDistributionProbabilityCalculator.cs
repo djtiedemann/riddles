@@ -81,7 +81,7 @@ namespace Riddles.Probability
                     currentOutcome,
                     0,
                     numRanges - 1,
-                    isOrdered: true
+                    doesOrderMatter: true
                 );
             }
             return probabilities;

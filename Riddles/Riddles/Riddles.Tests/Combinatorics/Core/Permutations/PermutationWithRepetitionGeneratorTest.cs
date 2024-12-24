@@ -54,6 +54,51 @@ namespace Riddles.Tests.Combinatorics.Core.Permutations
             } }
         };
 
+        private Dictionary<int, (int, int, int, bool, Func<int[], bool>, List<int[]>)>
+            _generateAllOutcomesTestCaseDictionary =
+                new Dictionary<int, (int, int, int, bool, Func<int[], bool>, List<int[]>)>
+                {
+                    { 1, (0, 2, 5, false, null, new List<int[]>{
+                        new int[] { 0, 0, 0, 0, 0 },
+                        new int[] { 0, 0, 0, 0, 1 },
+                        new int[] { 0, 0, 0, 0, 2 },
+                        new int[] { 0, 0, 0, 1, 1 },
+                        new int[] { 0, 0, 0, 1, 2 },
+                        new int[] { 0, 0, 0, 2, 2 },
+                        new int[] { 0, 0, 1, 1, 1 },
+                        new int[] { 0, 0, 1, 1, 2 },
+                        new int[] { 0, 0, 1, 2, 2 },
+                        new int[] { 0, 0, 2, 2, 2 },
+                        new int[] { 0, 1, 1, 1, 1 },
+                        new int[] { 0, 1, 1, 1, 2 },
+                        new int[] { 0, 1, 1, 2, 2 },
+                        new int[] { 0, 1, 2, 2, 2 },
+                        new int[] { 0, 2, 2, 2, 2 },
+                        new int[] { 1, 1, 1, 1, 1 },
+                        new int[] { 1, 1, 1, 1, 2 },
+                        new int[] { 1, 1, 1, 2, 2 },
+                        new int[] { 1, 1, 2, 2, 2 },
+                        new int[] { 1, 2, 2, 2, 2 },
+                        new int[] { 2, 2, 2, 2, 2 },
+                    })},
+                    { 2, (0, 3, 5, false,
+                        (x => x.Sum() % 4 == 2025 % 4 &&
+                            x.Where(x => x == 0 || x == 2).Count() <= 1), 
+                        new List<int[]>{
+                            new int[] { 1, 1, 1, 1, 1 },
+                            new int[] { 1, 1, 1, 3, 3 },
+                            new int[] { 1, 3, 3, 3, 3 },
+                    })},
+                    { 3, (0, 2, 5, false,
+                        (x => x.Sum() % 3 == 2025 % 3 &&
+                            x.Where(x => x == 0).Count() <= 1),
+                        new List<int[]>{
+                            new int[] { 0, 1, 1, 2, 2 },
+                            new int[] { 1, 1, 1, 1, 2 },
+                            new int[] { 1, 2, 2, 2, 2 },
+                    })}
+                };
+
         [TestCase(1, 1, 3, true)]
         [TestCase(1, 2, 3, false)]
         public void TestGenerateAllPossibleGroupAssignmentsForDistinctGroupsAndDistinctMembersSetApi(
@@ -69,6 +114,32 @@ namespace Riddles.Tests.Combinatorics.Core.Permutations
             for(int i=0; i<outcomes.Count; i++)
             {
                 Assert.AreEqual(expectedOutput[i], outcomes[i]);
+            }
+        }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void TestGenerateAllOutcomes(int testCaseId)
+        {
+            var testCase = this._generateAllOutcomesTestCaseDictionary[testCaseId];
+            var outcomeGenerator = new PermutationWithRepetitionGenerator();
+            var outcomes = outcomeGenerator.GenerateAllOutcomes(
+                    testCase.Item1,
+                    testCase.Item2,
+                    testCase.Item3,
+                    testCase.Item4,
+                    testCase.Item5
+                );
+            var expected = testCase.Item6;
+            Assert.AreEqual(expected.Count, outcomes.Count);
+            for(int i=0; i<expected.Count; i++)
+            {
+                Assert.AreEqual(expected[i].Length, outcomes[i].Length);
+                for (int j = 0; j < expected[i].Length; j++)
+                {
+                    Assert.AreEqual(expected[i][j], outcomes[i][j]);
+                }
             }
         }
 

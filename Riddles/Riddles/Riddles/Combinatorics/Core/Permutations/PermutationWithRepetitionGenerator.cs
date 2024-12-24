@@ -129,11 +129,37 @@ namespace Riddles.Combinatorics.Core.Permutations
 			return nextOutcome;
 		}
 
+		public List<int[]> GenerateAllOutcomes(
+			int firstOutcome,
+			int lastOutcome,
+			int numTrials,
+			bool doesOrderMatter,
+			Func<int[], bool> inclusionFilter = null)
+		{
+			var results = new List<int[]>();
+			var currentOutcome = Enumerable.Range(0, numTrials)
+				.Select(i => firstOutcome).ToArray();
+			while (currentOutcome != null)
+			{
+				if (inclusionFilter == null || inclusionFilter(currentOutcome))
+				{
+                    results.Add(currentOutcome);
+                }
+				currentOutcome = this.GenerateNextOutcome(
+					currentOutcome,
+					firstOutcome,
+					lastOutcome,
+					doesOrderMatter
+				);
+			}
+			return results;
+        }
+
 		public int[] GenerateNextOutcome(
 			int[] currentOutcome, 
 			int firstOutcome, 
 			int lastOutcome, 
-			bool isOrdered
+			bool doesOrderMatter
 		)
 		{
 			if(currentOutcome == null)
@@ -155,7 +181,7 @@ namespace Riddles.Combinatorics.Core.Permutations
 					{
 						// if order doesn't matter skip over any outcome that
 						// has already been generated
-						nextOutcome[j] = isOrdered ? firstOutcome : nextOutcome[i];
+						nextOutcome[j] = doesOrderMatter ? firstOutcome : nextOutcome[i];
 					}
 					break;
 				}

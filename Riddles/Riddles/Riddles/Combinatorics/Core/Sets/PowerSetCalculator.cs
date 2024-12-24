@@ -30,7 +30,7 @@ namespace Riddles.Combinatorics.Core.Sets
             var nextSubset = lastSubset != null ?
                 this._permutationWithRepititionGenerator
                     .GenerateNextOutcome(
-                        lastSubset, 0, 1, isOrdered: true
+                        lastSubset, 0, 1, doesOrderMatter: true
                     ) :
                     set.Select(s => 0).ToArray();
             var result = nextSubset != null ?

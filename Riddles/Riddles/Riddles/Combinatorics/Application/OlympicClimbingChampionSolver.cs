@@ -123,7 +123,7 @@ namespace Riddles.Combinatorics.Application
 			var currentOutcome = challengerScores;
 			while (true)
 			{
-				var nextOutcome = this._permutationGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes, isOrdered: true);
+				var nextOutcome = this._permutationGenerator.GenerateNextOutcome(currentOutcome, 1, numAthletes, doesOrderMatter: true);
 				if (nextOutcome == null || nextOutcome[0] != challengerScores[0]){ return null; }
 				var challengerScore = nextOutcome.Aggregate(1, (agg, o) => agg * o);
 				var comesInSamePositionAsPlayer =
